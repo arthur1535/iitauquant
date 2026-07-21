@@ -1,0 +1,4 @@
+data,ferramenta,o_que_foi_pedido,onde_entrou_no_projeto,revisao_humana_necessaria
+2026-07-20,"OpenAI Codex","Cruzar checklist, relatório técnico e tutorial; definir escopo reproduzível dos agentes 4 e 5","Arquitetura do pipeline e delimitação explícita entre proxy preliminar e stock-picking final","Confirmar se VFMF é aceitável apenas como proxy no pré-relatório"
+2026-07-20,"OpenAI Codex","Implementar backtest mensal, métricas, regressões FF5+Momentum e testes de vieses","scripts/backtest_auditoria.py; resultados/tabelas; resultados/relatorio_backtest_auditoria.md","Revisar premissas, fonte espelhada do spread e custo de 10 bps"
+2026-07-20,"OpenAI Codex","Criar gráficos, texto de apresentação e indicador Pine com alertas e pesos","resultados/graficos; resultados/material_pre_relatorio.md; tradingview/regime_credito_hy.pine","Validar compilação do Pine no TradingView e adaptar identidade visual final"

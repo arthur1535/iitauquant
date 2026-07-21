@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/
+
+# Dados obtidos externamente e artefatos gerados.
+dados/cache/
+dados/raw/
+dados/processed/
+dados/manifest.jsonl
+dados/relatorios/*.csv
+dados/relatorios/*.json
+!dados/relatorios/.gitkeep

@@ -1,0 +1,13 @@
+teste,aprovado,evidencia
+datas_precos_unicas,True,indice mensal sem duplicatas
+datas_spread_unicas,True,indice mensal sem duplicatas
+datas_ordenadas,True,ordem temporal crescente
+mes_parcial_excluido,True,ultimo mes=2026-06
+sem_retorno_extremo_30pct,True,max_abs=21.96%
+pesos_somam_1,True,erro_max=0
+pesos_nao_negativos,True,min=0
+stress_usa_BIL_exato,True,n_stress=10
+normal_usa_smallcap_exato,True,comparacao por estado
+sinal_defasado_1_mes,True,estado observado em t aplicado em t+1
+sem_nan_resultados,True,n_nan=0
+preco_ajustado_disponivel,True,campo Adj Close do Yahoo

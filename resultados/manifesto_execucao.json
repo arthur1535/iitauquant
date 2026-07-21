@@ -1,0 +1,43 @@
+{
+  "gerado_utc": "2026-07-21T20:59:08.210673+00:00",
+  "config": {
+    "start": "2007-01-01",
+    "z_window_months": 36,
+    "z_min_periods": 24,
+    "stress_entry": 1.0,
+    "stress_exit": 0.5,
+    "transaction_cost_bps": 10.0,
+    "candidates": [
+      "IWM",
+      "VB",
+      "IJR"
+    ],
+    "market": "SPY",
+    "fixed_income": "BIL",
+    "factor_proxy": "VFMF",
+    "crisis_windows": [
+      [
+        "2008-01",
+        "2009-06"
+      ],
+      [
+        "2011-05",
+        "2011-12"
+      ],
+      [
+        "2015-06",
+        "2016-03"
+      ],
+      [
+        "2020-02",
+        "2020-06"
+      ],
+      [
+        "2022-01",
+        "2023-12"
+      ]
+    ]
+  },
+  "sha256_config": "a870cbd4d3f3138203cd38eda42b81ac94c72f5477c0b24b2803ab78bc1f1f2f",
+  "nota": "Parametros definidos antes do backtest; nao otimizar pelo retorno."
+}

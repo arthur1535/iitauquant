@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iitauquant-data"
+version = "0.1.0"
+description = "Camada auditavel de dados do fundo sistematico multi-sleeve"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "requests>=2.31",
+  "yfinance>=0.2.54",
+  "lxml>=5.0",
+  "openpyxl>=3.1",
+]
+
+[project.scripts]
+iitauquant-data = "iitauquant_data.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

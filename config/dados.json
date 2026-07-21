@@ -1,0 +1,38 @@
+{
+  "project": "fundo-sistematico-multi-sleeve",
+  "timezone": "America/Sao_Paulo",
+  "prices": {
+    "start": "2010-01-01",
+    "interval": "1d",
+    "reference_tickers": ["IWM", "VB", "IJR", "SPY", "BIL"]
+  },
+  "fred": {
+    "series": ["BAMLH0A0HYM2"],
+    "minimum_start": "2012-01-01",
+    "history_warning": "Desde abril de 2026, o FRED limita BAMLH0A0HYM2 aos 3 anos mais recentes; usar arquivo licenciado/exportado para calibrar crises antigas"
+  },
+  "fundamentals": {
+    "forms": ["10-K", "10-K/A"],
+    "availability_field": "filed",
+    "sample_tickers": [
+      "AAPL", "MSFT", "AMZN", "GOOGL", "JPM", "BAC", "XOM", "CVX",
+      "JNJ", "PFE", "WMT", "COST", "CAT", "GE", "NEE", "DUK",
+      "LIN", "DIS", "UPS", "BRK-B"
+    ]
+  },
+  "holdings": {
+    "selected_fund": "VB",
+    "required_for_stock_selection": true
+  },
+  "quality": {
+    "max_missing_monthly_fraction": 0.05,
+    "max_staleness_days": 45,
+    "max_price_return_abs": 0.80
+  },
+  "methodology": {
+    "universe_is_point_in_time": false,
+    "fundamental_lag_rule": "Use filed/availability_date; nunca fiscal_period_end isoladamente",
+    "missing_fundamentals_rule": "Excluir ticker-periodo; nao imputar",
+    "tradingview_role": "Conferencia manual secundaria; nao fonte automatizada do backtest"
+  }
+}
