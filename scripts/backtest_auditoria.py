@@ -96,26 +96,19 @@ def monthly_adjusted_prices() -> pd.DataFrame:
 
 
 def credit_spread_monthly() -> tuple[pd.Series, dict[str, str]]:
-    # Espelho longo necessario desde 2026, quando a exportacao publica do FRED
-    # passou a devolver apenas ~3 anos para esta serie. O trecho atual vem do FRED.
-    mirror = (
-        "https://huggingface.co/datasets/Sashank-810/crisisnet-dataset/resolve/"
-        "main/Module_1/credit_spreads/BAMLH0A0HYM2.csv"
-    )
-    fred = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2"
-    hist = pd.read_csv(mirror)
-    hist = hist.rename(columns={hist.columns[0]: "date"})[["date", "BAMLH0A0HYM2"]]
-    current = pd.read_csv(fred).rename(columns={"observation_date": "date", "DATE": "date"})
-    combined = pd.concat([hist, current[["date", "BAMLH0A0HYM2"]]], ignore_index=True)
-    combined["date"] = pd.to_datetime(combined["date"], errors="coerce")
-    combined["BAMLH0A0HYM2"] = pd.to_numeric(combined["BAMLH0A0HYM2"], errors="coerce")
-    combined = combined.dropna().sort_values("date").drop_duplicates("date", keep="last")
-    combined = combined.set_index("date")["BAMLH0A0HYM2"]
-    monthly = combined.resample("ME").last()
+    # BAA10Y tem histórico oficial completo no FRED desde 1986 e evita a janela
+    # móvel de três anos imposta à série ICE/BofA BAMLH0A0HYM2 desde abril/2026.
+    fred = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAA10Y"
+    raw = pd.read_csv(fred).rename(columns={"observation_date": "date", "DATE": "date"})
+    raw["date"] = pd.to_datetime(raw["date"], errors="coerce")
+    raw["BAA10Y"] = pd.to_numeric(raw["BAA10Y"], errors="coerce")
+    spread = raw.dropna().sort_values("date").drop_duplicates("date", keep="last")
+    spread = spread.set_index("date")["BAA10Y"]
+    monthly = spread.resample("ME").last()
     monthly.index = monthly.index.to_period("M")
     monthly = monthly.loc[monthly.index <= complete_month_cutoff()]
-    monthly.to_csv(DATA / "spread_hy_mensal.csv", header=True)
-    return monthly, {"historico_espelho": mirror, "trecho_atual_oficial": fred}
+    monthly.to_csv(DATA / "spread_credito_baa_mensal.csv", header=True)
+    return monthly, {"fonte_oficial": fred}
 
 
 def regime_signal(spread: pd.Series) -> pd.DataFrame:
@@ -338,7 +331,7 @@ def save_plots(returns: pd.DataFrame, regime: pd.DataFrame, selected: str) -> No
 
     common = regime.dropna(subset=["z_score", "estado_aplicado"])
     fig, ax = plt.subplots(figsize=(12, 5))
-    ax.plot(common.index.to_timestamp(), common["z_score"], color=colors["navy"], lw=1.5, label="z-score spread HY")
+    ax.plot(common.index.to_timestamp(), common["z_score"], color=colors["navy"], lw=1.5, label="z-score spread Baa")
     ax.axhline(CFG.stress_entry, color=colors["red"], ls="--", label="entrada 1,0")
     ax.axhline(CFG.stress_exit, color=colors["green"], ls=":", label="saída 0,5")
     stress = common["estado_aplicado"].eq(1)
@@ -422,7 +415,7 @@ Auditoria automatizada: **{int(audit_df['aprovado'].sum())}/{len(audit_df)} test
 
 ## Decisão do proxy small-cap
 
-O proxy escolhido foi **{selected}**, pela correlação mais negativa entre variação mensal do spread HY e retorno relativo ao SPY nas crises pré-definidas. A decisão usa uma referência externa ao payoff do backtest.
+O proxy escolhido foi **{selected}**, pela correlação mais negativa entre variação mensal do spread Baa e retorno relativo ao SPY nas crises pré-definidas. A decisão usa uma referência externa ao payoff do backtest.
 
 {selection.to_markdown(floatfmt='.3f')}
 
@@ -452,14 +445,13 @@ OLS mensal com erros HAC/Newey-West (3 defasagens). Coeficientes e p-valores com
 | Dados ausentes | Mitigado | Nenhuma imputação de retornos; consolidação usa apenas a interseção completa. No stock-picking final, empresa incompleta deve ser excluída. |
 | Retornos × pesos | Testado | Pesos não negativos, soma unitária e igualdade exata BIL/Small Cap em cada estado. |
 | Custos | Parcial | Overlay desconta {CFG.transaction_cost_bps:.0f} bps por giro; custos e turnover do ranking mensal precisam ser incluídos no backtest final. |
-| Fonte do spread | Limitação material | Histórico longo vem de espelho público e trecho recente do FRED; arquivar checksum e, antes da entrega final, substituir/confirmar com exportação oficial autenticada. |
+| Fonte do spread | Mitigado | A série oficial FRED `BAA10Y` cobre o histórico desde 1986; o arquivo local registra a fonte e o período utilizado. |
 | Proxy vs. estratégia | Limitação material | Este pipeline não testa momentum+reversão por ação nem os quatro fatores fundamentalistas point-in-time. |
 
 ## Proveniência
 
 - Preços: Yahoo Finance, campo `Adj Close`, baixados no momento da execução.
-- Spread histórico: {sources['historico_espelho']}
-- Spread atual: {sources['trecho_atual_oficial']}
+- Spread de crédito Baa: {sources['fonte_oficial']}
 - Fatores: Kenneth R. French Data Library, FF5 e Momentum mensais.
 
 ## Arquivos visuais
@@ -475,9 +467,9 @@ OLS mensal com erros HAC/Newey-West (3 defasagens). Coeficientes e p-valores com
 
 ## Texto curto — backtest e risco
 
-No teste preliminar com ETFs, o VB foi o proxy small-cap mais sensível ao crédito: nas crises pré-definidas, sua correlação entre retorno relativo ao SPY e variação do spread HY foi {selection.loc[selected, 'correlacao_crises']:.2f}, contra {selection.loc['IWM', 'correlacao_crises']:.2f} no IWM e {selection.loc['IJR', 'correlacao_crises']:.2f} no IJR. O sinal usa z-score de 36 meses, entra em estresse acima de 1,0 e sai abaixo de 0,5; o estado observado no fim do mês só altera os pesos do mês seguinte.
+No teste preliminar com ETFs, o {selected} foi o proxy small-cap mais sensível ao crédito: nas crises pré-definidas, sua correlação entre retorno relativo ao SPY e variação do spread Baa foi {selection.loc[selected, 'correlacao_crises']:.2f}, contra {selection.loc['IWM', 'correlacao_crises']:.2f} no IWM e {selection.loc['IJR', 'correlacao_crises']:.2f} no IJR. O sinal usa z-score de 36 meses, entra em estresse acima de 1,0 e sai abaixo de 0,5; o estado observado no fim do mês só altera os pesos do mês seguinte.
 
-O resultado foi adverso e informativo. De março de 2018 a junho de 2026, o VB sempre ligado apresentou CAGR de {always['CAGR']:.1%}, Sharpe de {always['Sharpe_excesso_BIL']:.2f} e drawdown máximo de {always['max_drawdown']:.1%}. Com o filtro de regime e 10 bps por giro, apresentou {guarded['CAGR']:.1%}, {guarded['Sharpe_excesso_BIL']:.2f} e {guarded['max_drawdown']:.1%}. Portanto, o filtro binário, com sinal mensal defasado, não protegeu a proxy nesta amostra e não deve ser vendido como fonte comprovada de valor.
+O resultado foi adverso e informativo. No período de {always['inicio']} a {always['fim']}, o {selected} sempre ligado apresentou CAGR de {always['CAGR']:.1%}, Sharpe de {always['Sharpe_excesso_BIL']:.2f} e drawdown máximo de {always['max_drawdown']:.1%}. Com o filtro de regime e 10 bps por giro, apresentou {guarded['CAGR']:.1%}, {guarded['Sharpe_excesso_BIL']:.2f} e {guarded['max_drawdown']:.1%}. Portanto, o filtro binário, com sinal mensal defasado, não protegeu a proxy nesta amostra e não deve ser vendido como fonte comprovada de valor.
 
 O fundo proxy obteve CAGR de {fund['CAGR']:.1%}, volatilidade de {fund['volatilidade_anual']:.1%}, Sharpe de {fund['Sharpe_excesso_BIL']:.2f} e drawdown de {fund['max_drawdown']:.1%}, contra {benchmark['CAGR']:.1%}, {benchmark['volatilidade_anual']:.1%}, {benchmark['Sharpe_excesso_BIL']:.2f} e {benchmark['max_drawdown']:.1%} do benchmark 2/3 SPY + 1/3 BIL. A correlação de {corr.iloc[0,1]:.2f} entre VFMF e VB também não sustenta, por proxies, a hipótese de dois motores pouco correlacionados. A próxima validação decisiva é substituir os ETFs pelas seleções point-in-time dos Sleeves 1 e 2.
 
@@ -498,7 +490,7 @@ O fundo proxy obteve CAGR de {fund['CAGR']:.1%}, volatilidade de {fund['volatili
 
 ## TradingView Premium
 
-1. Abra um layout com dois painéis: benchmark/ativos no painel superior e o indicador `regime_credito_hy.pine` no inferior.
+1. Abra um layout com dois painéis: benchmark/ativos no painel superior e o indicador `regime_credito_baa.pine` no inferior.
 2. Cole o script no Pine Editor, salve e adicione ao gráfico. Use gráfico mensal para auditoria visual.
 3. Crie dois alertas separados, “ENTRADA EM ESTRESSE” e “VOLTA AO NORMAL”, ambos **Once Per Bar Close**. O alerta confirmado no fechamento do mês define os pesos do mês seguinte.
 4. Mantenha os inputs de produção em 36 meses, entrada 1,0 e saída 0,5. Qualquer alteração deve gerar uma nova versão do manifesto antes de olhar o resultado.

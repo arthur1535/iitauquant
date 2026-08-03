@@ -112,6 +112,58 @@ def targets_to_monthly_weights(
     return weights.ffill().fillna(0.0)
 
 
+def targets_to_buy_and_hold_weights(
+    prices: pd.DataFrame,
+    targets: dict[pd.Timestamp, pd.Series],
+) -> pd.DataFrame:
+    """Aplica o alvo no mês seguinte e deixa os pesos derivarem com os preços.
+
+    Os pesos de cada data representam a carteira no início do retorno daquele
+    mês. Entre duas formações, a quantidade de ações fica constante; por isso,
+    o peso do mês seguinte incorpora o retorno observado no mês anterior.
+    """
+
+    monthly_prices = ensure_numeric_frame(prices, "prices para pesos buy-and-hold")
+    index = monthly_prices.index
+    columns = monthly_prices.columns
+    scheduled_targets: dict[pd.Timestamp, pd.Series] = {}
+    positions = {date: position for position, date in enumerate(index)}
+
+    for signal_date, target in sorted(targets.items()):
+        position = positions.get(pd.Timestamp(signal_date))
+        if position is None or position + 1 >= len(index):
+            continue
+        effective_date = index[position + 1]
+        row = pd.Series(0.0, index=columns, dtype=float)
+        target_copy = target.copy()
+        target_copy.index = target_copy.index.astype(str)
+        common = columns.intersection(target_copy.index)
+        row.loc[common] = target_copy.loc[common].astype(float)
+        scheduled_targets[effective_date] = row
+
+    weights = pd.DataFrame(0.0, index=index, columns=columns, dtype=float)
+    asset_returns = monthly_prices.pct_change(fill_method=None)
+    for position, date in enumerate(index):
+        if date in scheduled_targets:
+            weights.loc[date] = scheduled_targets[date]
+            continue
+        if position == 0:
+            continue
+        previous_weights = weights.iloc[position - 1]
+        if not previous_weights.gt(0).any():
+            continue
+        previous_returns = asset_returns.iloc[position - 1]
+        if previous_returns.loc[previous_weights.gt(0)].isna().any():
+            weights.loc[date] = previous_weights
+            continue
+        drifted = previous_weights * (1.0 + previous_returns)
+        total = float(drifted.sum())
+        if total > 0:
+            weights.loc[date] = drifted / total
+
+    return weights
+
+
 def portfolio_returns(prices: pd.DataFrame, weights: pd.DataFrame) -> pd.Series:
     """Calcula retorno mensal sem tratar retorno faltante de posição ativa como zero."""
 

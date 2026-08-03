@@ -29,7 +29,7 @@
 Esta etapa vem ANTES de construir qualquer carteira. Ela existe para transformar os parâmetros "em aberto" em números fechados — usando dado real, não achismo.
 
 ### Passo 1.1 — Baixar as 4 séries de referência
-**O que fazer:** baixar o preço mensal histórico (10+ anos) de: IWM (proxy do Russell 2000), VB (proxy do CRSP Small Cap), IJR (proxy do S&P 600) e SPY (S&P 500, como referência de mercado). Baixar também a série diária do spread de crédito high yield do FRED (série `BAMLH0A0HYM2` — busque por esse código no site do FRED, baixe o CSV) e converter para mensal (último valor de cada mês).
+**O que fazer:** baixar o preço mensal histórico (10+ anos) de: IWM (proxy do Russell 2000), VB (proxy do CRSP Small Cap), IJR (proxy do S&P 600) e SPY (S&P 500, como referência de mercado). Baixar também a série diária do spread corporativo Baa contra o Treasury de 10 anos no FRED (série `BAA10Y`) e converter para mensal pelo último valor observado de cada mês.
 **Como saber se deu certo:** 5 séries, todas cobrindo pelo menos 2012-hoje, sem buracos grandes.
 
 ### Passo 1.2 — 🔴 DECISÃO: escolher o universo de small caps

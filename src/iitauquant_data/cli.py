@@ -27,7 +27,7 @@ def build_parser() -> argparse.ArgumentParser:
     prices.add_argument("--refresh", action="store_true")
     prices.add_argument("--output", default="precos_mensais.csv")
     fred = sub.add_parser("fred", help="Coletar serie do FRED")
-    fred.add_argument("--series", default="BAMLH0A0HYM2")
+    fred.add_argument("--series", default="BAA10Y")
     fred.add_argument("--file", default=None, help="CSV alternativo/licenciado com historico completo")
     fred.add_argument("--date-column", default=None)
     fred.add_argument("--value-column", default=None)

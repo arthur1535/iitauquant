@@ -25,12 +25,15 @@ Para calcular valor de mercado histórico a partir de `shares_outstanding`, use 
 - `fiscal_year` / `fiscal_period`: ano e período declarados pelo emissor.
 - `form`, `accession`, `frame`: rastreabilidade ao filing.
 
-## `processed/fred_BAMLH0A0HYM2_mensal.csv`
+## `processed/fred_BAA10Y_mensal.csv`
 
 - `date`: último dia de calendário do mês.
-- `series_id`: identificador FRED.
+- `series_id`: identificador FRED `BAA10Y`.
 - `value`: último valor não ausente observado no mês.
 - `frequency`: regra de agregação aplicada.
+
+A série mede o spread entre o rendimento de títulos corporativos Baa da Moody's
+e o Treasury de 10 anos. O histórico oficial do FRED começa em 1986.
 
 ## `processed/fama_french_5_mais_momentum_mensal.csv`
 

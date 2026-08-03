@@ -1,8 +1,8 @@
 //@version=6
-indicator("Fundo Multi-Sleeve — Regime de Crédito HY", overlay=false)
+indicator("Fundo Multi-Sleeve — Regime de Crédito Baa", overlay=false)
 
-// Série pública do ICE BofA US High Yield OAS no TradingView/FRED.
-fredSymbol = input.symbol("FRED:BAMLH0A0HYM2", "Série do spread HY")
+// Spread entre títulos corporativos Baa da Moody's e Treasury de 10 anos.
+fredSymbol = input.symbol("FRED:BAA10Y", "Série do spread Baa")
 lookback = input.int(36, "Janela do z-score (meses)", minval=12)
 entryZ = input.float(1.0, "Entrada em estresse", step=0.1)
 exitZ = input.float(0.5, "Saída do estresse", step=0.1)
@@ -23,13 +23,13 @@ factorWeight = 33.0
 smallWeight = stress ? 0.0 : 33.0
 bilWeight = stress ? 67.0 : 33.0
 
-plot(z, "z-score HY", color=color.rgb(29, 78, 121), linewidth=2)
+plot(z, "z-score Baa", color=color.rgb(29, 78, 121), linewidth=2)
 hline(entryZ, "Entrada", color=color.red, linestyle=hline.style_dashed)
 hline(exitZ, "Saída", color=color.teal, linestyle=hline.style_dotted)
 bgcolor(stress ? color.new(color.red, 84) : color.new(color.green, 91), title="Estado")
 
-alertcondition(stress and not stress[1], "ENTRADA EM ESTRESSE", "Regime HY entrou em estresse. Aplicar no próximo mês: Factor 33%, Small Caps 0%, BIL 67%.")
-alertcondition(not stress and stress[1], "VOLTA AO NORMAL", "Regime HY normalizou. Aplicar no próximo mês: Factor 33%, Small Caps 33%, BIL 33%.")
+alertcondition(stress and not stress[1], "ENTRADA EM ESTRESSE", "Regime Baa entrou em estresse. Aplicar no próximo mês: Factor 33%, Small Caps 0%, BIL 67%.")
+alertcondition(not stress and stress[1], "VOLTA AO NORMAL", "Regime Baa normalizou. Aplicar no próximo mês: Factor 33%, Small Caps 33%, BIL 33%.")
 
 var table panel = table.new(position.top_right, 2, 5, border_width=1)
 if barstate.islast

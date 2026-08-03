@@ -7,9 +7,9 @@
     "reference_tickers": ["IWM", "VB", "IJR", "SPY", "BIL"]
   },
   "fred": {
-    "series": ["BAMLH0A0HYM2"],
+    "series": ["BAA10Y"],
     "minimum_start": "2012-01-01",
-    "history_warning": "Desde abril de 2026, o FRED limita BAMLH0A0HYM2 aos 3 anos mais recentes; usar arquivo licenciado/exportado para calibrar crises antigas"
+    "history_note": "BAA10Y e o spread entre o rendimento Baa da Moody's e o Treasury de 10 anos; o FRED oferece historico oficial desde 1986"
   },
   "fundamentals": {
     "forms": ["10-K", "10-K/A"],

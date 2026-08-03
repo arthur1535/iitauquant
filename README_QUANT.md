@@ -7,12 +7,13 @@ fechamento de um mês só vira posição no mês seguinte.
 ## Regras implementadas
 
 - **Sleeve 1:** tamanho, valor, rentabilidade e investimento; winsorização 1%/99%;
-  z-score transversal; média dos quatro fatores; top 50; peso igual; rebalanceamento
-  anual em junho; balanço disponível na data informada ou, na ausência dela, três
-  meses depois do fechamento fiscal.
+  z-score transversal; média dos quatro fatores; top 50; peso igual na formação;
+  compra e manutenção com pesos derivados pelos preços até o rebalanceamento anual
+  em junho; balanço disponível na data informada ou, na ausência dela, três meses
+  depois do fechamento fiscal.
 - **Sleeve 2:** momentum 12–1 (`P(t-1) / P(t-12) - 1`); reversão do último mês;
   z-scores transversais; composto 50/50; top 5%; peso igual; rebalanceamento mensal;
-  z-score móvel de 36 meses do spread HY; histerese 1,0/0,5; migração integral para
+  z-score móvel de 36 meses do spread Baa; histerese 1,0/0,5; migração integral para
   BIL em estresse.
 - **Sleeve 3:** retorno mensal do preço ajustado do BIL e peso integral no instrumento.
 - **Fundo:** pesos exatos de 1/3–1/3–1/3 em regime normal e 1/3–0–2/3 em estresse.
@@ -32,7 +33,7 @@ devem ser **ajustados por dividendos e desdobramentos**.
 | `factor_prices.csv` | wide ajustado, ou long da camada de dados com `close` e `adjusted_close` |
 | `factor_fundamentals.csv` | long: colunas descritas abaixo |
 | `small_cap_prices.csv` | wide: `date, ticker1, ticker2, ...` |
-| `credit_spread.csv` | `date, spread` — FRED `BAMLH0A0HYM2` |
+| `credit_spread.csv` | `date, spread` — FRED `BAA10Y` |
 | `bil_prices.csv` | `date, BIL` |
 | `small_cap_membership.csv` | opcional, wide de booleanos point-in-time |
 

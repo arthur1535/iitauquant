@@ -148,7 +148,7 @@ def run_full_audit(config: dict[str, Any]) -> tuple[pd.DataFrame, dict[str, Any]
     else:
         issues.append(Issue("fundamentals", "error", "dataset_missing", str(fundamental_path)))
     for path, name in (
-        (DATA_ROOT / "processed" / "fred_BAMLH0A0HYM2_mensal.csv", "fred"),
+        (DATA_ROOT / "processed" / "fred_BAA10Y_mensal.csv", "fred"),
         (DATA_ROOT / "processed" / "fama_french_5_mais_momentum_mensal.csv", "fama_french"),
     ):
         if path.exists():
