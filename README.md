@@ -2,6 +2,13 @@
 
 Este diretório agora contém um backtest **preliminar por proxies**, uma suíte de auditoria, gráficos reprodutíveis e o indicador de regime para TradingView.
 
+## Relatório final
+
+O relatório acadêmico consolidado da VCapital está disponível em:
+
+- `relatorios/Relatorio_Final_VCapital.pdf`;
+- `relatorios/Relatorio_Final_VCapital.docx`.
+
 ## Executar
 
 ```powershell
@@ -15,7 +22,7 @@ Para uso imediato no texto, consulte `resultados/material_pre_relatorio.md`. O r
 
 ## O que este teste valida
 
-- z-score de 36 meses e histerese 1,0/0,5 do spread HY;
+- z-score de 36 meses e histerese 1,0/0,5 do spread de crédito Baa (`BAA10Y`);
 - aplicação do sinal apenas no mês seguinte;
 - comparação Small Cap com e sem regime;
 - pesos 33/33/33 e 33/0/67;

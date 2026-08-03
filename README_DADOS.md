@@ -8,17 +8,20 @@ Esta pasta agora tem uma camada executável para coleta, normalização, cache e
 |---|---|---|
 | Preços e preços ajustados | Yahoo Finance via `yfinance` | `Close` e `Adj Close` são preservados; retornos usam apenas `adjusted_close` |
 | Fundamentos | SEC EDGAR Company Facts | A data disponível é `availability_date` (`filed`), não o fim do exercício |
-| Spread de crédito | FRED `BAMLH0A0HYM2` ou arquivo licenciado | Diário convertido para o último valor observado de cada mês |
+| Spread de crédito | FRED `BAA10Y` | Diário convertido para o último valor observado de cada mês |
 | FF5 + Momentum | Kenneth R. French Data Library | Percentuais convertidos para decimais; `-99.99`/`-999` viram ausentes |
 | Holdings de ETF | Arquivo baixado do gestor | Todo snapshot precisa de `as_of`; um arquivo atual não é composição histórica |
 | S&P 500 | Tabela pública atual | `point_in_time=false`; o alerta de viés de sobrevivência é obrigatório |
 
 TradingView Premium é útil para conferir visualmente preços, eventos corporativos e símbolos suspeitos. Ele não entra como fonte automatizada: além da reprodutibilidade menor, exportações/scraping podem depender do plano e dos termos da plataforma. Se houver divergência, registre-a no manifesto e confirme contra uma segunda fonte antes de alterar dados.
 
-**Restrição descoberta em julho de 2026:** o próprio FRED informa que, desde abril de 2026, `BAMLH0A0HYM2` contém apenas os três anos mais recentes. Isso não cobre 2015-16 nem 2020 e, portanto, não serve sozinho para a calibração planejada. A auditoria marca `insufficient_history` como erro. Se o TradingView Premium permitir exportar legalmente o histórico completo do símbolo, baixe o CSV pela interface e ingira-o assim:
+O sinal de produção usa `BAA10Y`, spread entre o rendimento corporativo Baa da
+Moody's e o Treasury de 10 anos. O FRED disponibiliza histórico oficial desde
+1986, suficiente para cobrir as janelas de crise usadas na calibração. Essa escolha
+elimina a dependência de um espelho não oficial para a série ICE/BofA.
 
 ```powershell
-python -m iitauquant_data fred --file "C:\caminho\BAMLH0A0HYM2.csv" --source-label "TradingView Premium exportado manualmente"
+python -m iitauquant_data fred --series BAA10Y --refresh
 python -m iitauquant_data audit
 ```
 

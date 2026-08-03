@@ -1,44 +1,50 @@
-# Status do Agente de Dados — 20/07/2026
+# Status do Agente de Dados - 02/08/2026
 
 ## Resumo executivo
 
-A camada de dados está implementada e os endpoints principais foram testados. A coleta de referência produziu 990 observações mensais de preços (cinco ETFs), 755 meses completos de FF5+Momentum e 503 membros atuais do S&P 500. A auditoria está em **FAIL controlado** porque o histórico oficial hoje disponível no FRED para `BAMLH0A0HYM2` começa em julho de 2023, enquanto a metodologia exige ao menos 2012 para cobrir 2015-16, 2020 e 2022-23.
+A camada de dados está implementada e os endpoints principais foram testados. A
+coleta de referência contém 990 observações mensais de preços (cinco ETFs), 755
+meses completos de FF5+Momentum, 503 membros atuais do S&P 500 e 487 meses do
+spread `BAA10Y`, de janeiro/1986 a julho/2026.
 
-O repositório também contém `dados/spread_hy_mensal.csv` desde 2005, montado por outro pipeline com um espelho público de terceiros mais o trecho atual do FRED. Ele é útil para resultado preliminar, mas não deve ser tratado como fonte final sem confirmação/licença; o próprio relatório de backtest já declara essa limitação.
+A limitação histórica do `BAMLH0A0HYM2` foi resolvida pela substituição por
+`BAA10Y`, obtida diretamente do FRED. A auditoria não acusa mais histórico de
+crédito insuficiente. O status agregado continua em **FAIL controlado** apenas
+porque os fundamentos SEC point-in-time ainda não foram coletados. Permanecem
+dois avisos: universo atual sujeito a viés de sobrevivência e ausência do
+snapshot de holdings do VB.
 
 ## Estado por ativo
 
 | Bloco | Estado | Evidência / pendência |
 |---|---|---|
-| Preços ajustados IWM/VB/IJR/SPY/BIL | Pronto | 2010-01 a 2026-06; nenhum ticker falhou; mês corrente incompleto removido |
-| Preço não ajustado | Pronto | `close` preservado para valor de mercado; retornos usam `adjusted_close` |
-| FF5 + Momentum | Pronto | 1963-07 a 2026-05; interseção completa, retornos decimais |
-| S&P 500 atual | Pronto com ressalva | 503 símbolos; `BRK.B` → `BRK-B`; `point_in_time=false` |
-| Spread HY oficial | Bloqueado para histórico longo | FRED atual: 2023-07 a 2026-06; importar exportação licenciada/TradingView |
-| Fundamentos SEC | Código pronto, coleta pendente | Requer nome + e-mail real da equipe no `SEC_USER_AGENT` |
-| Holdings VB | Importador pronto, arquivo pendente | Baixar “Portfolio composition file” no site oficial da Vanguard e registrar `as_of` |
-| Viés de sobrevivência | Identificado | S&P 500 e holdings atuais não reconstroem membros removidos |
+| Preços ajustados IWM/VB/IJR/SPY/BIL | Pronto | 990 linhas; `close` preservado e retornos por `adjusted_close` |
+| FF5 + Momentum | Pronto | 755 meses completos; retornos em decimais |
+| S&P 500 atual | Pronto com ressalva | 503 símbolos; `point_in_time=false` |
+| Spread de crédito Baa | Pronto | FRED `BAA10Y`; 1986-01 a 2026-07; 487 meses |
+| Fundamentos SEC | Código pronto, coleta pendente | Requer identificador real da equipe no `SEC_USER_AGENT` |
+| Holdings VB | Importador pronto, arquivo pendente | Preservar arquivo oficial e data `as_of` |
+| Backtest por proxies | Atualizado | BAA10Y; período 2018-03 a 2026-07; auditoria 12/12 |
+| Backtest por ações | Bloqueado por dados | Faltam `factor_fundamentals.csv`, preços/universo point-in-time e holdings históricos |
 
 ## Próximas entradas necessárias
 
-1. Exportar no TradingView Premium o histórico diário completo de `FRED:BAMLH0A0HYM2` e salvar o CSV neste workspace. O importador reconhece `date`/`time` e `close`/`value`.
-2. Informar no ambiente o identificador real para SEC: `$env:SEC_USER_AGENT = "Nome email@dominio.com"`.
-3. Baixar o arquivo oficial de composição do VB, preservando o nome original e a data do snapshot.
-
-Depois dessas três entradas:
-
-```powershell
-python -m iitauquant_data fred --file "CAMINHO_DO_CSV" --source-label "TradingView Premium exportado manualmente"
-python -m iitauquant_data fundamentals
-python -m iitauquant_data holdings --file "CAMINHO_HOLDINGS" --fund VB --as-of AAAA-MM-DD
-python -m iitauquant_data audit
-```
+1. Definir o identificador real exigido pela SEC:
+   `$env:SEC_USER_AGENT = "Nome email@dominio.com"`.
+2. Coletar fundamentos anuais da amostra e preservar `availability_date`.
+3. Obter universo/holdings históricos point-in-time ou declarar formalmente o
+   viés de sobrevivência no experimento por amostra.
+4. Montar os cinco arquivos de entrada do `run_quant_pipeline.py`:
+   `factor_prices.csv`, `factor_fundamentals.csv`, `small_cap_prices.csv`,
+   `credit_spread.csv` e `bil_prices.csv`.
 
 ## Regras que não podem ser relaxadas
 
 - Não imputar fundamento ausente; excluir ticker-período.
 - Usar `availability_date <= data_de_decisao` nos fatos SEC.
-- Usar `close` não ajustado para `shares_outstanding × preço`; usar `adjusted_close` para retornos.
+- Usar `close` não ajustado para `shares_outstanding × preço`; usar
+  `adjusted_close` para retornos.
 - Não chamar composição atual de universo histórico.
 - Não misturar observação parcial do mês corrente com meses fechados.
-- Não substituir o dado por TradingView sem registrar fonte, data de exportação e permissão de uso.
+- Manter o TradingView como conferência/alerta, não como fonte automatizada do
+  backtest.

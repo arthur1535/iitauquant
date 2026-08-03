@@ -17,7 +17,7 @@ from quant_fund.pipeline import run_pipeline
 from quant_fund.sleeve1 import build_sleeve1
 from quant_fund.sleeve2 import apply_hysteresis, build_sleeve2
 from quant_fund.sleeve3 import build_sleeve3
-from quant_fund.utils import cross_sectional_zscore
+from quant_fund.utils import cross_sectional_zscore, targets_to_buy_and_hold_weights
 
 
 class CrossSectionTests(unittest.TestCase):
@@ -117,6 +117,24 @@ class Sleeve1Tests(unittest.TestCase):
         self.assertTrue((june_2022["available_date"] <= june_2022["signal_date"]).all())
         # O alvo de junho só pode valer a partir do mês terminado em julho.
         self.assertAlmostEqual(float(result.weights.loc["2022-07-31"].sum()), 1.0)
+
+    def test_weights_drift_with_prices_until_next_annual_rebalance(self) -> None:
+        dates = pd.date_range("2021-06-30", periods=4, freq="ME")
+        prices = pd.DataFrame(
+            {
+                "AAA": [100.0, 200.0, 300.0, 300.0],
+                "BBB": [100.0, 100.0, 100.0, 100.0],
+            },
+            index=dates,
+        )
+        targets = {
+            dates[0]: pd.Series({"AAA": 0.5, "BBB": 0.5}),
+        }
+        weights = targets_to_buy_and_hold_weights(prices, targets)
+        self.assertAlmostEqual(float(weights.loc[dates[1], "AAA"]), 0.5)
+        self.assertAlmostEqual(float(weights.loc[dates[2], "AAA"]), 2.0 / 3.0)
+        self.assertAlmostEqual(float(weights.loc[dates[2], "BBB"]), 1.0 / 3.0)
+        self.assertAlmostEqual(float(weights.loc[dates[2]].sum()), 1.0)
 
 
 class Sleeve2Tests(unittest.TestCase):

@@ -13,7 +13,7 @@ from .utils import (
     ensure_numeric_frame,
     portfolio_returns,
     ranked_selection,
-    targets_to_monthly_weights,
+    targets_to_buy_and_hold_weights,
 )
 
 
@@ -184,7 +184,7 @@ def build_sleeve1(
         if signal_frames
         else pd.DataFrame(columns=signal_columns)
     )
-    weights = targets_to_monthly_weights(prices.index, prices.columns, targets)
+    weights = targets_to_buy_and_hold_weights(prices, targets)
     returns = portfolio_returns(prices, weights)
     returns.name = "sleeve1_return"
     return Sleeve1Result(signals=signals, weights=weights, returns=returns)
