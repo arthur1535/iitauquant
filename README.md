@@ -33,6 +33,13 @@ e `resultados/manifesto_revisao.json`.
 O registro de uso de IA generativa está em `log_uso_genai.csv`; cada nova intervenção
 deve ser acrescentada no momento em que ocorrer.
 
+## TradingView
+
+O painel Pine v6 está em `tradingview/regime_credito_baa.pine`. Ele reproduz o
+overlay revisado com `BAA10Y` + `NFCI`, usa somente fechamentos mensais confirmados,
+mostra os pesos vigentes e emite alertas quando a alocação muda. O passo a passo de
+instalação e os limites operacionais estão em `tradingview/README_EXPORTACAO_DADOS.md`.
+
 ## O que o teste valida
 
 - z-score de 36 meses e histerese 1,0/0,5 nos dois eixos macro (`BAA10Y` e `NFCI`);
