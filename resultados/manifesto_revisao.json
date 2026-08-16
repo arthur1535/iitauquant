@@ -1,0 +1,21 @@
+{
+  "gerado_utc": "2026-08-16T01:24:56.243270+00:00",
+  "config_overlay": {
+    "zscore_window_months": 36,
+    "zscore_min_periods": 24,
+    "stress_entry_z": 1.0,
+    "stress_exit_z": 0.5,
+    "max_derisk": 0.5,
+    "axis_labels": [
+      "credito",
+      "condicoes_financeiras"
+    ]
+  },
+  "custo_bps": 10.0,
+  "series_macro": {
+    "credito": "BAA10Y",
+    "condicoes_financeiras": "NFCI"
+  },
+  "sha256_config": "762212f5742c3708cb3157a4530397e979f872b2fb585f2546b642361d742061",
+  "nota": "Revisões motivadas por argumento econômico; grid publicado para mostrar dependência de parâmetro."
+}
