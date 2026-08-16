@@ -1,0 +1,570 @@
+<title>LASTRO — Relatório Final · AAKR</title>
+<style>
+  :root{
+    --ink:#0d1621; --paper:#ffffff; --muted:#667085; --soft:#8b95a5;
+    --rule:#e2e6ec; --wash:#f5f7fa; --navy:#0e2436;
+    --blue:#2a78d6; --orange:#eb6834; --aqua:#1baf7a; --red:#c2413b; --slate:#9aa3ae;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#5b6472;color:var(--ink);
+       font-family:Lato,"Liberation Sans","Helvetica Neue",Arial,sans-serif;
+       -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+
+  .page{width:1280px;height:720px;background:var(--paper);position:relative;
+        overflow:hidden;margin:0 auto 26px;display:flex;flex-direction:column}
+  .body{flex:1;padding:20px 44px 0;display:flex;flex-direction:column;min-height:0}
+
+  /* ---------- cabeçalho e rodapé ---------- */
+  .head{display:flex;align-items:baseline;gap:14px;padding:16px 44px 10px;
+        border-bottom:2px solid var(--navy)}
+  .head .mark{font-size:19px;font-weight:900;letter-spacing:.16em;color:var(--navy)}
+  .head h1{font-size:19px;font-weight:700;letter-spacing:-.01em;flex:1}
+  .head .num{font-size:12px;font-weight:700;color:var(--soft);letter-spacing:.1em}
+  .foot{display:flex;justify-content:space-between;align-items:center;
+        padding:8px 44px 12px;font-size:10.5px;color:var(--soft);border-top:1px solid var(--rule);
+        margin-top:auto}
+  .foot b{color:var(--muted);font-weight:700}
+
+  /* ---------- tipografia ---------- */
+  h2{font-size:13px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+     color:var(--navy);margin-bottom:7px}
+  h3{font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:4px}
+  p{font-size:13px;line-height:1.5;color:#2c3846}
+  .lead{font-size:15px;line-height:1.48}
+  .sm{font-size:11.5px;line-height:1.45;color:var(--muted)}
+  .xs{font-size:10.5px;line-height:1.4;color:var(--soft)}
+  em{color:var(--navy);font-style:normal;font-weight:700}
+  .accent{color:var(--blue);font-weight:700}
+  .warn{color:var(--orange);font-weight:700}
+
+  /* ---------- blocos ---------- */
+  .grid{display:grid;gap:16px;min-height:0}
+  .card{background:var(--wash);border-radius:7px;padding:12px 14px;min-height:0}
+  .card.line{background:none;border:1px solid var(--rule)}
+  .rail{border-left:3px solid var(--blue);padding-left:12px}
+  .rail.o{border-color:var(--orange)}
+  .band{background:var(--navy);color:#fff;border-radius:7px;padding:12px 16px}
+  .band p,.band .sm{color:#cfdae5}
+  .band b{color:#fff}
+
+  /* ---------- tabelas ---------- */
+  table{width:100%;border-collapse:collapse;font-size:11.5px}
+  th{text-align:left;font-weight:800;color:var(--soft);font-size:9.5px;
+     letter-spacing:.08em;text-transform:uppercase;padding:0 8px 5px 0;
+     border-bottom:1.5px solid var(--rule);white-space:nowrap}
+  td{padding:5px 8px 5px 0;border-bottom:1px solid #eef1f5;color:#2c3846;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .n{text-align:right;font-weight:700;white-space:nowrap}
+  .hi td{background:#eaf2fd}
+  .hi td:first-child{box-shadow:inset 3px 0 0 var(--blue)}
+  td.k{font-weight:700;color:var(--ink)}
+
+  /* ---------- números de destaque ---------- */
+  .kpis{display:grid;gap:10px}
+  .kpi{border-top:2.5px solid var(--navy);padding-top:7px}
+  .kpi .v{font-size:25px;font-weight:900;letter-spacing:-.03em;line-height:1}
+  .kpi .l{font-size:10px;color:var(--soft);margin-top:4px;line-height:1.3;
+          text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+  .kpi.b{border-color:var(--blue)} .kpi.b .v{color:var(--blue)}
+  .kpi.o{border-color:var(--orange)} .kpi.o .v{color:var(--orange)}
+
+  img{width:100%;display:block}
+  img.fit{width:auto;max-width:100%;margin:0 auto}
+  img.h185{max-height:185px} img.h195{max-height:195px}
+
+  /* Barras de correlação: os números são poucos e a comparação é o ponto. */
+  .bars div{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .bars span{font-size:10.5px;color:var(--muted);width:152px;flex:none;text-align:right}
+  .bars i{height:15px;border-radius:2px;display:block}
+  .bars b{font-size:12px;font-weight:800;color:var(--ink)}
+
+  /* ---------- diagrama de arquitetura ---------- */
+  .flow{display:flex;align-items:stretch;gap:9px}
+  .node{flex:1;border:1.5px solid var(--rule);border-top:3px solid var(--slate);
+        border-radius:6px;padding:9px 10px;background:#fff}
+  .node.s1{border-top-color:var(--blue)} .node.s2{border-top-color:var(--orange)}
+  .node.s3{border-top-color:var(--aqua)}
+  .node .t{font-size:11px;font-weight:800;color:var(--ink);margin-bottom:3px}
+  .node .d{font-size:10px;color:var(--muted);line-height:1.42}
+  .node .w{font-size:9.5px;font-weight:800;color:var(--soft);letter-spacing:.05em;margin-top:5px}
+
+  .chip{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.07em;
+        text-transform:uppercase;padding:2px 7px;border-radius:3px;background:#e8edf3;color:var(--navy)}
+  .chip.b{background:#e0edfd;color:#1a5aa8} .chip.o{background:#fdeae1;color:#b34518}
+  .chip.g{background:#e2f5ee;color:#0e7a55}
+
+  ul{list-style:none} li{font-size:12px;line-height:1.5;color:#2c3846;
+     padding-left:14px;position:relative;margin-bottom:3px}
+  li:before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;
+            border-radius:50%;background:var(--blue)}
+  ul.o li:before{background:var(--orange)}
+  ol{counter-reset:s;list-style:none}
+  ol li{padding-left:22px;margin-bottom:5px}
+  ol li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;
+     width:16px;height:16px;border-radius:50%;background:var(--navy);color:#fff;
+     font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center}
+
+  @page{size:13.333in 7.5in;margin:0}
+  @media print{
+    body{background:#fff}
+    .page{margin:0;page-break-after:always;box-shadow:none}
+    .page:last-child{page-break-after:auto}
+  }
+  @media screen{.page{box-shadow:0 10px 34px rgba(0,0,0,.3)}
+    body{padding:26px 0}}
+</style>
+
+<!-- ======================================================= PÁGINA 1 -->
+<section class="page">
+  <div class="head"><span class="mark">LASTRO</span>
+    <h1>Fundo sistemático multi-sleeve com orçamento de risco dinâmico</h1>
+    <span class="num">AAKR · 1/5</span></div>
+  <div class="body">
+    <div class="grid" style="grid-template-columns:342px 1fr;flex:1;align-content:stretch">
+
+      <div style="display:flex;flex-direction:column;gap:14px;justify-content:space-between">
+        <div style="display:flex;gap:15px;align-items:center">
+          <svg width="104" height="104" viewBox="0 0 100 100" aria-label="Identidade visual LASTRO">
+            <defs><clipPath id="hull"><path d="M14 20 L86 20 L78 74 Q50 92 22 74 Z"/></clipPath></defs>
+            <rect x="0" y="0" width="100" height="100" rx="10" fill="#0e2436"/>
+            <g clip-path="url(#hull)">
+              <rect x="14" y="20" width="72" height="72" fill="#173c58"/>
+              <rect x="14" y="62" width="72" height="30" fill="#2a78d6"/>
+              <rect x="49" y="20" width="2" height="46" fill="#0e2436"/>
+              <rect x="14" y="43" width="72" height="2" fill="#0e2436"/>
+            </g>
+            <path d="M14 20 L86 20 L78 74 Q50 92 22 74 Z" fill="none" stroke="#eb6834" stroke-width="3.4"/>
+            <path d="M6 47 L94 47" stroke="#eb6834" stroke-width="2.6" stroke-dasharray="7 5"/>
+            <circle cx="50" cy="47" r="4.6" fill="#eb6834"/>
+          </svg>
+          <div>
+            <div style="font-size:38px;font-weight:900;letter-spacing:.06em;color:var(--navy);line-height:1">LASTRO</div>
+            <div class="xs" style="letter-spacing:.13em;text-transform:uppercase;font-weight:800;margin-top:5px">
+              Orçamos risco, não capital</div>
+          </div>
+        </div>
+
+        <div class="card rail">
+          <h3>Por que este nome</h3>
+          <p class="sm">Lastro é o peso que se carrega no fundo do casco para o navio não emborcar — e,
+            em finanças, é a garantia sólida por trás de um ativo. A linha laranja da marca é a linha
+            d'água: ela sobe quando as condições financeiras apertam, e o robô responde carregando mais
+            lastro. <em>Batizamos a estratégia pelo que ela comprovadamente entrega — estabilidade — e
+            não pelo que gostaríamos que entregasse.</em></p>
+        </div>
+
+        <div class="card line">
+          <h3>Ineficiência explorada</h3>
+          <p class="sm"><b>1. Prêmio de risco.</b> Tamanho, valor, rentabilidade, investimento e momentum
+            pagam porque exigem carregar risco que a maioria abandona no pior momento.</p>
+          <p class="sm" style="margin-top:5px"><b>2. Velocidade macro.</b> As condições de financiamento
+            se reprecificam mais rápido do que a alocação típica reage. Medir o aperto por regra remove a
+            hesitação discricionária — que é justamente o que falha sob estresse.</p>
+        </div>
+
+        <div class="kpis" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="kpi"><div class="v">101</div><div class="l">Meses testados</div></div>
+          <div class="kpi o"><div class="v">−1,05</div><div class="l">pp/ano · custo<br>do gatilho</div></div>
+          <div class="kpi b"><div class="v">−0,44</div><div class="l">pp/ano · após<br>revisão</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:13px;min-height:0;justify-content:space-between">
+        <div>
+          <h2>Tese central</h2>
+          <p class="lead">Dois motores de retorno com lógicas <em>independentes</em> — um fundamentalista,
+            um técnico — e um mostrador macro que decide <em>quanto risco carregar</em>, com caixa
+            como único refúgio. A diversificação vem de combinar formas diferentes de ganhar dinheiro,
+            não de somar ativos diferentes.</p>
+        </div>
+
+        <div>
+          <h2>Arquitetura</h2>
+          <div class="flow">
+            <div class="node s1"><div class="t">Sleeve 1 · Fatores</div>
+              <div class="d">S&amp;P 500. Nota composta de 4 fatores contábeis. Top 50, peso igual,
+                rebalanceio anual.</div>
+              <div class="w">TESE ESTRUTURAL — NUNCA REAGE AO GATILHO</div></div>
+            <div class="node s2"><div class="t">Sleeve 2 · Small caps</div>
+              <div class="d">Momentum 12−1 e reversão de 1 mês. Top 5% do universo, peso igual,
+                rebalanceio mensal.</div>
+              <div class="w">PERNA TÁTICA — É ELA QUE MIGRA</div></div>
+            <div class="node s3"><div class="t">Sleeve 3 · Caixa</div>
+              <div class="d">T-bill de 1–3 meses (BIL). Duration próxima de zero, por decisão,
+                não por conveniência.</div>
+              <div class="w">ÂNCORA E DESTINO DA MIGRAÇÃO</div></div>
+          </div>
+        </div>
+
+        <div class="band">
+          <div style="display:flex;gap:16px;align-items:center">
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:800;letter-spacing:.1em;color:#7fb0e8">MOSTRADOR DE RISCO</div>
+              <p class="sm" style="margin-top:4px">Dois eixos macro, cada um com um voto: <b>crédito</b>
+                (spread Baa − Treasury 10a) e <b>condições financeiras</b> (índice amplo do Fed de Chicago).
+                Cada voto aceso migra metade da perna tática para caixa.
+                O estado observado no fechamento do mês só vale para o mês seguinte.</p>
+            </div>
+            <table style="width:250px;font-size:10.5px">
+              <tr><th>Estado</th><th class="n">S1</th><th class="n">S2</th><th class="n">Caixa</th></tr>
+              <tr><td style="color:#cfdae5">Normal</td><td class="n" style="color:#fff">33%</td>
+                  <td class="n" style="color:#fff">33%</td><td class="n" style="color:#fff">33%</td></tr>
+              <tr><td style="color:#cfdae5">Alerta · 1 eixo</td><td class="n" style="color:#fff">33%</td>
+                  <td class="n" style="color:#fff">25%</td><td class="n" style="color:#fff">42%</td></tr>
+              <tr><td style="color:#cfdae5">Estresse · 2 eixos</td><td class="n" style="color:#fff">33%</td>
+                  <td class="n" style="color:#fff">17%</td><td class="n" style="color:#fff">50%</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="card line" style="border-color:var(--orange);background:#fef8f5">
+          <p class="sm"><span class="chip o">Leia primeiro</span> &nbsp;Este relatório apresenta um
+            resultado <em>desfavorável</em> e o que aprendemos com ele. O backtest mostrou que o
+            componente que desenhamos do zero — o gatilho macro — foi a maior fonte isolada de perda
+            relativa. As páginas 3 e 4 mostram o diagnóstico e a revisão que dele decorreu.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span><b>AAKR</b> · Relatório Final · Desafio Quant AI</span>
+    <span>Backtest preliminar por ETFs · 2018-03 a 2026-07 · 101 meses</span></div>
+</section>
+
+<!-- ======================================================= PÁGINA 2 -->
+<section class="page">
+  <div class="head"><span class="mark">LASTRO</span><h1>Modelagem: dos dados à decisão de carteira</h1>
+    <span class="num">AAKR · 2/5</span></div>
+  <div class="body">
+    <div class="grid" style="grid-template-columns:1fr 1fr;flex:1">
+
+      <div style="display:flex;flex-direction:column;gap:11px;min-height:0">
+        <div>
+          <h2>Sleeve 1 · seleção fundamentalista</h2>
+          <table>
+            <tr><th>Fator</th><th>Medida</th><th style="width:66px">Direção</th></tr>
+            <tr><td class="k">Tamanho</td><td>valor de mercado</td><td>menor</td></tr>
+            <tr><td class="k">Valor</td><td>patrimônio líquido ÷ valor de mercado</td><td>maior</td></tr>
+            <tr><td class="k">Rentabilidade</td><td>lucro bruto ÷ ativo total</td><td>maior</td></tr>
+            <tr><td class="k">Investimento</td><td>variação do ativo total em 12 meses</td><td>menor</td></tr>
+          </table>
+          <p class="sm" style="margin-top:6px">Cada fator é winsorizado em 1%/99% e convertido em z-score
+            <em>entre empresas na mesma data</em> — nunca contra o próprio passado da empresa. A nota é a
+            média dos quatro. O fator Mercado fica fora da seleção porque não varia dentro de uma carteira
+            comprada em ações; ele entra na regressão de validação, como beta.</p>
+        </div>
+
+        <div>
+          <h2>Sleeve 2 · seleção técnica</h2>
+          <p class="sm"><b>Momentum 12−1:</b> retorno de 12 meses excluindo o mês mais recente — o salto
+            evita contaminar o sinal com a reversão de curto prazo. <b>Reversão de 1 mês:</b> retorno do
+            último mês com sinal invertido. Os dois z-scores entram com peso 50/50; seleciona-se o top 5%
+            do universo, peso igual, mensalmente.</p>
+          <p class="sm" style="margin-top:6px"><b>Por que small caps.</b> Receita concentrada nos EUA,
+            dependência de crédito bancário e dívida a taxa flutuante, e uma fração relevante de empresas
+            ainda não lucrativas. É o segmento cuja avaliação depende mais das condições de financiamento —
+            exatamente o que o mostrador mede.</p>
+        </div>
+
+        <div class="card rail" style="display:flex;gap:12px;align-items:center">
+          <div style="flex:1">
+            <h3>Sleeve 3 · por que caixa, e não Treasury</h3>
+            <p class="sm">Um gatilho de crédito costuma acender junto com aperto monetário. Um título
+              longo perderia valor por risco de juros <em>no mesmo momento</em> em que deveria proteger.
+              O T-bill acompanha a política do Fed em vez de sofrer com ela.</p>
+            <p class="sm" style="margin-top:5px"><em>No aperto de 2022–23, o refúgio convencional foi
+              a maior perda da carteira.</em></p>
+          </div>
+          <img src="{{R5}}" alt="Retorno dos instrumentos defensivos no aperto monetário"
+               style="width:212px;flex:none">
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:11px;min-height:0">
+        <div>
+          <h2>Mostrador de risco · dois eixos, um voto cada</h2>
+          <table>
+            <tr><th>Eixo</th><th>Série</th><th>O que enxerga</th></tr>
+            <tr><td class="k">Crédito</td><td>Baa Moody's − Treasury 10a<br><span class="xs">FRED · diária desde 1986</span></td>
+                <td>Prêmio exigido para carregar risco de crédito corporativo</td></tr>
+            <tr><td class="k">Condições<br>financeiras</td><td>Índice amplo do Fed de Chicago<br><span class="xs">105 indicadores · semanal desde 1971</span></td>
+                <td>Risco, crédito e alavancagem no sistema — inclusive choques de taxa de desconto</td></tr>
+          </table>
+          <p class="sm" style="margin-top:7px">Cada série vira z-score de 36 meses e passa pela mesma
+            histerese: acende acima de <em>z = 1,0</em>, só apaga abaixo de <em>z = 0,5</em>. A histerese
+            impede que uma oscilação em torno do limiar gere duas operações por mês; o preço é uma saída
+            deliberadamente tardia. <em>Dois eixos porque um só não bastou</em> — a página 3 mostra por quê.</p>
+        </div>
+
+        <div class="card line">
+          <h3>Controles contra look-ahead</h3>
+          <ul>
+            <li>Balanço só é elegível se a <em>data de disponibilidade</em> for anterior ao sinal — não a
+              data fiscal. Empresas fecham exercício em meses diferentes.</li>
+            <li>Sinal formado no fechamento de <em>t</em> governa apenas o retorno de <em>t+1</em>.</li>
+            <li>Mês corrente incompleto é removido antes de qualquer cálculo.</li>
+            <li>Empresa sem um dos quatro dados sai do ranking daquele ano. Não imputamos.</li>
+            <li>Retornos usam preço ajustado; preço não ajustado fica reservado ao valor de mercado.</li>
+          </ul>
+        </div>
+
+        <div class="card" style="background:#f0f4f9">
+          <h3>Decisões que recusamos</h3>
+          <p class="sm"><b>Otimizar pesos entre os sleeves.</b> Com 101 meses, a matriz de covariância
+            estimada tem mais erro do que sinal. Peso igual é a escolha honesta.<br>
+            <b>Vol-targeting sem alavancagem.</b> Testado: derruba o CAGR de 8,0% para 4,1% porque só
+            consegue reduzir exposição em um mercado altista. Rejeitado com o dado na mão.<br>
+            <b>Regra gradual contínua no mostrador.</b> Três estados discretos são auditáveis e
+            defensáveis; uma função contínua adicionaria parâmetros sem adicionar economia.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span><b>AAKR</b> · Modelagem</span>
+    <span>Parâmetros congelados em manifesto com hash antes da execução do backtest</span></div>
+</section>
+
+<!-- ======================================================= PÁGINA 3 -->
+<section class="page">
+  <div class="head"><span class="mark">LASTRO</span><h1>Backtest e o diagnóstico que mudou o modelo</h1>
+    <span class="num">AAKR · 3/5</span></div>
+  <div class="body">
+    <div class="grid" style="grid-template-columns:352px 1fr;flex:1">
+
+      <div style="display:flex;flex-direction:column;gap:10px;min-height:0">
+        <div class="card line">
+          <h3>Metodologia</h3>
+          <table style="font-size:11px">
+            <tr><td class="k" style="width:96px">Janela</td><td>2018-03 a 2026-07 · 101 meses</td></tr>
+            <tr><td class="k">Frequência</td><td>Mensal, retornos compostos</td></tr>
+            <tr><td class="k">Custos</td><td>10 bps por unidade de giro</td></tr>
+            <tr><td class="k">Benchmark</td><td>2/3 SPY + 1/3 BIL</td></tr>
+            <tr><td class="k">Sharpe</td><td>Excesso sobre o T-bill</td></tr>
+            <tr><td class="k">Validação</td><td>Regressão FF5 + Momentum, erros HAC</td></tr>
+          </table>
+        </div>
+
+        <div class="card line" style="border-color:var(--orange);background:#fef8f5">
+          <h3 style="color:#b34518">Escopo honesto deste resultado</h3>
+          <p class="sm">O backtest usa <em>ETFs como proxy</em> dos Sleeves 1 e 2. Ele valida o
+            mostrador de risco, a consolidação e a mecânica de pesos — <em>não</em> valida a seleção de
+            ações, que ainda depende de fundamentos por data de disponibilidade e de universos históricos.
+            Todo número aqui é evidência sobre a arquitetura, não sobre o stock-picking.</p>
+        </div>
+
+        <div>
+          <h2>Vieses e o que fizemos</h2>
+          <table style="font-size:11px">
+            <tr><th>Viés</th><th>Tratamento</th></tr>
+            <tr><td class="k">Look-ahead</td><td>Defasagem de um mês, testada automaticamente</td></tr>
+            <tr><td class="k">Sobrevivência</td><td><span class="warn">Não resolvido</span> — universo é a
+              composição atual. Infla o retorno.</td></tr>
+            <tr><td class="k">Escolha de período</td><td>Limiares calibrados contra crises documentadas,
+              nunca contra o payoff</td></tr>
+            <tr><td class="k">Overfitting</td><td>Grid de 36 configurações publicado (página 4)</td></tr>
+            <tr><td class="k">Significância</td><td>101 meses e 9 meses de estresse na especificação
+              original: amostra pequena, declarada</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;min-height:0">
+        <div class="grid" style="grid-template-columns:1fr 300px">
+          <div><img src="{{R1}}" alt="Z-score do crédito e das condições financeiras contra o drawdown do mercado"></div>
+          <div style="display:flex;flex-direction:column;gap:9px;justify-content:center">
+            <div class="rail o">
+              <h3>O ponto cego</h3>
+              <p class="sm">Um spread de crédito mede o prêmio para carregar <em>risco de crédito</em>.
+                Ele não enxerga um choque de <em>taxa de desconto</em>. Em 2022 o Treasury de 10 anos
+                saiu de 1,79% para 4,10% e o mercado caiu 24% — o z-score do crédito oscilou entre
+                −0,77 e +0,19 e nunca chegou perto do limiar.</p>
+              <p class="sm" style="margin-top:5px"><em>Não foi calibração ruim: foi cegueira por
+                construção.</em> Um segundo eixo, que mede condições financeiras amplas, cruzou o
+                limiar em maio de 2022.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0">
+          <div><img src="{{R2}}" alt="Atribuição da diferença de retorno contra o benchmark"></div>
+          <div style="display:flex;flex-direction:column;gap:9px;justify-content:center">
+            <div>
+              <h2>Onde o retorno se perdeu</h2>
+              <p class="sm">A diferença contra o benchmark decompõe-se de forma exata em três termos
+                mais custo. As duas seleções custaram 1,36 pp ao ano somadas — resultado do contexto
+                de fator, discutido na página 5.</p>
+            </div>
+            <div class="band">
+              <p class="sm"><b>O overlay sozinho destruiu 1,05 pp ao ano</b> — mais do que as duas
+                seleções juntas. É a única peça inteiramente desenhada por nós, e a que menos entregou.
+                Pior: ele passou nove meses defensivo durante a recuperação de 2020 e zero mês defensivo
+                em 2022, quando o mercado caiu 24%.</p>
+            </div>
+            <p class="xs">Decomposição aditiva do retorno mensal médio, anualizada. Resíduo &lt; 0,01 pp.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span><b>AAKR</b> · Backtest</span>
+    <span>Preços ajustados · sinal defasado em um mês · líquido de custos de giro</span></div>
+</section>
+
+<!-- ======================================================= PÁGINA 4 -->
+<section class="page">
+  <div class="head"><span class="mark">LASTRO</span><h1>Resultados e a revisão que o diagnóstico exigiu</h1>
+    <span class="num">AAKR · 4/5</span></div>
+  <div class="body">
+    <div class="grid" style="grid-template-columns:1fr 396px;flex:1">
+
+      <div style="display:flex;flex-direction:column;gap:10px;min-height:0">
+        <div><img src="{{R3}}" alt="Curvas de capital das duas especificações contra o benchmark"></div>
+        <table>
+          <tr><th>Série · 101 meses</th><th class="n">CAGR</th><th class="n">Vol.</th>
+              <th class="n">Sharpe</th><th class="n">Máx. DD</th><th class="n">Calmar</th></tr>
+          <tr><td class="k">Especificação original</td><td class="n">8,03%</td><td class="n">11,50%</td>
+              <td class="n">0,51</td><td class="n">−13,72%</td><td class="n">0,59</td></tr>
+          <tr class="hi"><td class="k">Especificação revisada</td><td class="n">8,64%</td><td class="n">11,88%</td>
+              <td class="n">0,55</td><td class="n">−17,10%</td><td class="n">0,51</td></tr>
+          <tr><td class="k">Benchmark 2/3 SPY + 1/3 BIL</td><td class="n">10,73%</td><td class="n">10,96%</td>
+              <td class="n">0,76</td><td class="n">−16,13%</td><td class="n">0,67</td></tr>
+          <tr><td>SPY</td><td class="n">14,53%</td><td class="n">16,44%</td>
+              <td class="n">0,76</td><td class="n">−23,93%</td><td class="n">0,61</td></tr>
+        </table>
+        <div class="card line" style="border-color:var(--orange)">
+          <p class="sm"><span class="chip o">Leitura crítica</span> &nbsp;A revisão melhora retorno e
+            Sharpe, mas <em>piora</em> o drawdown máximo. O −13,72% da versão original veio de acertar
+            um único mês em cheio — março de 2020, com migração integral. Não tratamos sorte de timing
+            como proteção replicável: no grid de 36 configurações, a versão graduada domina.
+            <em>Nenhuma das duas bate o benchmark.</em></p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:9px;min-height:0">
+        <div>
+          <h2>O overlay é seguro, não alfa</h2>
+          <table style="font-size:11px">
+            <tr><th>Contabilidade da apólice</th><th class="n">Original</th><th class="n">Revisada</th></tr>
+            <tr><td class="k">Prêmio pago por ano</td><td class="n">−3,16 pp</td>
+                <td class="n" style="color:var(--blue)">−1,33 pp</td></tr>
+            <tr><td class="k">Meses cobertos</td><td class="n">9 (9%)</td>
+                <td class="n" style="color:var(--blue)">22 (22%)</td></tr>
+            <tr><td class="k">Média dos 5 piores meses</td><td class="n">−9,74%</td><td class="n">−9,77%</td></tr>
+            <tr><td class="k">Meses defensivos em 2022–23</td><td class="n">0</td>
+                <td class="n" style="color:var(--blue)">13</td></tr>
+            <tr><td class="k">Giro anual</td><td class="n">0,24×</td><td class="n">0,24×</td></tr>
+          </table>
+          <p class="sm" style="margin-top:4px">Sem overlay, os cinco piores meses somam −12,43%.
+            <em>A revisada compra a mesma proteção por 42% do custo e cobre 2,4× mais meses</em> —
+            inclusive o drawdown de 2022.</p>
+        </div>
+
+        <div>
+          <img src="{{R4}}" class="fit h185" alt="Fronteira risco-retorno por intensidade de de-risking">
+          <p class="xs" style="margin-top:3px"><b style="color:var(--ink)">Robustez.</b> Em 36
+            combinações de janela, limiar e intensidade, <em>100% melhoram o drawdown máximo e apenas
+            44% melhoram o Sharpe</em> — a definição empírica de um instrumento de risco.</p>
+        </div>
+
+        <div>
+          <h2 style="margin-bottom:5px">Diversificação: a medida muda a conclusão</h2>
+          <div class="bars">
+            <div><span>Retorno total</span><i style="width:96%;background:var(--slate)"></i><b>0,96</b></div>
+            <div><span>Retorno ativo vs. mercado</span><i style="width:79%;background:var(--slate)"></i><b>0,79</b></div>
+            <div><span>Resíduo após mercado e tamanho</span><i style="width:56%;background:var(--blue)"></i><b>0,56</b></div>
+          </div>
+          <p class="xs" style="margin-top:5px">Duas carteiras 100% compradas em ações <em>têm</em> de
+            ser correlacionadas: 0,96 refutaria uma tese que não foi testada.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span><b>AAKR</b> · Análise de resultados</span>
+    <span>Resultados por proxies de ETF · não constituem recomendação de investimento</span></div>
+</section>
+
+<!-- ======================================================= PÁGINA 5 -->
+<section class="page">
+  <div class="head"><span class="mark">LASTRO</span><h1>IA generativa, conclusão e próximos passos</h1>
+    <span class="num">AAKR · 5/5</span></div>
+  <div class="body">
+    <div class="grid" style="grid-template-columns:1fr 1fr;flex:1">
+
+      <div style="display:flex;flex-direction:column;gap:10px;min-height:0">
+        <div>
+          <h2>Como usamos IA generativa</h2>
+          <table style="font-size:11px">
+            <tr><th style="width:104px">Aplicação</th><th>Valor concreto agregado</th></tr>
+            <tr><td class="k">Revisão<br>adversarial</td><td>Pedimos explicitamente que o modelo
+              <em>atacasse</em> nossa tese. Foi de lá que veio a hipótese de que um spread de crédito não
+              enxerga choque de taxa de desconto — que confirmamos no dado e virou a página 3.</td></tr>
+            <tr><td class="k">Auditoria de<br>viés</td><td>Geração da suíte que testa defasagem do sinal,
+              soma e não-negatividade dos pesos, mês parcial e uso de preço ajustado.</td></tr>
+            <tr><td class="k">Formalização</td><td>Derivação da decomposição aditiva exata do retorno
+              contra o benchmark, que substituiu comparações soltas por uma identidade verificável.</td></tr>
+            <tr><td class="k">Implementação</td><td>Winsorize, z-score transversal, histerese e o motor de
+              backtest — semanas de código em horas, sempre com revisão linha a linha.</td></tr>
+            <tr><td class="k">Identidade</td><td>Iterações do conceito visual do robô até chegar ao casco
+              com linha d'água.</td></tr>
+          </table>
+        </div>
+
+        <div class="card line" style="border-color:var(--orange);background:#fef8f5">
+          <h3 style="color:#b34518">Onde a IA falhou — e o que passou a valer</h3>
+          <ul class="o">
+            <li><b>Dado sugerido sem verificação.</b> Foi indicada uma série de spread high yield que, ao
+              conferirmos na fonte, tinha apenas três anos de histórico. Regra adotada: <em>nenhuma série
+              entra sem checagem na fonte primária.</em></li>
+            <li><b>Sugestão de otimizar limiares até o backtest melhorar.</b> Recusada — é escolha
+              oportunista de período. Regra adotada: parâmetros congelados com hash antes de olhar o
+              resultado.</li>
+            <li><b>Excesso de confiança estatística.</b> Conclusões apresentadas como robustas sobre nove
+              meses de estresse. Regra adotada: toda afirmação de regime vem acompanhada do grid de
+              sensibilidade.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:9px;min-height:0">
+        <div class="grid" style="grid-template-columns:1fr 168px;gap:11px;align-items:center;flex:none">
+          <img src="{{R7}}" class="fit h195" alt="Prêmio dos fatores na janela testada contra a média histórica">
+          <p class="xs">O Sleeve 1 compra tamanho e valor. Na janela testada, os dois pagaram prêmio
+            <em>negativo</em>. Isso não absolve o resultado — mas define o que a amostra pode e não pode
+            provar sobre a tese de fator.</p>
+        </div>
+
+        <div>
+          <h2>Conclusão</h2>
+          <p class="sm">A arquitetura é implementável: três instrumentos líquidos, giro de 0,24× ao ano,
+            sem alavancagem, sinal reproduzível a partir de séries públicas. <em>O que não funcionou foi
+            a peça que mais nos orgulhava:</em> o gatilho binário custou 1,05 pp ao ano e foi cego ao
+            maior drawdown da amostra. A revisão corta esse custo para 0,44 pp e cobre 2,4× mais meses.
+            Ainda assim, <em>nenhuma versão superou o benchmark</em>. O que o LASTRO entrega, nesta
+            amostra, é controle de risco a um custo mensurável — e é assim que deve ser vendido.</p>
+        </div>
+
+        <div class="card line">
+          <h3>Limitações que permanecem</h3>
+          <p class="sm">Seleção de ações não testada (proxies de ETF); universo pela composição atual, com
+            viés de sobrevivência; 101 meses e um único ciclo completo de crédito; o índice de condições
+            financeiras é revisado, portanto não é estritamente point-in-time; custos por ativo, liquidez
+            e impostos ainda não modelados.</p>
+        </div>
+
+        <div>
+          <h2>Próximos passos</h2>
+          <ol>
+            <li><b>Substituir os proxies.</b> Fundamentos por data de disponibilidade e universos
+              históricos, para enfim testar a tese de seleção — o único resultado que confirma ou refuta
+              o projeto.</li>
+            <li><b>Validar o mostrador fora da amostra.</b> Rodar 1986–2017 com os limiares congelados;
+              é o único teste que separa desenho de ajuste.</li>
+            <li><b>Custo real e paper trading.</b> Giro por ativo, spread e liquidez; depois execução
+              simulada com limites de perda antes de qualquer capital.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span><b>AAKR</b> · Conclusão · Desafio Quant AI</span>
+    <span>Fontes: FRED · Kenneth R. French Data Library · preços ajustados de mercado</span></div>
+</section>
