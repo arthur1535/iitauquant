@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ASML Holding / ASML34 — Análise Quantitativa, Fundamentalista e Cenários</title>
+  <style>
+    :root{--ink:#0f172a;--muted:#475569;--paper:#f8fafc;--card:#ffffff;--line:#e2e8f0;--asml:#0071ce;--asml-dark:#002855;--asml-glow:#38bdf8;--green:#059669;--red:#dc2626;--amber:#d97706;--shadow:0 10px 25px -5px rgba(15,23,42,0.06), 0 8px 10px -6px rgba(15,23,42,0.04)}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;line-height:1.6}
+    a{color:var(--asml);text-decoration-thickness:1px;text-underline-offset:2px} .wrap{max-width:1180px;margin:auto;padding:32px 24px}
+    header{background:linear-gradient(135deg, #001733 0%, #002855 55%, #083b7a 100%);color:#fff;border-top:6px solid var(--asml-glow);padding:44px;border-radius:8px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    header::after{content:"";position:absolute;top:-40px;right:-40px;width:240px;height:240px;background:radial-gradient(circle, rgba(56,189,248,0.18) 0%, transparent 70%);border-radius:50%;pointer-events:none}
+    .eyebrow{color:var(--asml-glow);font-weight:750;letter-spacing:.09em;text-transform:uppercase;font-size:.78rem;display:flex;align-items:center;gap:8px}
+    .eyebrow::before{content:"";width:8px;height:8px;background:var(--asml-glow);border-radius:50%;display:inline-block}
+    .meta{color:#94a3b8;font-size:.88rem;margin-top:6px}
+    h1{font-size:clamp(2rem,4vw,3.6rem);line-height:1.08;margin:.4rem 0 1rem;max-width:920px;font-weight:800;letter-spacing:-0.03em}
+    h2{font-size:1.55rem;line-height:1.25;margin:0 0 18px;color:#0f172a;font-weight:750;letter-spacing:-0.02em}
+    h3{font-size:1.08rem;margin:0 0 8px;font-weight:700}
+    .verdict{margin:24px 0 0;padding:20px 24px;border-left:5px solid var(--asml-glow);background:rgba(255,255,255,0.07);backdrop-filter:blur(6px);border-radius:0 6px 6px 0;font-size:1.05rem;line-height:1.55}
+    .grid{display:grid;gap:20px}.kpis{grid-template-columns:repeat(4,1fr);margin:24px 0}.kpi,.card,section{background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow)}
+    .kpi{padding:20px 22px;transition:transform .15s ease}
+    .kpi:hover{transform:translateY(-2px)}
+    .kpi b{display:block;font-size:1.65rem;line-height:1.1;color:#0f172a;font-weight:800;letter-spacing:-0.02em}
+    .kpi span{color:var(--muted);font-size:.82rem;font-weight:500;margin-top:4px;display:block}
+    section{padding:30px;margin:22px 0}
+    .two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}
+    .card{padding:22px;box-shadow:none;border:1px solid var(--line);border-radius:6px;background:#ffffff}
+    .card p:last-child{margin-bottom:0}
+    .tag{display:inline-block;padding:4px 9px;border-radius:4px;background:#f1f5f9;color:#334155;font-size:.73rem;font-weight:750;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+    .positive{border-top:4px solid var(--green)}.negative{border-top:4px solid var(--red)}.neutral{border-top:4px solid var(--asml)}.amber{border-top:4px solid var(--amber)}
+    table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:12px}
+    th,td{padding:12px 12px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+    th:first-child,td:first-child{text-align:left}
+    thead th{background:#f8fafc;color:#334155;font-weight:700;border-bottom:2px solid var(--line)}
+    tbody tr:hover{background:#f8fafc}
+    tbody tr:last-child td{border-bottom:0}
+    .callout{padding:20px 22px;background:#f0f9ff;border-left:5px solid var(--asml);border-radius:0 6px 6px 0;margin:18px 0;color:#0369a1;font-size:.96rem;line-height:1.55}
+    .callout strong{color:#075985}
+    .small{font-size:.84rem;color:var(--muted)}
+    .barrow{display:grid;grid-template-columns:150px 1fr 90px;gap:14px;align-items:center;margin:12px 0}
+    .bar{height:14px;background:#e2e8f0;border-radius:8px;overflow:hidden}
+    .bar i{display:block;height:100%;background:linear-gradient(90deg, #0071ce, #38bdf8);border-radius:8px}
+    .scenario-bear{color:var(--red);font-weight:750}
+    .scenario-base{color:var(--asml);font-weight:750}
+    .scenario-bull{color:var(--green);font-weight:750}
+    ul{padding-left:22px;margin:10px 0}
+    li{margin:.5rem 0;color:#334155}
+    .decision{font-size:1.06rem;margin-bottom:14px;line-height:1.6}
+    .sources li{margin:.7rem 0}
+    .footer{color:var(--muted);font-size:.82rem;padding:12px 4px 40px;border-top:1px solid var(--line);margin-top:30px}
+    .badge-quant{background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:700;letter-spacing:.03em;display:inline-block}
+    @media(max-width:860px){.wrap{padding:16px}header,section{padding:22px}.kpis,.two,.three{grid-template-columns:1fr}.barrow{grid-template-columns:110px 1fr 70px}table{font-size:.82rem}th,td{padding:8px 6px}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">Iniciação Analítica Institucional • NASDAQ: ASML / Euronext: ASML / B3: ASML34</div>
+    <h1>ASML Holding: O Monopólio da Litografia EUV na Era da IA e o Equilíbrio de Múltiplos</h1>
+    <p class="meta">Data-base: 21 de setembro de 2026 • Horizonte: 12–24 meses • Valores em US$, EUR e BRL • ASML34 representa 1/55 (0,01818) de ação ordinária ASML</p>
+    <div class="verdict">
+      <strong>Postura Institucional: Observar / Compra tática em correções estruturadas ou no rompimento confirmado.</strong><br>
+      A ASML detém o fosso competitivo (<i>economic moat</i>) mais intransponível de toda a indústria de semicondutores, sendo a única detentora da tecnologia de litografia por Ultravioleta Extremo (EUV Low-NA e High-NA), indispensável para a fabricação de chips abaixo de 5nm (GPUs de IA, CPUs de ponta e memórias HBM). A orientação para o ano de 2026 foi recentemente elevada para € 43–45 bi (+21% a/a), com backlog robusto para 2027/2028. Contudo, aos múltiplos de 38,9x P/L 2026E e 29,0x 2027E, e com o motor quantitativo <i>Momentum ATR</i> do laboratório em modo caixa (4,6% de distância do breakout de 20 dias), o investidor tem a seu favor a paciência para selecionar pontos de entrada de alta assimetria.
+    </div>
+  </header>
+
+  <div class="grid kpis">
+    <div class="kpi">
+      <b>US$ 1.711,32</b>
+      <span>ASML (NASDAQ), 21 set. 2026</span>
+    </div>
+    <div class="kpi">
+      <b>R$ 158,75</b>
+      <span>ASML34 (B3) • Paridade Teórica: R$ 158,91</span>
+    </div>
+    <div class="kpi">
+      <b>38,9x / 29,0x</b>
+      <span>P/L 2026E (EPS US$ 44) / 2027E (EPS US$ 59)</span>
+    </div>
+    <div class="kpi">
+      <b>54,0% / € 4,69 bi</b>
+      <span>Margem Bruta 2T26 / Caixa Líquido Consolidado</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>1. Conclusão Executiva em Linguagem Direta</h2>
+    <div class="grid three">
+      <div class="card positive">
+        <span class="tag">Empresa & Fosso</span>
+        <h3>Monopólio Insubstituível</h3>
+        <p>Nenhuma fábrica no mundo (TSMC, Intel, Samsung) consegue manufaturar semicondutores avançados de inteligência artificial (sub-5nm) sem as máquinas de litografia EUV da ASML. O domínio tecnológico e a cadeia de suprimentos com fornecedores exclusivos (Zeiss, Trumpf) criam barreiras de entrada intransponíveis.</p>
+      </div>
+      <div class="card positive">
+        <span class="tag">Momento Operacional</span>
+        <h3>Guidance Elevada e Ciclo de IA</h3>
+        <p>No 2T26, as vendas líquidas atingiram € 9,33 bi com lucro líquido de € 2,92 bi. A gestão elevou a meta de receita para o ano de 2026 para a faixa de € 43–45 bilhões, impulsionada pela explosão da demanda por aceleração de IA (GPUs, TPUs) e memórias de alta largura de banda (HBM3e / HBM4).</p>
+      </div>
+      <div class="card amber">
+        <span class="tag">Ação & Valuation</span>
+        <h3>Múltiplo Exigente e Gestão de Risco</h3>
+        <p>A ação subiu com força e negocia a ~29x os lucros esperados de 2027. O backtest quantitativo do repositório revela que o Buy & Hold em ASML já enfrentou quedas de -57,4%. O sistema Momentum ATR reduziu o drawdown para -36,9%, sugerindo disciplina contra entradas em euforia esticada.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>O que o mercado já precificou:</strong> Plena aceleração do capex de fabs globais em 2026–2027, transição bem-sucedida para o High-NA EUV (EXE:5000/5200) e capacidade da companhia de compensar os limites de exportação para a China com expansões em Taiwan, Coreia, EUA e Europa. Qualquer atraso em cronograma de fab comprime múltiplos de forma acentuada.
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Fatos e Direcionadores Fundamentais da Tese</h2>
+    <div class="grid two">
+      <div class="card positive">
+        <h3>1. Revisão em Alta da Guidance de 2026</h3>
+        <p>A ASML elevou sua projeção de vendas para 2026 para <strong>€ 43 bi – € 45 bi</strong> (contra € 36–40 bi no guidance anterior), com margens brutas sustentadas entre 54% e 56%. Um pilar vital é o segmento de <i>Installed Base Management</i> (serviços de manutenção, upgrades de software e retrofits de ópticas), que gerou € 2,8 bi só no segundo trimestre, conferindo receitas recorrentes de altíssima margem.</p>
+      </div>
+      <div class="card positive">
+        <h3>2. Comercialização e Escala do High-NA EUV (0.55 NA)</h3>
+        <p>A ASML reconheceu receita de sistemas High-NA EUV (série TWINSCAN EXE) e confirmou que a Intel Foundry já colocou o scanner em produção de volume para os processadores Core Ultra Series 3. TSMC e Samsung também já têm ordens firmadas para seus nós de 2nm / 1.6nm (A16), com a capacidade produtiva da ASML para EUV praticamente esgotada para 2027 e ordens relevantes já garantidas para 2028.</p>
+      </div>
+      <div class="card neutral">
+        <h3>3. Geopolítica e Restrições na China Estabilizadas</h3>
+        <p>Após os embargos do governo holandês e do Departamento de Comércio dos EUA à exportação de scanners DUV de imersão avançados (NXT:1980i/2000i) e EUV para a China, a participação do mercado chinês na receita total se estabilizou em aproximadamente <strong>20% em 2026</strong> (abaixo dos picos anormais de 40% vistos durante a corrida de estoques chineses em 2023/24). A demanda de fabs ocidentais e asiáticos absorveu integralmente a cota liberada.</p>
+      </div>
+      <div class="card positive">
+        <h3>4. O Vetor Oculto: HBM (High Bandwidth Memory)</h3>
+        <p>A explosão de demanda por aceleradores de inteligência artificial (NVIDIA Blackwell/Rubin, AMD MI350/400) exige pilhas maciças de memória HBM3e e HBM4. Líderes como SK Hynix, Micron e Samsung adotaram etapas litográficas de EUV para reduzir o pitch das células DRAM, tornando a ASML um beneficiário direto não apenas do mercado de lógica, mas também do superciclo de memória.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Análise Financeira Consolidada e Estrutura de Balanço</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Métrica Financeira</th>
+          <th>2T26 / 1S26 (Consolidado)</th>
+          <th>Comparação / Histórico</th>
+          <th>Interpretação Buy-Side</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Receita Líquida (Vendas)</td>
+          <td>€ 9,33 bilhões no 2T26</td>
+          <td>+24,1% vs 2T25 (€ 7,52 bi no 3T25)</td>
+          <td>Crescimento acelerado impulsionado por EUV e serviços de base instalada.</td>
+        </tr>
+        <tr>
+          <td>Margem Bruta (Gross Margin)</td>
+          <td>54,0%</td>
+          <td>51,3% no 2T25</td>
+          <td>Poder de precificação absoluto; cada máquina EUV custa entre US$ 200 mi e US$ 380 mi.</td>
+        </tr>
+        <tr>
+          <td>Lucro Operacional (EBIT)</td>
+          <td>€ 3,46 bilhões</td>
+          <td>Margem Operacional de 37,1%</td>
+          <td>Alavancagem operacional exemplar típica de empresas monopolistas de software/equipamento.</td>
+        </tr>
+        <tr>
+          <td>Lucro Líquido & EPS Diluído</td>
+          <td>€ 2,92 bi / € 7,58 por ação</td>
+          <td>EPS TTM de € 27,55</td>
+          <td>Salto expressivo de lucratividade suportado pela demanda de nós de vanguarda.</td>
+        </tr>
+        <tr>
+          <td>Caixa & Equivalentes vs Dívida</td>
+          <td>€ 6,67 bi de caixa vs € 1,98 bi de dívida</td>
+          <td><strong>Caixa Líquido de € 4,69 bi</strong></td>
+          <td>Estrutura de capital imbatível (Net Cash); balanço fortress sem risco de solvência.</td>
+        </tr>
+        <tr>
+          <td>Retorno sobre Patrimônio Líquido (ROE)</td>
+          <td>53,9% (TTM)</td>
+          <td>Patrimônio de € 21,8 bi</td>
+          <td>Retorno sobre capital investido (ROIC/ROE) entre os mais elevados do planeta.</td>
+        </tr>
+        <tr>
+          <td>Remuneração ao Acionista</td>
+          <td>Dividend Yield ~0,54% + Recompras</td>
+          <td>Payout ratio de 29,7%</td>
+          <td>Empresa autofinancia todo o seu P&D trilionário e ainda retorna capital excedente.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="small">Fonte: Demonstrações financeiras oficiais da ASML Holding N.V. (relatório de resultados do 2T26 divulgado em 15/07/2026) auditadas sob normas IFRS/US-GAAP.</p>
+  </section>
+
+  <section>
+    <h2>4. Evidência Quantitativa do Repositório: Momentum ATR vs Buy & Hold (2020–2026)</h2>
+    <p>Utilizando o motor de eventos do repositório <code>iitauquant</code> (parâmetros de governança: janela de momentum de 20 barras, ATR de 14 barras, multiplicador de stop de 2,5x e custo de execução de 15 bps por lado com execução no Open em t+1), auditamos o comportamento histórico de ASML e do BDR ASML34 em comparação com o ETF de semicondutores (SMH), gigantes setoriais e o S&P 500:</p>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Ativo / Ticker</th>
+          <th>Barras</th>
+          <th>Trades</th>
+          <th>Win Rate</th>
+          <th>Retorno Mom ATR</th>
+          <th>CAGR Mom</th>
+          <th>Vol Mom</th>
+          <th>Sharpe Mom</th>
+          <th>Max DD Mom</th>
+          <th>Profit Factor</th>
+          <th>Retorno B&H</th>
+          <th>CAGR B&H</th>
+          <th>Vol B&H</th>
+          <th>Max DD B&H</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f0f9ff;font-weight:700">
+          <td>ASML (NASDAQ)</td>
+          <td>1.688</td>
+          <td>76</td>
+          <td>40,8%</td>
+          <td>+56,90%</td>
+          <td>6,96%</td>
+          <td>24,4%</td>
+          <td>0,397</td>
+          <td style="color:var(--green)">-36,87%</td>
+          <td>1,43</td>
+          <td>+465,11%</td>
+          <td>29,50%</td>
+          <td>43,8%</td>
+          <td style="color:var(--red)">-57,37%</td>
+        </tr>
+        <tr style="background:#fdf4ff">
+          <td>ASML34.SA (B3)</td>
+          <td>1.674</td>
+          <td>77</td>
+          <td>41,6%</td>
+          <td>+6,26%</td>
+          <td>0,92%</td>
+          <td>23,3%</td>
+          <td>0,154</td>
+          <td style="color:var(--green)">-36,10%</td>
+          <td>1,14</td>
+          <td>+641,04%</td>
+          <td>35,19%</td>
+          <td>41,8%</td>
+          <td style="color:var(--red)">-58,18%</td>
+        </tr>
+        <tr>
+          <td>SMH (ETF Semicondutores)</td>
+          <td>1.678</td>
+          <td>77</td>
+          <td>41,6%</td>
+          <td>+1,74%</td>
+          <td>0,26%</td>
+          <td>20,3%</td>
+          <td>0,114</td>
+          <td>-46,06%</td>
+          <td>1,12</td>
+          <td>+713,46%</td>
+          <td>37,00%</td>
+          <td>37,5%</td>
+          <td>-45,30%</td>
+        </tr>
+        <tr>
+          <td>NVDA (NVIDIA)</td>
+          <td>1.678</td>
+          <td>82</td>
+          <td>37,8%</td>
+          <td>+378,32%</td>
+          <td>26,50%</td>
+          <td>33,3%</td>
+          <td>0,870</td>
+          <td>-46,73%</td>
+          <td>2,05</td>
+          <td>+3.762,6%</td>
+          <td>73,11%</td>
+          <td>51,9%</td>
+          <td>-66,34%</td>
+        </tr>
+        <tr>
+          <td>TSM (Taiwan Semi)</td>
+          <td>1.688</td>
+          <td>81</td>
+          <td>40,7%</td>
+          <td>+179,68%</td>
+          <td>16,60%</td>
+          <td>25,4%</td>
+          <td>0,731</td>
+          <td>-45,33%</td>
+          <td>1,99</td>
+          <td>+641,41%</td>
+          <td>34,86%</td>
+          <td>39,3%</td>
+          <td>-57,14%</td>
+        </tr>
+        <tr>
+          <td>SPY (S&P 500)</td>
+          <td>1.678</td>
+          <td>66</td>
+          <td>42,4%</td>
+          <td>+48,83%</td>
+          <td>6,15%</td>
+          <td>10,0%</td>
+          <td>0,645</td>
+          <td>-16,44%</td>
+          <td>1,78</td>
+          <td>+160,09%</td>
+          <td>15,44%</td>
+          <td>20,1%</td>
+          <td>-33,72%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>Insights Críticos da Auditoria Quantitativa:</strong>
+      <ul>
+        <li><strong>Mitigação de Queda Severa:</strong> No Buy & Hold, a ASML amargou um drawdown brutal de <strong>-57,37%</strong> no inverno de semicondutores de 2022. O modelo Momentum ATR conteve a perda máxima em <strong>-36,87%</strong>, reduzindo a volatilidade de 43,8% para 24,4%.</li>
+        <li><strong>Fricção Cambial e Abertura no BDR:</strong> O BDR ASML34.SA rendeu +641,04% no Buy & Hold (superando o papel lá fora devido à depreciação do Real frente ao Dólar entre 2020 e 2026). Contudo, no modelo sistemático de momentum diário, os gaps de abertura do B3 gerados pelo câmbio noturno provocaram chicotadas (<i>whip-saws</i>), fazendo o Momentum ATR render apenas +6,26%. <i>Conclusão quantitativa: para trading sistemático de curto/médio prazo, prefira a ação no exterior; para alocação patrimonial de longo prazo, o BDR oferece excelente hedge cambial.</i></li>
+        <li><strong>Estado Atual do Sistema:</strong> Ambas as séries estão em <strong>modo CAIXA (Posição = 0)</strong> desde o início de setembro/2026. A distância para acionar nova compra por rompimento do topo de 20 dias é de <strong>+4,60%</strong> (preço gatilho: US$ 1.790,00 para ASML e R$ 165,96 para ASML34).</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. O Verdadeiro Debate: Crescimento do EPS vs Compressão do Múltiplo</h2>
+    <p>O mercado precifica uma aceleração substancial dos lucros da ASML para os próximos anos, conforme a nova capacidade de EUV entra em operação comercial:</p>
+    <div class="barrow">
+      <strong>EPS 2025A</strong>
+      <div class="bar"><i style="width:58%"></i></div>
+      <b>€ 27,55</b>
+    </div>
+    <div class="barrow">
+      <strong>EPS 2026E</strong>
+      <div class="bar"><i style="width:78%"></i></div>
+      <b>US$ 44,00</b>
+    </div>
+    <div class="barrow">
+      <strong>EPS 2027E</strong>
+      <div class="bar"><i style="width:100%"></i></div>
+      <b>US$ 59,00</b>
+    </div>
+    <p>O consenso FactSet / S&P Global projeta que o lucro por ação atinja cerca de US$ 44 em 2026 (+40% a/a em dólar) e alcance ~US$ 59 em 2027 (+34% a/a). A cotação de US$ 1.711 coloca a empresa negociando a <strong>38,9x o lucro esperado de 2026</strong> e <strong>29,0x o lucro de 2027</strong>. A média dos preços-alvo dos analistas situa-se em <strong>US$ 2.133,95</strong> (potencial de alta de +24,7%), o que implicaria negociar a 36x o lucro de 2027.</p>
+  </section>
+
+  <section id="cenarios">
+    <h2>6. Matriz de Cenários para 12–24 Meses (ASML & ASML34)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Cenário</th>
+          <th>EPS 2027E</th>
+          <th>P/L Terminal</th>
+          <th>ASML Estimada</th>
+          <th>USD/BRL</th>
+          <th>ASML34 Estimado*</th>
+          <th>Retorno Esperado</th>
+          <th>Probabilidade & Gatilho Macro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="scenario-bear">Baixista (Bear)</td>
+          <td>US$ 48,00</td>
+          <td>22,0x</td>
+          <td>US$ 1.056</td>
+          <td>R$ 4,85</td>
+          <td><strong>R$ 93,12</strong></td>
+          <td class="scenario-bear">-41,3%</td>
+          <td>20% • Desaceleração de capex em IA, novos bloqueios ocidentais ou atrasos na adoção de High-NA.</td>
+        </tr>
+        <tr>
+          <td class="scenario-base">Base (Consenso)</td>
+          <td>US$ 59,00</td>
+          <td>29,0x</td>
+          <td>US$ 1.711</td>
+          <td>R$ 5,11</td>
+          <td><strong>R$ 158,91</strong></td>
+          <td class="scenario-base">+0,1%</td>
+          <td>55% • Entrega da guidance de € 43–45 bi em 2026, expansão contínua em 2027 e estabilidade do múltiplo em ~29x.</td>
+        </tr>
+        <tr>
+          <td class="scenario-bull">Otimista (Bull)</td>
+          <td>US$ 68,00</td>
+          <td>35,0x</td>
+          <td>US$ 2.380</td>
+          <td>R$ 5,60</td>
+          <td><strong>R$ 242,33</strong></td>
+          <td class="scenario-bull">+52,6%</td>
+          <td>25% • Superciclo de chips de 2nm acelerado, vitória total do High-NA, gargalo severo de litografia e desvalorização do Real.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="small">* Fórmula da Paridade Teórica do BDR: <code>(Cotação ASML / 55) × Câmbio USD/BRL</code>. Cenários elaborados com base em premissas quantitativas e macroeconômicas do comitê, não constituindo promessa de rendimento.</p>
+  </section>
+
+  <section>
+    <h2>7. ASML34: O que o Investidor Local Precisa Saber</h2>
+    <div class="grid two">
+      <div class="card neutral">
+        <h3>Paridade Oficial de 1 : 55</h3>
+        <p>Cada BDR <strong>ASML34</strong> na B3 corresponde exatamente a 1/55 (0,0181818...) de uma ação ordinária negociada no exterior. Para saber se o BDR está negociando com prêmio ou desconto em relação ao mercado externo, utilize a equação: <code>Preço Teórico = (ASML na NASDAQ ÷ 55) × USD/BRL</code>.</p>
+      </div>
+      <div class="card neutral">
+        <h3>Exposição Cambial Integrada</h3>
+        <p>O investidor de ASML34 carrega simultaneamente o risco operacional da ASML e o risco da moeda brasileira. Se o papel subir 20% em dólares mas o Real se valorizar 15%, o ganho em moeda local será significativamente mitigado. Nos últimos 6 anos, essa dinâmica foi extremamente favorável ao investidor de BDRs.</p>
+      </div>
+      <div class="card amber">
+        <h3>Tributação de Dividendos na Holanda</h3>
+        <p>A ASML é sediada em Veldhoven, Países Baixos. Os dividendos sofrem retenção na fonte pelo fisco holandês de <strong>15%</strong> (<i>dividend withholding tax</i>), antes da conversão para o Brasil e das taxas de custódia do banco depositário (Banco B3 S.A.).</p>
+      </div>
+      <div class="card neutral">
+        <h3>Liquidez e Execução em Pregão</h3>
+        <p>ASML34 possui liquidez adequada para investidores institucionais e pessoas físicas na B3, mas com spreads bid-ask mais largos do que a negociação direta na NASDAQ. Recomenda-se estritamente o uso de ordens limitadas para evitar derrapagem de execução (<i>slippage</i>).</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>8. O que Provaria — e o que Destruiria — a Tese (Falsificadores)</h2>
+    <div class="grid two">
+      <div class="card positive">
+        <h3>Fatos Confirmadores (Evidências Favoráveis)</h3>
+        <ul>
+          <li>Entrada de novas ordens líquidas (<i>net bookings</i>) acima de € 7 bilhões por trimestre no segundo semestre de 2026.</li>
+          <li>Confirmação da TSMC de inserção plena do High-NA EUV em suas linhas de produção de 1.6nm (A16) em escala comercial.</li>
+          <li>Crescimento de dois dígitos nas receitas de <i>Installed Base Management</i>, garantindo resiliência de fluxo de caixa livre.</li>
+          <li>Retomada acelerada dos investimentos de capital das fabricantes de memórias (Micron, SK Hynix) para atender à carência de HBM.</li>
+          <li>Rompimento técnico do topo de 20 dias (US$ 1.790 / R$ 165,96), ativando o gatilho sistemático de Momentum ATR com stop disciplinado.</li>
+        </ul>
+      </div>
+      <div class="card negative">
+        <h3>Falsificadores da Tese (Gatilhos de Desinvestimento)</h3>
+        <ul>
+          <li>Cancelamento ou adiamento de encomendas de scanners EUV por grandes clientes (TSMC, Intel ou Samsung) devido a excesso de capacidade de fabs.</li>
+          <li>Problemas técnicos ou custos operacionais desmedidos no scanner High-NA (EXE:5200), retardando sua adoção pelas fundições.</li>
+          <li>Endurecimento unilateral de sanções que proíba inclusive os serviços de manutenção em máquinas DUV já instaladas na China, impactando as margens de base instalada.</li>
+          <li>Compressão generalizada dos múltiplos de tecnologia decorrente de juros elevados persistentes nos EUA e Europa, puxando o P/L de ASML abaixo de 22x.</li>
+          <li>Perda do suporte estrutural da média móvel exponencial de 200 dias (US$ 1.512 / R$ 142,43).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>9. Próximos Catalisadores e Calendário de Acompanhamento</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Data / Janela Estimada</th>
+          <th>Evento Crítico</th>
+          <th>Impacto Esperado na Tese</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Outubro de 2026</td>
+          <td>Divulgação dos Resultados do 3T26 da ASML</td>
+          <td>Monitorar o volume de net bookings (carteira de pedidos) e o guidance de entrega de scanners High-NA para 2027.</td>
+        </tr>
+        <tr>
+          <td>Novembro de 2026</td>
+          <td>Investor Day / Atualização de Mercado de Capitais</td>
+          <td>Atualização dos modelos de longo prazo para a meta de faturamento de 2030 (faixa de € 44 bi a € 60 bi).</td>
+        </tr>
+        <tr>
+          <td>Contínuo (2026–2027)</td>
+          <td>Cronograma de Ramp-up dos Fabs dos EUA (CHIPS Act)</td>
+          <td>Acompanhar a instalação física de scanners nas novas fábricas de TSMC Arizona e Intel Ohio.</td>
+        </tr>
+        <tr>
+          <td>Diário</td>
+          <td>Gatilhos de Preço do Modelo Quantitativo (iitauquant)</td>
+          <td>Monitorar gatilho de breakout em US$ 1.790 / R$ 165,96 e stop dinâmico de 2,5x ATR.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>10. Decisão Prática do Comitê de Alocação</h2>
+    <p class="decision">
+      <strong>Para quem NÃO POSSUI posição em ASML34:</strong> A postura tática recomendada é de <strong>NEUTRALIDADE / WATCHLIST ATIVA</strong>. O ativo é o melhor ativo monopolista de tecnologia do planeta, mas o preço atual reflete grande parte das boas notícias de curto prazo. Há duas janelas ótimas de entrada:<br>
+      1) <em>Entrada por Reversão à Média:</em> Compra escalonada em eventuais correções até a região da EMA 200 (em torno de <strong>US$ 1.510–1.520 / R$ 142–145</strong>);<br>
+      2) <em>Entrada Sistemática por Momentum:</em> Compra na confirmação do rompimento do topo de 20 dias em <strong>US$ 1.790 / R$ 166</strong>, acoplando um stop tático em 2,5x ATR (~R$ 12,80 abaixo da entrada).
+    </p>
+    <p class="decision">
+      <strong>Para quem JÁ POSSUI posição em carteira:</strong> <strong>MANTER (HOLD)</strong>. O fosso econômico está mais largo do que nunca, a empresa possui caixa líquido positivo de € 4,7 bi, ROE de 53,9% e é impossível construir o futuro da inteligência artificial sem suas máquinas. Não recomendamos venda precipitada, apenas a disciplina de não aumentar posição de forma alavancada no topo do canal.
+    </p>
+    <p class="small"><i>Aviso Legal e Governança: Este relatório foi produzido com base nos dados e modelos quantitativos do repositório iitauquant para fins educacionais e de pesquisa institucional. Não constitui consultoria financeira individualizada nem oferta pública de valores mobiliários.</i></p>
+  </section>
+
+  <section id="fontes">
+    <h2>11. Fontes Primárias e Governança de Dados</h2>
+    <ul class="sources">
+      <li><a href="https://www.asml.com/en/investors">ASML Investor Relations</a>: Relatório Trimestral Oficial do 2T26 (vendas líquidas de € 9,33 bi, lucro líquido de € 2,92 bi, guidance atualizada para € 43–45 bi).</li>
+      <li><a href="https://www.sec.gov/edgar/browse/?CIK=0000937966">SEC Form 6-K / Form 20-F — ASML Holding N.V.</a> (Demonstrações contábeis auditadas e notas explicativas).</li>
+      <li><a href="https://www.b3.com.br/pt_br/produtos-e-servicos/negociacao/renda-variavel/bdrs/bdrs-nao-patrocinados/bdrs-nao-patrocinados-listados/">B3 — Regulamento e Paridades do Programa de BDRs Não Patrocinados</a>: Paridade oficial ASML34 estabelecida em 1:55 e custódia pelo Banco B3 S.A.</li>
+      <li><a href="https://www.nasdaq.com/market-activity/stocks/asml">NASDAQ Real-Time Market Data</a>: Cotação de fechamento de ASML a US$ 1.711,32 em 21/09/2026.</li>
+      <li><a href="https://www.bloomberg.com/quote/ASML34:BZ">Mercado B3 — Cotações Históricas de ASML34.SA</a>: Cotação de fechamento a R$ 158,75 em 21/09/2026.</li>
+      <li><strong>Motor de Backtest iitauquant</strong>: <code>scripts/analisar_asml34.py</code>, <code>src/backtest/engine.py</code> e <code>src/strategies/momentum_atr.py</code> com histórico de 1.688 barras limpas e point-in-time de 2020 a 2026.</li>
+    </ul>
+    <p><strong>Nível de Confiança da Evidência:</strong> Elevado (A+) para balanços, especificações de EUV, parâmetros quantitativos e paridade oficial B3; Médio para consensos de lucros de analistas de 2027 e projeções cambiais.</p>
+  </section>
+
+  <div class="footer">
+    Relatório gerado em 21 de setembro de 2026 • Repositório iitauquant (Fundo LASTRO & Laboratório Momentum ATR) • Projeto acadêmico e de pesquisa institucional.
+  </div>
+</main>
+</body>
+</html>
