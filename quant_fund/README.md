@@ -1,7 +1,7 @@
 # Agente Quantitativo — fundo multi-sleeve
 
-Este pacote implementa a lógica financeira descrita em `relatorio_tecnico_fundo.md` e
-`tutorial_desenvolvimento_fundo.md`. A entrega é point-in-time: um sinal calculado no
+Este pacote implementa a lógica financeira descrita em [`docs/fundo/relatorio_tecnico_fundo.md`](../docs/fundo/relatorio_tecnico_fundo.md) e
+[`docs/fundo/tutorial_desenvolvimento_fundo.md`](../docs/fundo/tutorial_desenvolvimento_fundo.md). A entrega é point-in-time: um sinal calculado no
 fechamento de um mês só vira posição no mês seguinte.
 
 ## Regras implementadas

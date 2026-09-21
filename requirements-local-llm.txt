@@ -1,0 +1,6 @@
+transformers>=4.48,<5
+accelerate>=1.2,<2
+bitsandbytes>=0.45,<1
+safetensors>=0.4
+sentencepiece>=0.2
+yfinance>=0.2.54

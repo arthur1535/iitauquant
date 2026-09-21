@@ -63,6 +63,29 @@
       "SPY",
       "SMH",
       "GLD"
+    ],
+    "china_market": [
+      "MCHI",
+      "KWEB",
+      "FXI",
+      "ASHR",
+      "CQQQ",
+      "BABA",
+      "PDD",
+      "JD",
+      "BIDU",
+      "NIO"
+    ],
+    "asymmetric_outliers": [
+      "VRT",
+      "PLTR",
+      "CELH",
+      "SMCI",
+      "MSTR",
+      "FUTU",
+      "ASTS",
+      "APP",
+      "HIMS"
     ]
   },
   "assets": {
@@ -93,6 +116,25 @@
     "QQQ": {"local_file": "../data/market/QQQ.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
     "SPY": {"local_file": "../data/market/SPY.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
     "SMH": {"local_file": "../data/market/SMH.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
-    "GLD": {"local_file": "../data/market/GLD.parquet", "status": "global_leader", "valid_from": "2020-01-01"}
+    "GLD": {"local_file": "../data/market/GLD.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "MCHI": {"local_file": "../data/market/MCHI.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "KWEB": {"local_file": "../data/market/KWEB.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "FXI": {"local_file": "../data/market/FXI.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "ASHR": {"local_file": "../data/market/ASHR.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "CQQQ": {"local_file": "../data/market/CQQQ.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "BABA": {"local_file": "../data/market/BABA.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "PDD": {"local_file": "../data/market/PDD.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "JD": {"local_file": "../data/market/JD.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "BIDU": {"local_file": "../data/market/BIDU.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "NIO": {"local_file": "../data/market/NIO.parquet", "status": "china_research", "valid_from": "2020-01-01"},
+    "VRT": {"local_file": "../data/market/VRT.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "PLTR": {"local_file": "../data/market/PLTR.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "CELH": {"local_file": "../data/market/CELH.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "SMCI": {"local_file": "../data/market/SMCI.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "MSTR": {"local_file": "../data/market/MSTR.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "FUTU": {"local_file": "../data/market/FUTU.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "ASTS": {"local_file": "../data/market/ASTS.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "APP": {"local_file": "../data/market/APP.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "HIMS": {"local_file": "../data/market/HIMS.parquet", "status": "outlier_research", "valid_from": "2020-01-01"}
   }
 }
