@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caterpillar / CATP34 — análise financeira e cenários</title>
+  <style>
+    :root{--ink:#17202a;--muted:#5f6b76;--paper:#f5f4ef;--card:#fff;--line:#d9d7cf;--cat:#ffcd11;--green:#177245;--red:#a33b32;--blue:#224c70;--shadow:0 10px 28px rgba(24,30,35,.08)}
+    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.55}
+    a{color:var(--blue);text-decoration-thickness:1px;text-underline-offset:2px} .wrap{max-width:1180px;margin:auto;padding:28px}
+    header{background:#111820;color:#fff;border-top:8px solid var(--cat);padding:42px;border-radius:4px;box-shadow:var(--shadow)}
+    .eyebrow{color:var(--cat);font-weight:750;letter-spacing:.09em;text-transform:uppercase;font-size:.78rem}.meta{color:#c8d0d7;font-size:.88rem}
+    h1{font-size:clamp(2rem,4.5vw,4rem);line-height:1.02;margin:.35rem 0 1rem;max-width:900px} h2{font-size:1.6rem;line-height:1.2;margin:0 0 16px} h3{font-size:1.05rem;margin:0 0 8px}
+    .verdict{margin:22px 0 0;padding:18px 20px;border-left:5px solid var(--cat);background:#202a34;border-radius:0 4px 4px 0;font-size:1.08rem}
+    .grid{display:grid;gap:18px}.kpis{grid-template-columns:repeat(4,1fr);margin:20px 0}.kpi,.card,section{background:var(--card);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow)}
+    .kpi{padding:18px}.kpi b{display:block;font-size:1.55rem;line-height:1.1}.kpi span{color:var(--muted);font-size:.83rem}
+    section{padding:28px;margin:18px 0}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}.card{padding:20px;box-shadow:none}.card p:last-child{margin-bottom:0}
+    .tag{display:inline-block;padding:4px 8px;border-radius:3px;background:#edf0f2;color:#34414b;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.positive{border-top:4px solid var(--green)}.negative{border-top:4px solid var(--red)}.neutral{border-top:4px solid var(--cat)}
+    table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}th:first-child,td:first-child{text-align:left}thead th{background:#f0efe9;color:#3d4851}tbody tr:last-child td{border-bottom:0}
+    .callout{padding:18px 20px;background:#fff8d7;border-left:5px solid var(--cat);margin:16px 0}.small{font-size:.84rem;color:var(--muted)}
+    .barrow{display:grid;grid-template-columns:170px 1fr 70px;gap:10px;align-items:center;margin:10px 0}.bar{height:12px;background:#e7e5de;border-radius:7px;overflow:hidden}.bar i{display:block;height:100%;background:var(--blue)}
+    .scenario-bear{color:var(--red);font-weight:700}.scenario-base{color:var(--blue);font-weight:700}.scenario-bull{color:var(--green);font-weight:700}
+    ul{padding-left:20px}li{margin:.45rem 0}.decision{font-size:1.08rem}.sources li{margin:.7rem 0}.footer{color:var(--muted);font-size:.8rem;padding:6px 4px 30px}
+    @media(max-width:800px){.wrap{padding:14px}header,section{padding:22px}.kpis,.two,.three{grid-template-columns:1fr}.barrow{grid-template-columns:120px 1fr 55px}table{font-size:.8rem}th,td{padding:8px 5px}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">Iniciação preliminar • NYSE: CAT / B3: CATP34</div>
+    <h1>Caterpillar: excelente execução, mas pouca margem para erro no preço atual</h1>
+    <p class="meta">Data-base: 21 set. 2026 • horizonte: 12–24 meses • valores em US$, salvo indicação • CATP34 representa 0,0625 ação CAT</p>
+    <div class="verdict"><strong>Postura: observar / esperar melhor ponto de entrada.</strong> O negócio está no melhor momento operacional recente, apoiado por infraestrutura, mineração e energia para data centers. A ação, porém, negocia a múltiplos que já exigem crescimento elevado e margens fortes. A tese da empresa é positiva; a tese do preço é mais equilibrada.</div>
+  </header>
+
+  <div class="grid kpis">
+    <div class="kpi"><b>US$ 818,76</b><span>CAT, 21 set. 2026, 17:11 UTC</span></div>
+    <div class="kpi"><b>35,2x</b><span>P/L dos últimos 12 meses</span></div>
+    <div class="kpi"><b>25,5x</b><span>P/L sobre consenso de EPS 2027</span></div>
+    <div class="kpi"><b>≈ R$ 263</b><span>paridade indicativa do BDR a USD/BRL ≈ 5,14</span></div>
+  </div>
+
+  <section>
+    <h2>Conclusão em linguagem direta</h2>
+    <div class="grid three">
+      <div class="card positive"><span class="tag">Empresa</span><h3>Qualidade alta</h3><p>Marca, rede global de distribuidores, peças e serviços, disciplina de preço e retorno de capital sustentam uma posição competitiva difícil de replicar.</p></div>
+      <div class="card positive"><span class="tag">Momento</span><h3>Operação acelerando</h3><p>No 2T26, receita subiu 24%, margem operacional ajustada alcançou 21,9% e o EPS ajustado foi US$ 8,17, muito acima do ano anterior.</p></div>
+      <div class="card negative"><span class="tag">Ação</span><h3>Valuation exigente</h3><p>A aproximadamente 30x o lucro esperado de 2026 e 25,5x o de 2027, o investidor paga antecipadamente por boa parte da melhora operacional.</p></div>
+    </div>
+    <div class="callout"><strong>O que parece precificado:</strong> continuidade da demanda de energia e data centers, recuperação ampla de construção/mineração, poder de preço e crescimento de lucro até 2027. Uma simples normalização do múltiplo pode anular o crescimento do EPS.</div>
+  </section>
+
+  <section>
+    <h2>Notícias e fatos que realmente mudam a tese</h2>
+    <div class="grid two">
+      <div class="card positive"><h3>1. Trimestre recorde e crescimento amplo</h3><p>A receita do 2T26 chegou a US$ 20,54 bi (+24% a/a), com crescimento nos três segmentos principais. Construction Industries cresceu 35%, Resource Industries 20% e Power &amp; Energy 17%. A margem operacional ajustada foi 21,9%, contra 17,6% um ano antes. <a href="https://www.sec.gov/Archives/edgar/data/18230/000001823026000040/ex991toformcat2q2026earnin.htm">Resultado oficial 2T26</a>.</p></div>
+      <div class="card positive"><h3>2. Data centers viraram vetor material</h3><p>Power Generation cresceu 29%, puxado por grandes motores e turbinas usados principalmente em aplicações de data center. É a ponte entre uma empresa industrial tradicional e a expansão de infraestrutura elétrica para IA. <a href="https://www.sec.gov/Archives/edgar/data/18230/000001823026000040/ex991toformcat2q2026earnin.htm">Detalhamento por aplicação</a>.</p></div>
+      <div class="card neutral"><h3>3. Automação e IA reforçam o “moat”</h3><p>Em setembro, a companhia anunciou expansão do transporte autônomo na Luck Stone e colaboração com a FieldAI em robótica, digital twins e IA física. São positivos estratégicos, mas ainda não justificam sozinhos o múltiplo atual. <a href="https://www.cat.com/content/caterpillarDotCom/en/news/corporate-press-releases.html">Comunicados recentes</a> e <a href="https://investors.caterpillar.com/news/news-details/2026/Caterpillar-and-FieldAI-Advance-AI-Powered-Industrial-Innovation/default.aspx">FieldAI</a>.</p></div>
+      <div class="card negative"><h3>4. Parte do resultado exige leitura cuidadosa</h3><p>O lucro operacional do trimestre incluiu US$ 392 mi de recuperações esperadas de tarifas IEEPA. Além disso, estoques e recebíveis consumiram caixa no semestre, enquanto os estoques de distribuidores aumentaram mais que no ano anterior. Isso pode representar atendimento de backlog — ou antecipação de demanda. <a href="https://www.sec.gov/Archives/edgar/data/18230/000001823026000046/cat-20260630.htm">Form 10-Q 2T26</a>.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Leitura financeira</h2>
+    <table>
+      <thead><tr><th>Métrica</th><th>2T26 / 1S26</th><th>Comparação</th><th>Interpretação</th></tr></thead>
+      <tbody>
+        <tr><td>Receita</td><td>US$ 20,54 bi no 2T</td><td>+24% a/a</td><td>Crescimento forte e diversificado.</td></tr>
+        <tr><td>Margem operacional ajustada</td><td>21,9% no 2T</td><td>17,6% no 2T25</td><td>Excelente alavancagem operacional; cria risco de normalização futura.</td></tr>
+        <tr><td>EPS ajustado</td><td>US$ 8,17 no 2T</td><td>US$ 4,72 no 2T25</td><td>+73%; parte do salto não deve ser extrapolada mecanicamente.</td></tr>
+        <tr><td>Fluxo de caixa operacional</td><td>US$ 6,24 bi no 1S</td><td>US$ 4,41 bi no 1S25</td><td>Geração forte apesar do investimento em capital de giro.</td></tr>
+        <tr><td>Recompras</td><td>US$ 6,52 bi no 1S</td><td>US$ 4,49 bi no 1S25</td><td>Ajuda o EPS, mas foi executada num valuation elevado.</td></tr>
+        <tr><td>Ações diluídas médias</td><td>462,5 mi no 2T</td><td>471,5 mi no 2T25</td><td>Queda de 1,9% a/a; retorno de capital é material.</td></tr>
+        <tr><td>Caixa / dívida industrial</td><td>US$ 5,95 bi / US$ 10,69 bi</td><td>30 jun. 2026</td><td>Alavancagem do negócio industrial é administrável; não confundir com dívida da financeira.</td></tr>
+      </tbody>
+    </table>
+    <p class="small">Fonte principal: <a href="https://www.sec.gov/Archives/edgar/data/18230/000001823026000046/cat-20260630.htm">10-Q do 2T26</a> e <a href="https://www.sec.gov/Archives/edgar/data/18230/000001823026000040/ex991toformcat2q2026earnin.htm">release de resultados</a>. A dívida consolidada inclui a Cat Financial, que financia clientes e distribuidores; por isso, dívida consolidada/EBITDA sem separação é enganosa.</p>
+  </section>
+
+  <section>
+    <h2>O verdadeiro debate: crescimento do lucro versus compressão do múltiplo</h2>
+    <div class="barrow"><strong>EPS 2025A</strong><div class="bar"><i style="width:58%"></i></div><b>19,06</b></div>
+    <div class="barrow"><strong>EPS 2026E</strong><div class="bar"><i style="width:84%"></i></div><b>27,45</b></div>
+    <div class="barrow"><strong>EPS 2027E</strong><div class="bar"><i style="width:98%"></i></div><b>32,08</b></div>
+    <p>O consenso implica crescimento de aproximadamente 44% em 2026 e 17% em 2027. Mesmo aceitando esse caminho, CAT negocia a cerca de 29,8x o EPS 2026E e 25,5x o EPS 2027E. A média de preço-alvo de 28 analistas, US$ 975,61, oferece cerca de 19% de alta, mas pressupõe aproximadamente 30x o EPS 2027 — ainda um múltiplo premium. <a href="https://www.boursorama.com/cours/consensus/CAT/">Consenso FactSet</a>; <a href="https://stockanalysis.com/stocks/cat/forecast/">consenso de preço-alvo</a>.</p>
+    <div class="callout"><strong>Minha leitura:</strong> não há uma “barganha” evidente. Para a ação entregar retorno superior, o lucro precisa exceder o consenso, permanecer elevado por mais tempo e/ou o mercado precisa continuar aceitando um múltiplo incomumente alto para uma empresa cíclica.</div>
+  </section>
+
+  <section id="cenarios">
+    <h2>Cenários de 12–24 meses</h2>
+    <table>
+      <thead><tr><th>Cenário</th><th>EPS 2027</th><th>P/L terminal</th><th>CAT estimada</th><th>USD/BRL</th><th>CATP34 estimado*</th><th>vs. paridade atual</th></tr></thead>
+      <tbody>
+        <tr><td class="scenario-bear">Baixista</td><td>US$ 27</td><td>22x</td><td>US$ 594</td><td>4,80</td><td>R$ 178</td><td>-32%</td></tr>
+        <tr><td class="scenario-base">Base</td><td>US$ 32,50</td><td>25x</td><td>US$ 813</td><td>5,14</td><td>R$ 261</td><td>-1%</td></tr>
+        <tr><td class="scenario-bull">Otimista</td><td>US$ 36</td><td>29x</td><td>US$ 1.044</td><td>5,50</td><td>R$ 359</td><td>+37%</td></tr>
+      </tbody>
+    </table>
+    <p class="small">* Fórmula simplificada: CAT × 0,0625 × USD/BRL. Não inclui spread, taxa do depositário, impostos ou desvios temporários de paridade. Cenários são hipóteses analíticas, não previsões garantidas. Paridade atual indicativa ≈ R$ 263 usando CAT a US$ 818,76 e dólar perto de R$ 5,14; a última cotação pública localizada de CATP34 foi R$ 257,04 em 11 set. 2026.</p>
+  </section>
+
+  <section>
+    <h2>CATP34: o que muda para o investidor brasileiro</h2>
+    <div class="grid two">
+      <div class="card neutral"><h3>Dupla exposição</h3><p>O retorno em reais combina o desempenho de CAT em dólares e o USD/BRL. Se CAT subir 10% e o dólar cair 10%, o ganho do BDR pode ficar próximo de zero antes de custos. O inverso também vale.</p></div>
+      <div class="card neutral"><h3>Paridade de 1/16</h3><p>Cada BDR representa 0,0625 ação. Portanto, o valor teórico é <strong>CAT × dólar × 0,0625</strong>. Compare esse valor à cotação do BDR antes de negociar, sobretudo em dias de menor liquidez.</p></div>
+      <div class="card neutral"><h3>Dividendos modestos</h3><p>O dividendo trimestral foi elevado para US$ 1,63 por ação; isso equivale a US$ 0,1019 por BDR antes de câmbio, impostos e taxas. No preço atual de CAT, o yield bruto anualizado é apenas ~0,8%. <a href="https://investors.caterpillar.com/stock-info/dividend-history/default.aspx">Histórico oficial</a>.</p></div>
+      <div class="card negative"><h3>Liquidez e custos</h3><p>CATP34 pode ter spreads maiores que CAT na NYSE, além de taxas do programa e tratamento tributário próprio. Use ordem limitada e confira o documento do programa de BDR e as regras fiscais atuais com sua corretora/contador.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>O que provaria — ou destruiria — a tese</h2>
+    <div class="grid two">
+      <div class="card positive"><h3>Provas favoráveis</h3><ul><li>Backlog e pedidos continuam fortes sem nova alta anormal de estoques dos distribuidores.</li><li>Power Generation mantém crescimento de dois dígitos e converte demanda de data centers em receita e caixa.</li><li>Margem ajustada permanece próxima ou acima de 20% sem depender de recuperações tarifárias.</li><li>EPS 2027 caminha para US$ 35–36, acima do consenso atual.</li><li>Fluxo de caixa acompanha o lucro apesar do crescimento de estoques e recebíveis.</li></ul></div>
+      <div class="card negative"><h3>Falsificadores</h3><ul><li>Desaceleração de pedidos ou redução de backlog após recomposição de estoques.</li><li>Margem volta para a faixa de 17%–18% por custos, tarifas, mix ou menor volume.</li><li>Capex de mineração/construção enfraquece com commodities ou crédito.</li><li>Cat Financial mostra alta persistente de atrasos, perdas e provisões.</li><li>EPS cresce, mas o P/L converge para 20x–22x, provocando queda da ação.</li></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Próximos catalisadores e plano de acompanhamento</h2>
+    <table>
+      <thead><tr><th>Janela</th><th>Evento / métrica</th><th>Leitura para a tese</th></tr></thead>
+      <tbody>
+        <tr><td>4 nov. 2026 (estimado)</td><td>Resultado do 3T26; consenso aproximado de receita US$ 20,1 bi e EPS US$ 6,93</td><td>Confirmar se o 2T foi novo patamar ou pico temporário.</td></tr>
+        <tr><td>Trimestral</td><td>Vendas ao usuário final, estoques de distribuidores e backlog</td><td>Separar demanda real de reposição/pull-forward.</td></tr>
+        <tr><td>Trimestral</td><td>Margens por segmento e ajustes tarifários</td><td>Medir qualidade do lucro e normalização.</td></tr>
+        <tr><td>2026–27</td><td>Pedidos de geração para data centers e autonomia em mineração</td><td>Validar duração do novo vetor estrutural.</td></tr>
+        <tr><td>Contínuo</td><td>USD/BRL e prêmio/desconto de CATP34</td><td>Controlar o risco específico do BDR.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Decisão prática</h2>
+    <p class="decision"><strong>Para quem ainda não tem posição:</strong> eu colocaria CATP34 em watchlist e preferiria entrada escalonada apenas com margem de segurança — por correção de preço, revisão positiva do EPS ou ambos. Comprar agora é apostar que o excelente cenário continuará e que o múltiplo premium será preservado.</p>
+    <p class="decision"><strong>Para quem já possui:</strong> o operacional não sugere uma saída automática, mas o valuation pede disciplina. Acompanhe pedidos, estoques dos distribuidores, geração de caixa e margem; uma decepção pequena pode gerar reação grande.</p>
+    <p class="small">Isto é pesquisa educacional, não recomendação personalizada. A ação apropriada depende de preço médio, tamanho da posição, horizonte, tolerância a perdas e exposição cambial do restante da carteira.</p>
+  </section>
+
+  <section id="fontes">
+    <h2>Fontes e qualidade da evidência</h2>
+    <ul class="sources">
+      <li><a href="https://www.nasdaq.com/market-activity/stocks/cat">Market data — NYSE: CAT</a>: feed de mercado consultado em 21 set. 2026 às 17:11 UTC (US$ 818,76; valor de mercado US$ 378,7 bi; P/L 35,2x). A página pública pode exibir atraso ou indisponibilidade temporária.</li>
+      <li><a href="https://www.sec.gov/Archives/edgar/data/18230/000001823026000046/cat-20260630.htm">SEC — Caterpillar Form 10-Q, trimestre encerrado em 30 jun. 2026</a> (fonte primária; alta confiança).</li>
+      <li><a href="https://www.sec.gov/Archives/edgar/data/18230/000001823026000040/ex991toformcat2q2026earnin.htm">SEC — release de resultados do 2T26</a> (fonte primária; alta confiança).</li>
+      <li><a href="https://investors.caterpillar.com/stock-info/dividend-history/default.aspx">Caterpillar IR — histórico de dividendos</a> (fonte primária; alta confiança).</li>
+      <li><a href="https://www.cat.com/content/caterpillarDotCom/en/news/corporate-press-releases.html">Caterpillar — notícias corporativas</a> (declarações da companhia; alta confiança quanto ao anúncio, não quanto ao impacto econômico futuro).</li>
+      <li><a href="https://www.boursorama.com/cours/consensus/CAT/">Boursorama / FactSet — consenso de lucros</a> (estimativas de mercado em 10 set. 2026; confiança média).</li>
+      <li><a href="https://stockanalysis.com/stocks/cat/forecast/">StockAnalysis / S&amp;P Global — consenso de preço-alvo</a> (estimativas, não fatos; confiança média).</li>
+      <li><a href="https://br.investing.com/equities/caterpillar-inc-bdr">Investing — CATP34</a> e <a href="https://hgbrasil.com/finance/tickers/B3%3ACATP34">HG Brasil — cotação local</a> (preço local disponível até 10–11 set.; desatualizado para execução).</li>
+      <li><a href="https://economia.uol.com.br/cotacoes/noticias/redacao/2026/09/21/dolar-e-bolsa-21-de-setembro-de-2026.amp.htm">UOL — USD/BRL em 21 set. 2026</a> (cotação intradiária; confiança média).</li>
+    </ul>
+    <p><strong>Confiança da evidência:</strong> alta para resultados e balanço; média para consenso, preço-alvo e paridade do BDR. <strong>Status da análise:</strong> iniciação preliminar / watchlist, pois não foi construído um DCF completo nem verificada uma cotação executável de CATP34 no instante do relatório.</p>
+  </section>
+  <div class="footer">Preparado em 21 de setembro de 2026. Valores arredondados; possíveis diferenças por horário de mercado, câmbio, spread e atualização das fontes.</div>
+</main>
+</body>
+</html>
