@@ -1,5 +1,5 @@
 {
-  "gerado_utc": "2026-08-16T01:24:56.243270+00:00",
+  "gerado_utc": "2026-08-17T01:08:47.260007+00:00",
   "config_overlay": {
     "zscore_window_months": 36,
     "zscore_min_periods": 24,
@@ -16,6 +16,31 @@
     "credito": "BAA10Y",
     "condicoes_financeiras": "NFCI"
   },
+  "fonte_backtest_macro": "ALFRED point-in-time; vintage no fechamento mensal",
   "sha256_config": "762212f5742c3708cb3157a4530397e979f872b2fb585f2546b642361d742061",
-  "nota": "Revisões motivadas por argumento econômico; grid publicado para mostrar dependência de parâmetro."
+  "status_inferencia": "exploratorio; hash identifica a execucao, nao e pre-registro",
+  "tentativas_grid": 36,
+  "governanca": {
+    "decisao": "shadow_mode",
+    "aprovado": false,
+    "criterios": {
+      "regra_aprovacao": "todos_os_gates_devem_ser_aprovados",
+      "dsr_minimo": 0.95,
+      "bootstrap_ic95_limite_inferior_maior_que": 0.0,
+      "placebo_percentil_minimo_por_metrica": 95.0,
+      "hac_p_valor_maximo": 0.05,
+      "hac_diferenca_media_anual_maior_que": 0.0,
+      "validacao_out_of_sample_obrigatoria": true
+    },
+    "gates": {
+      "dsr_minimo_95pct": false,
+      "bootstrap_ic95_inteiramente_positivo": false,
+      "placebo_cagr_percentil_minimo_95": false,
+      "placebo_sharpe_percentil_minimo_95": false,
+      "placebo_drawdown_percentil_minimo_95": false,
+      "placebo_cauda_percentil_minimo_95": false,
+      "hac_revisada_vs_sem_overlay_positivo_e_significativo": false,
+      "validacao_out_of_sample": false
+    }
+  }
 }

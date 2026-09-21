@@ -1,0 +1,56 @@
+{
+  "gerado_utc": "2026-08-17T01:01:46.830432+00:00",
+  "fonte": "ALFRED alfredgraph.csv; vintage_date = fim de cada mês",
+  "config": {
+    "zscore_window_months": 36,
+    "zscore_min_periods": 24,
+    "stress_entry_z": 1.0,
+    "stress_exit_z": 0.5,
+    "max_derisk": 0.5,
+    "axis_labels": [
+      "credito",
+      "condicoes_financeiras"
+    ]
+  },
+  "periodo": {
+    "inicio": "2011-05",
+    "fim": "2026-07"
+  },
+  "amostra_backtest": {
+    "inicio": "2018-02",
+    "fim": "2026-07",
+    "meses": 102
+  },
+  "por_serie": {
+    "BAA10Y": {
+      "meses": 102,
+      "mudancas_de_estado": 1,
+      "mae_nivel": 0.022156862745098045,
+      "mae_z_36": 0.06933019859905595
+    },
+    "NFCI": {
+      "meses": 102,
+      "mudancas_de_estado": 2,
+      "mae_nivel": 0.1285729411764706,
+      "mae_z_36": 0.3702605859400862
+    }
+  },
+  "meses_com_votos_diferentes": 2,
+  "meses_com_derisk_aplicado_diferente": 2,
+  "cutoff_mais_recente": {
+    "BAA10Y": {
+      "vintage": "2026-07-31",
+      "observacao": "2026-07-30",
+      "nivel": 1.64,
+      "z_36": -0.08865450791189791,
+      "estado": 0
+    },
+    "NFCI": {
+      "vintage": "2026-07-31",
+      "observacao": "2026-07-24",
+      "nivel": -0.554,
+      "z_36": -1.497191689380239,
+      "estado": 0
+    }
+  }
+}

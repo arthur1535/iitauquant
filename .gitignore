@@ -3,6 +3,18 @@ __pycache__/
 .pytest_cache/
 .venv/
 *.egg-info/
+.env
+.env.*
+!.env.example
+.dev.vars
+infra/cloudflare/.dev.vars
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+
+# Renderizações temporárias e cópias dos relatórios oficiais em relatorios/.
+/tmp/
+/output/
 
 # Dados obtidos externamente e artefatos gerados.
 dados/cache/
@@ -12,3 +24,18 @@ dados/manifest.jsonl
 dados/relatorios/*.csv
 dados/relatorios/*.json
 !dados/relatorios/.gitkeep
+
+# Momentum/TradingView: cache de dados e saídas avulsas ficam locais.
+# Evidências selecionadas em subpastas de results/ são versionadas nesta entrega.
+data/*.parquet
+data/**/*.parquet
+data/**/*.csv
+data/**/*.jsonl
+results/*.parquet
+results/*.csv
+results/*.json
+results/*.log
+!results/manifesto_momentum.json
+results/checkpoints/
+results/automation/
+data/oms_kill_switch.flag

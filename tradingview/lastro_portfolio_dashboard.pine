@@ -1,0 +1,148 @@
+//@version=5
+indicator("LASTRO — Multi-Sleeve Portfolio Allocation Dashboard", shorttitle="LASTRO-HUD", overlay=true)
+
+// =============================================================================
+// LASTRO — Painel de Alocação e Regime Macro Multi-Sleeve
+// Projeto Oficial do Desafio Quant AI 2026 / Fundo Sistemático LASTRO
+//
+// Monitora os três motores de retorno em tempo real:
+//   - Sleeve 1: Factor Investing (S&P 500 / Proxy de Fatores)
+//   - Sleeve 2: Small Caps & Momentum com mitigação de risco
+//   - Sleeve 3: Renda Fixa Ultracurta (T-Bills 1-3M / BIL)
+//
+// Calcula o sinal de regime com histerese (entrada em z >= 1.0, saída em z <= 0.5)
+// e projeta na tela a matriz de alocação de capital e alertas operacionais.
+// =============================================================================
+
+// --- Configurações dos Sleeves ---
+string GRP_SLEEVES = "1. Configuração dos Ativos e Sleeves"
+string tickerS1 = input.symbol("AMEX:SPY", "Sleeve 1 (Factor / Core Equity)", group=GRP_SLEEVES)
+string tickerS2 = input.symbol("AMEX:IWM", "Sleeve 2 (Small Caps / Momentum)", group=GRP_SLEEVES)
+string tickerS3 = input.symbol("AMEX:BIL", "Sleeve 3 (Renda Fixa / T-Bills)", group=GRP_SLEEVES)
+
+// --- Configurações do Regime Macro ---
+string GRP_REGIME = "2. Sinal de Regime e Histerese"
+string macroSource = input.string("VIX (Proxy Diário)", "Fonte de Estresse", options=["VIX (Proxy Diário)", "Spread de Crédito (BAA10Y)", "Ativo Atual"], group=GRP_REGIME)
+string customMacroTicker = input.symbol("CBOE:VIX", "Ticker Macro Personalizado", group=GRP_REGIME)
+int zWindow = input.int(36, "Janela de Z-Score (Barras)", minval=10, maxval=252, group=GRP_REGIME)
+float entryZ = input.float(1.0, "Limiar de Entrada em Estresse (+Z)", minval=0.5, step=0.1, group=GRP_REGIME)
+float exitZ  = input.float(0.5, "Limiar de Saída do Estresse (+Z)", minval=0.0, step=0.1, group=GRP_REGIME)
+bool modeGradual = input.bool(true, "De-risking Gradual (vs Binário)", group=GRP_REGIME)
+
+// --- Configurações Visuais do HUD ---
+string GRP_UI = "3. Interface do Usuário (HUD)"
+bool showTable = input.bool(true, "Exibir Tabela de Alocação", group=GRP_UI)
+string tablePos = input.string("Superior direito", "Posição da Tabela", options=["Superior direito", "Superior esquerdo", "Inferior direito", "Inferior esquerdo"], group=GRP_UI)
+color colNormal = input.color(color.new(#00c853, 0), "Cor Regime Normal", group=GRP_UI)
+color colWarning = input.color(color.new(#ffd600, 0), "Cor Regime Alerta", group=GRP_UI)
+color colStress = input.color(color.new(#d50000, 0), "Cor Regime Estresse", group=GRP_UI)
+
+// -----------------------------------------------------------------------------
+// Obtenção de Dados Macro e Preços dos Sleeves
+// -----------------------------------------------------------------------------
+f_getMacroPrice() =>
+    string sym = macroSource == "VIX (Proxy Diário)" ? "CBOE:VIX" :
+                 macroSource == "Spread de Crédito (BAA10Y)" ? "FRED:BAA10Y" :
+                 customMacroTicker
+    request.security(sym, timeframe.period, close, lookahead=barmerge.lookahead_off)
+
+float macroVal = f_getMacroPrice()
+
+
+// -----------------------------------------------------------------------------
+// Cálculo do Z-Score e Máquina de Estados com Histerese
+// -----------------------------------------------------------------------------
+float macroMean = ta.sma(macroVal, zWindow)
+float macroStd  = ta.stdev(macroVal, zWindow)
+float zScore    = macroStd > 0.0 ? (macroVal - macroMean) / macroStd : 0.0
+
+var int regimeState = 0 // 0 = Normal, 1 = Alerta, 2 = Estresse Pleno
+
+if barstate.isconfirmed
+    if regimeState == 0
+        if zScore >= entryZ
+            regimeState := modeGradual ? (zScore >= entryZ * 1.5 ? 2 : 1) : 2
+    else if regimeState == 1
+        if zScore >= entryZ * 1.5
+            regimeState := 2
+        else if zScore <= exitZ
+            regimeState := 0
+    else if regimeState == 2
+        if zScore <= exitZ
+            regimeState := 0
+        else if modeGradual and zScore < entryZ
+            regimeState := 1
+
+// -----------------------------------------------------------------------------
+// Matriz de Pesos Dinâmica (Alocação LASTRO)
+// -----------------------------------------------------------------------------
+float wS1 = 33.33
+float wS2 = regimeState == 0 ? 33.33 : (regimeState == 1 ? 25.00 : (modeGradual ? 16.67 : 0.0))
+float wS3 = 100.0 - wS1 - wS2
+
+// -----------------------------------------------------------------------------
+// Tabela e HUD Visual
+// -----------------------------------------------------------------------------
+var table hud = table.new(
+     tablePos == "Superior direito" ? position.top_right :
+     tablePos == "Superior esquerdo" ? position.top_left :
+     tablePos == "Inferior direito" ? position.bottom_right : position.bottom_left,
+     5, 6, bgcolor=color.new(#131722, 10), border_color=color.new(#363c4e, 30), border_width=1)
+
+if barstate.islast and showTable
+    color statusColor = regimeState == 0 ? colNormal : (regimeState == 1 ? colWarning : colStress)
+    string statusText  = regimeState == 0 ? "NORMAL (Risk-On)" : (regimeState == 1 ? "ALERTA (De-risking)" : "ESTRESSE (Risk-Off)")
+
+    // Cabeçalho
+    table.cell(hud, 0, 0, "FUNDO SISTEMÁTICO LASTRO", bgcolor=color.new(#2962ff, 20), text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 0, "ESTADO: " + statusText, bgcolor=statusColor, text_color=color.black, text_size=size.small)
+    table.merge_cells(hud, 1, 0, 4, 0)
+
+    // Métricas Macro
+    table.cell(hud, 0, 1, "Sinal Macro", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 1, str.tostring(macroVal, "#.##"), text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 2, 1, "Z-Score (" + str.tostring(zWindow) + ")", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 1, str.tostring(zScore, "+#.##;-#.##"), text_color=statusColor, text_size=size.tiny)
+    table.cell(hud, 4, 1, "Histerese [" + str.tostring(exitZ, "#.#") + " / " + str.tostring(entryZ, "#.#") + "]", text_color=color.gray, text_size=size.tiny)
+
+    // Alocação dos Sleeves
+    table.cell(hud, 0, 2, "Sleeve 1: Factor Equity", text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 1, 2, tickerS1, text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 2, 2, "Peso Alocado:", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 2, str.tostring(wS1, "#.#") + "%", text_color=color.white, text_size=size.small)
+    table.cell(hud, 4, 2, "Âncora Estrutural", text_color=color.gray, text_size=size.tiny)
+
+    table.cell(hud, 0, 3, "Sleeve 2: Small Caps Mom", text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 1, 3, tickerS2, text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 2, 3, "Peso Alocado:", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 3, str.tostring(wS2, "#.#") + "%", text_color=statusColor, text_size=size.small)
+    table.cell(hud, 4, 3, regimeState > 0 ? "Migrando p/ BIL" : "100% Ativo", text_color=statusColor, text_size=size.tiny)
+
+    table.cell(hud, 0, 4, "Sleeve 3: T-Bills / Caixa", text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 1, 4, tickerS3, text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 2, 4, "Peso Alocado:", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 4, str.tostring(wS3, "#.#") + "%", text_color=color.white, text_size=size.small)
+    table.cell(hud, 4, 4, "Refúgio + Carrego", text_color=color.gray, text_size=size.tiny)
+
+    table.cell(hud, 0, 5, "Total Carteira", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 5, "100.0%", text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 2, 5, "Modo de Execução", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 5, "PAPER-ONLY", bgcolor=color.new(color.orange, 30), text_color=color.orange, text_size=size.tiny)
+    table.cell(hud, 4, 5, "Sem ordens reais", text_color=color.gray, text_size=size.tiny)
+
+// -----------------------------------------------------------------------------
+// Alertas Operacionais
+// -----------------------------------------------------------------------------
+bool regimeChanged = ta.change(regimeState) != 0
+
+if regimeChanged and barstate.isconfirmed
+    string alertMsg = "{\"event\":\"REGIME_CHANGE\",\"regime\":\"" + 
+                      (regimeState == 0 ? "NORMAL" : (regimeState == 1 ? "WARNING" : "STRESS")) + 
+                      "\",\"z_score\":" + str.tostring(zScore, "#.##") + 
+                      ",\"weights\":{\"sleeve1\":" + str.tostring(wS1) + 
+                      ",\"sleeve2\":" + str.tostring(wS2) + 
+                      ",\"sleeve3\":" + str.tostring(wS3) + "}}"
+    alert(alertMsg, alert.freq_once_per_bar_close)
+
+// Visualização de background sutil no gráfico
+bgcolor(regimeState == 2 ? color.new(colStress, 90) : (regimeState == 1 ? color.new(colWarning, 94) : na), title="Coloração de Fundo por Regime")

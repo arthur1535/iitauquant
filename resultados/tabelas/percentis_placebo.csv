@@ -1,0 +1,5 @@
+metric,percentile
+cagr,1.0
+sharpe,1.0
+max_drawdown,42.0
+mean_worst_months,56.0

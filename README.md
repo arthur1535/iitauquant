@@ -1,7 +1,7 @@
 # LASTRO — fundo sistemático multi-sleeve
 
-Backtest preliminar por proxies, suíte de auditoria, diagnóstico do overlay de risco,
-gráficos reprodutíveis e o indicador de regime para TradingView.
+Backtest preliminar por proxies, reconstrução macro point-in-time, gate estatístico,
+gráficos reprodutíveis e indicador de regime em modo shadow no TradingView.
 
 ## Relatório final
 
@@ -21,32 +21,45 @@ ou de instituição.
 python -m pip install -r requirements.txt
 
 python scripts/backtest_auditoria.py      # backtest por proxies + auditoria de vieses
-python scripts/diagnostico_overlay.py     # atribuição, ponto cego, sensibilidade, seguro
+python scripts/auditar_vintages_macro.py  # fotografias ALFRED disponíveis em cada mês
+python scripts/diagnostico_overlay.py     # atribuição, sensibilidade e gate estatístico
 python scripts/graficos_relatorio.py      # figuras R1..R7
 python scripts/build_relatorio.py         # monta AAKR.pdf e AAKR_retrato.pdf
 ```
 
+Para arquivar e reconciliar exportações mensais do TradingView sem preservar
+colunas de outros indicadores do layout:
+
+```bash
+python scripts/auditar_tradingview.py --baa10y "caminho/BAA10Y.csv" --nfci "caminho/NFCI.csv"
+```
+
+O resultado sanitizado fica em `dados/tradingview/`; a trilha de auditoria, com
+hashes dos arquivos brutos e o estado operacional vigente, fica em `resultados/`.
+
 Dados em `dados/`; métricas, regressões, pesos, testes e imagens em `resultados/`.
-Os parâmetros ficam congelados e identificados por hash em `resultados/manifesto_execucao.json`
-e `resultados/manifesto_revisao.json`.
+Os manifests preservam a identidade das execuções por hash. O hash dá rastreabilidade,
+mas não transforma a revisão exploratória em pré-registro ou holdout.
 
 O registro de uso de IA generativa está em `log_uso_genai.csv`; cada nova intervenção
 deve ser acrescentada no momento em que ocorrer.
 
 ## TradingView
 
-O painel Pine v6 está em `tradingview/regime_credito_baa.pine`. Ele reproduz o
-overlay revisado com `BAA10Y` + `NFCI`, usa somente fechamentos mensais confirmados,
-mostra os pesos vigentes e emite alertas quando a alocação muda. O passo a passo de
-instalação e os limites operacionais estão em `tradingview/README_EXPORTACAO_DADOS.md`.
+O painel Pine v6 está em `tradingview/regime_credito_baa.pine`. Ele calcula o candidato
+`BAA10Y` + `NFCI`, mas inicia com `Aprovar overlay para capital = false`. Nesse modo,
+o regime continua visível e alertado enquanto os pesos executáveis permanecem
+33,33% / 33,33% / 33,33%. O passo a passo e os limites operacionais estão em
+`tradingview/README_EXPORTACAO_DADOS.md`.
 
 ## O que o teste valida
 
-- z-score de 36 meses e histerese 1,0/0,5 nos dois eixos macro (`BAA10Y` e `NFCI`);
+- vintages ALFRED disponíveis em cada fechamento mensal para `BAA10Y` e `NFCI`;
+- z-score de 36 meses, histerese 1,0/0,5 e aplicação apenas em t+1;
 - aplicação do sinal apenas no mês seguinte ao da observação;
 - comparação Small Cap com e sem regime, e binário contra graduado;
 - pesos 33/33/33 no normal e migração proporcional ao nível de de-risking;
-- métricas, drawdown, correlações e regressões FF5 + Momentum;
+- DSR, bootstrap em blocos, placebos circulares e erros HAC;
 - verificações de datas, preços ajustados, dados ausentes e consistência retorno-peso.
 
 ## O que o teste ainda não valida
@@ -55,19 +68,21 @@ instalação e os limites operacionais estão em `tradingview/README_EXPORTACAO_
 pelas seleções point-in-time dos Sleeves 1 e 2, com custos e turnover próprios. Enquanto
 isso não acontecer, os números medem a arquitetura e o overlay — não o stock-picking.
 
-## Diagnóstico que motivou a revisão do modelo
+## Diagnóstico e decisão de governança
 
-`scripts/diagnostico_overlay.py` produz as quatro evidências que o relatório usa:
+`scripts/diagnostico_overlay.py` produz as evidências que o relatório usa:
 
 | Evidência | Resultado |
 |---|---|
-| Atribuição contra o benchmark | overlay `−1,05 pp/ano`, mais que as duas seleções somadas |
-| Ponto cego de 2022 | z do crédito entre `−0,77` e `+0,19` enquanto o mercado caiu 24% |
-| Sensibilidade (36 configurações) | 100% melhoram o drawdown máximo; 44% melhoram o Sharpe |
-| Overlay como seguro | prêmio cai de `−3,16` para `−1,33 pp/ano` com a mesma proteção de cauda |
+| Auditoria de vintage | 2 de 102 decisões diferem do histórico final revisado |
+| Atribuição contra o benchmark | overlay binário `-1,93 pp/ano`; proxies `-1,36 pp/ano` |
+| Ponto cego de 2022 | z do crédito entre `-0,81` e `+0,32` enquanto o SPY caiu 23,93% |
+| Sensibilidade (36 configurações) | 22% melhoram o drawdown; 0% melhoram o Sharpe |
+| Evidência estatística | DSR 0,03%; IC95% ativo `[-6,84%; -0,22%]` |
 
-A conclusão que daí resulta está implementada em `quant_fund/risk_overlay.py`: dois eixos
-macro em vez de um, e migração graduada em vez de binária.
+A conclusão é operacional: `shadow_mode`, `aprovado=false`. O overlay permanece como
+candidato de pesquisa; o capital não o executa até todos os gates e um teste futuro
+congelado serem aprovados.
 
 ## Pipeline das seleções por ação
 

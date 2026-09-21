@@ -12,11 +12,22 @@ fechamento de um mês só vira posição no mês seguinte.
   em junho; balanço disponível na data informada ou, na ausência dela, três meses
   depois do fechamento fiscal.
 - **Sleeve 2:** momentum 12–1 (`P(t-1) / P(t-12) - 1`); reversão do último mês;
-  z-scores transversais; composto 50/50; top 5%; peso igual; rebalanceamento mensal;
-  z-score móvel de 36 meses do spread Baa; histerese 1,0/0,5; migração integral para
-  BIL em estresse.
+  z-scores transversais; composto 50/50; top 5%; peso igual; rebalanceamento mensal.
+  O overlay combina o spread Baa–Treasury (`BAA10Y`) e o índice amplo de condições
+  financeiras (`NFCI`), ambos com z-score móvel e histerese 1,0/0,5. Cada eixo aceso
+  migra 25% do Sleeve 2 para BIL, até o limite de 50%.
 - **Sleeve 3:** retorno mensal do preço ajustado do BIL e peso integral no instrumento.
-- **Fundo:** pesos exatos de 1/3–1/3–1/3 em regime normal e 1/3–0–2/3 em estresse.
+- **Fundo:** a decisão observada no fechamento de `t` só altera a posição de `t+1`.
+  Com 0/1/2 eixos acesos, os pesos fator/small caps/BIL são, respectivamente,
+  33,33/33,33/33,33%, 33,33/25,00/41,67% e 33,33/16,67/50,00%.
+
+O argumento `financial_conditions` ativa o overlay de dois eixos na API. Se ele não
+for informado, `run_pipeline` e `build_sleeve2` preservam o comportamento credit-only
+anterior: BAA10Y binário e migração integral do Sleeve 2 para BIL.
+
+Esse acionamento gera o **cenário de pesquisa**, não uma autorização de capital. O
+manifesto vigente registra `governanca.aprovado=false`; no TradingView, a flag de
+capital inicia desligada e mantém 1/3 por sleeve enquanto o overlay permanece shadow.
 
 Os parâmetros são centralizados em `quant_fund/config.py`. Junho é uma convenção
 operacional parametrizável; a documentação original fixa a frequência anual, mas não
@@ -34,6 +45,7 @@ devem ser **ajustados por dividendos e desdobramentos**.
 | `factor_fundamentals.csv` | long: colunas descritas abaixo |
 | `small_cap_prices.csv` | wide: `date, ticker1, ticker2, ...` |
 | `credit_spread.csv` | `date, spread` — FRED `BAA10Y` |
+| `financial_conditions.csv` | opcional, `date, NFCI` — Chicago Fed `NFCI` |
 | `bil_prices.csv` | `date, BIL` |
 | `small_cap_membership.csv` | opcional, wide de booleanos point-in-time |
 
@@ -64,7 +76,8 @@ Parâmetros principais podem ser alterados na linha de comando:
 
 ```powershell
 python run_quant_pipeline.py --sleeve1-top-n 50 --sleeve1-rebalance-month 6 `
-  --sleeve2-top-fraction 0.05 --stress-entry-z 1.0 --stress-exit-z 0.5
+  --sleeve2-top-fraction 0.05 --stress-entry-z 1.0 --stress-exit-z 0.5 `
+  --financial-conditions-file financial_conditions.csv --max-derisk 0.50
 ```
 
 ## Entregas geradas
@@ -73,8 +86,8 @@ A pasta de saída contém:
 
 - sinais completos e seleção de cada sleeve;
 - pesos mensais wide de cada sleeve;
-- regime de crédito observado e regime efetivo defasado;
-- carteira do Sleeve 2 sempre ligada e carteira com migração para BIL;
+- z-scores, votos por eixo, `derisk_sinal` e `derisk_aplicado` defasado no modo dual;
+- carteira do Sleeve 2 sempre ligada e carteira com migração graduada para BIL;
 - alocações mensais entre sleeves;
 - pesos consolidados por instrumento, em formatos wide e long;
 - retornos mensais dos sleeves e do fundo.

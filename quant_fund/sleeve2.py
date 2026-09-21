@@ -1,4 +1,4 @@
-"""Sleeve 2: momentum 12–1, reversão mensal e regime de crédito."""
+"""Sleeve 2: momentum 12–1, reversão mensal e overlay de risco."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 
 from .config import Sleeve2Config
+from .risk_overlay import RiskOverlayConfig, build_risk_overlay
 from .utils import (
     cross_sectional_zscore,
     ensure_numeric_frame,
@@ -96,8 +97,16 @@ def build_sleeve2(
     bil_prices: pd.Series | None = None,
     universe_membership: pd.DataFrame | None = None,
     config: Sleeve2Config | None = None,
+    *,
+    financial_conditions: pd.Series | None = None,
+    risk_overlay_config: RiskOverlayConfig | None = None,
 ) -> Sleeve2Result:
-    """Constrói rankings mensais e migra integralmente para BIL no estresse."""
+    """Constrói rankings mensais e aplica o regime defensivo no mês seguinte.
+
+    Sem ``financial_conditions``, preserva o regime histórico credit-only e a
+    migração integral para BIL. Quando o segundo eixo é informado, aplica o
+    overlay graduado configurado por ``RiskOverlayConfig``.
+    """
 
     config = config or Sleeve2Config()
     prices = ensure_numeric_frame(adjusted_prices, "adjusted_prices do Sleeve 2")
@@ -164,13 +173,27 @@ def build_sleeve2(
     risky_returns = portfolio_returns(prices, risky_weights)
     risky_returns.name = "sleeve2_risky_return"
 
-    regime = build_credit_regime(credit_spread, prices.index, config)
+    if financial_conditions is None:
+        regime = build_credit_regime(credit_spread, prices.index, config)
+        derisk_applied = regime["regime_effective"].eq("stress").astype(float)
+    else:
+        overlay_config = risk_overlay_config or RiskOverlayConfig()
+        if len(overlay_config.axis_labels) != 2:
+            raise ValueError("O overlay BAA10Y+NFCI exige exatamente dois rótulos de eixo.")
+        axes = {
+            overlay_config.axis_labels[0]: credit_spread,
+            overlay_config.axis_labels[1]: financial_conditions,
+        }
+        regime = build_risk_overlay(axes, prices.index, overlay_config)
+        derisk_applied = regime["derisk_aplicado"]
+
     regime_columns = prices.columns.union(pd.Index([config.bil_ticker]))
     weights_with_regime = pd.DataFrame(0.0, index=prices.index, columns=regime_columns)
-    weights_with_regime.loc[:, prices.columns] = risky_weights
-    stress_dates = regime.index[regime["regime_effective"].eq("stress")]
-    weights_with_regime.loc[stress_dates, prices.columns] = 0.0
-    weights_with_regime.loc[stress_dates, config.bil_ticker] = 1.0
+    derisk_applied = derisk_applied.reindex(prices.index).fillna(0.0).clip(0.0, 1.0)
+    weights_with_regime.loc[:, prices.columns] = risky_weights.mul(
+        1.0 - derisk_applied, axis=0
+    )
+    weights_with_regime.loc[:, config.bil_ticker] = derisk_applied
 
     returns_with_regime: pd.Series | None = None
     if bil_prices is not None:

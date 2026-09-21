@@ -1,0 +1,119 @@
+//@version=5
+indicator("LASTRO Sleeve 2 — Momentum 12-1 & Reversion Engine", shorttitle="Mom12-1-Rev", overlay=false)
+
+// =============================================================================
+// LASTRO Sleeve 2 — Motor de Momentum 12-1 e Reversão de Curto Prazo
+// Base Matemática Oficial do Fundo Sistemático LASTRO / Desafio Quant AI 2026
+//
+// O Sleeve 2 captura duas anomalias empíricas de mercado:
+// 1. Momentum Intermediário (12-1): Retorno dos 12 meses anteriores excluindo
+//    o mês mais recente (t-12 até t-1), capturando continuidade de tendência.
+// 2. Reversão de Curto Prazo (1M): Retorno do último mês (t-1 até t) com sinal
+//    invertido, capturando sobrecompra/sobrevenda e liquidez.
+//
+// Ambos os fatores são normalizados via Z-score e combinados com peso 50/50.
+// Um filtro de Força Relativa contra o Benchmark (SPY / IBOV) confirma o alfa.
+// =============================================================================
+
+// --- Parâmetros ---
+string GRP_PARAM = "1. Janelas Temporais (Base Diária)"
+int momLookback = input.int(252, "Janela Total de Momentum (12M)", minval=60, group=GRP_PARAM)
+int skipRecent  = input.int(21,  "Janela de Exclusão / Reversão (1M)", minval=5, group=GRP_PARAM)
+int zscorePeriod = input.int(126, "Janela de Normalização Z-Score", minval=20, group=GRP_PARAM)
+
+string GRP_BENCH = "2. Benchmark de Força Relativa"
+string benchSymbol = input.symbol("AMEX:SPY", "Ativo de Referência", group=GRP_BENCH)
+bool showRelativeCurve = input.bool(true, "Exibir Curva de Alfa Relativo", group=GRP_BENCH)
+
+string GRP_LEVELS = "3. Limiares de Seleção Top 5%"
+float topThreshold = input.float(1.645, "Limiar Top 5% (+1.645 Sigma)", step=0.1, group=GRP_LEVELS)
+float bottomThreshold = input.float(-1.645, "Limiar Inferior (-1.645 Sigma)", step=0.1, group=GRP_LEVELS)
+
+// -----------------------------------------------------------------------------
+// Cálculos de Momentum 12-1 e Reversão 1M
+// -----------------------------------------------------------------------------
+// Momentum 12-1: retorno de (t - skipRecent) em relação a (t - momLookback)
+float closeSkip = close[skipRecent]
+float closePast = close[momLookback]
+float rawMom12_1 = (not na(closeSkip) and not na(closePast) and closePast > 0) ? (closeSkip / closePast - 1.0) : na
+
+// Reversão de 1 mês: retorno recente com sinal invertido
+float rawRev1M = (not na(closeSkip) and closeSkip > 0) ? -1.0 * (close / closeSkip - 1.0) : na
+
+// -----------------------------------------------------------------------------
+// Normalização por Z-Score Móvel
+// -----------------------------------------------------------------------------
+f_zscore(float src, int len) =>
+    float m = ta.sma(src, len)
+    float s = ta.stdev(src, len)
+    s > 0.0 ? (src - m) / s : 0.0
+
+float zMom = f_zscore(rawMom12_1, zscorePeriod)
+float zRev = f_zscore(rawRev1M, zscorePeriod)
+
+// Nota Composta 50/50 (Conforme Seção 3 do Tutorial do Fundo)
+float compositeScore = (zMom * 0.5) + (zRev * 0.5)
+
+// -----------------------------------------------------------------------------
+// Força Relativa contra o Benchmark
+// -----------------------------------------------------------------------------
+float benchClose = request.security(benchSymbol, timeframe.period, close, lookahead=barmerge.lookahead_off)
+float relativeRatio = (not na(benchClose) and benchClose > 0) ? (close / benchClose) : na
+float relativeMom = ta.change(relativeRatio, skipRecent) / relativeRatio[skipRecent]
+float zRelative = f_zscore(relativeMom, zscorePeriod)
+
+// -----------------------------------------------------------------------------
+// Visualização Gráfica
+// -----------------------------------------------------------------------------
+// Níveis de Referência
+hline(0.0, "Linha Zero (Neutro)", color=color.gray, linestyle=hline.style_dotted)
+hTop = hline(topThreshold, "Top 5% Alpha (Seleção)", color=color.green, linestyle=hline.style_dashed)
+hBot = hline(bottomThreshold, "Bottom 5% (Exclusão)", color=color.red, linestyle=hline.style_dashed)
+fill(hTop, hBot, color=color.new(color.blue, 96), title="Zona Intermediária")
+
+// Histograma da Nota Composta
+color histColor = compositeScore >= topThreshold ? color.new(#00e676, 0) :
+                  compositeScore > 0 ? color.new(#29b6f6, 30) :
+                  compositeScore <= bottomThreshold ? color.new(#ff1744, 0) :
+                  color.new(#ff9100, 30)
+
+plot(compositeScore, "Nota Composta Sleeve 2", color=histColor, style=plot.style_columns)
+plot(showRelativeCurve ? zRelative : na, "Z-Score Força Relativa vs Benchmark", color=color.new(#ffd600, 0), linewidth=2)
+
+// -----------------------------------------------------------------------------
+// Diagnóstico Visual HUD
+// -----------------------------------------------------------------------------
+var table hud = table.new(position.top_right, 3, 5, bgcolor=color.new(#131722, 10), border_color=color.new(#363c4e, 30), border_width=1)
+
+if barstate.islast
+    bool isTop5 = compositeScore >= topThreshold
+    string rankStatus = isTop5 ? "ELEGÍVEL TOP 5%" : (compositeScore > 0 ? "POSITIVO" : "ABAIXO DA MÉDIA")
+    color rankColor = isTop5 ? color.new(#00c853, 20) : (compositeScore > 0 ? color.new(#0288d1, 20) : color.new(#d32f2f, 20))
+
+    table.cell(hud, 0, 0, "SLEEVE 2 FACTOR ENGINE", bgcolor=color.new(#00897b, 20), text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 0, rankStatus, bgcolor=rankColor, text_color=color.white, text_size=size.small)
+    table.merge_cells(hud, 1, 0, 2, 0)
+
+    table.cell(hud, 0, 1, "Z-Score Momentum 12-1", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 1, str.tostring(zMom, "+#.##;-#.##"), text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 2, 1, "Peso: 50%", text_color=color.gray, text_size=size.tiny)
+
+    table.cell(hud, 0, 2, "Z-Score Reversão 1M", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 2, str.tostring(zRev, "+#.##;-#.##"), text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 2, 2, "Peso: 50%", text_color=color.gray, text_size=size.tiny)
+
+    table.cell(hud, 0, 3, "Nota Composta Final", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 3, str.tostring(compositeScore, "+#.##;-#.##"), text_color=isTop5 ? color.green : color.white, text_size=size.small)
+    table.cell(hud, 2, 3, "Limiar: " + str.tostring(topThreshold, "#.##"), text_color=color.gray, text_size=size.tiny)
+
+    table.cell(hud, 0, 4, "Alfa Relativo vs " + benchSymbol, text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 4, str.tostring(zRelative, "+#.##;-#.##"), text_color=zRelative > 0 ? color.yellow : color.gray, text_size=size.tiny)
+    table.cell(hud, 2, 4, "Normalizado", text_color=color.gray, text_size=size.tiny)
+
+// -----------------------------------------------------------------------------
+// Alerta de Entrada na Zona Top 5%
+// -----------------------------------------------------------------------------
+bool crossedIntoTop = ta.crossover(compositeScore, topThreshold)
+if crossedIntoTop and barstate.isconfirmed
+    string alertPayload = "{\"event\":\"SLEEVE2_TOP5_SELECTION\",\"ticker\":\"" + syminfo.ticker + "\",\"composite_score\":" + str.tostring(compositeScore, "#.##") + ",\"z_mom\":" + str.tostring(zMom, "#.##") + ",\"z_rev\":" + str.tostring(zRev, "#.##") + ",\"timestamp\":" + str.tostring(timenow) + "}"
+    alert(alertPayload, alert.freq_once_per_bar_close)

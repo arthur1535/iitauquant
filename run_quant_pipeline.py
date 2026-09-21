@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from quant_fund import (
+    RiskOverlayConfig,
     Sleeve1Config,
     Sleeve2Config,
     export_pipeline_result,
@@ -56,6 +57,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--sleeve2-top-fraction", type=float, default=0.05)
     parser.add_argument("--stress-entry-z", type=float, default=1.0)
     parser.add_argument("--stress-exit-z", type=float, default=0.5)
+    parser.add_argument(
+        "--financial-conditions-file",
+        type=Path,
+        help=(
+            "CSV de condições financeiras, relativo a --input-dir. "
+            "Se omitido, usa financial_conditions.csv quando existente."
+        ),
+    )
+    parser.add_argument("--overlay-window-months", type=int, default=36)
+    parser.add_argument("--overlay-min-periods", type=int, default=24)
+    parser.add_argument("--max-derisk", type=float, default=0.50)
     return parser.parse_args()
 
 
@@ -67,6 +79,18 @@ def main() -> None:
     factor_path = source / "factor_prices.csv"
     fundamentals = _fundamentals_csv(source / "factor_fundamentals.csv")
     needs_close = "market_cap" not in fundamentals or fundamentals["market_cap"].isna().any()
+    if args.financial_conditions_file is None:
+        default_financial_path = source / "financial_conditions.csv"
+        financial_path = default_financial_path if default_financial_path.exists() else None
+    else:
+        financial_path = args.financial_conditions_file
+        if not financial_path.is_absolute():
+            financial_path = source / financial_path
+        if not financial_path.exists():
+            raise FileNotFoundError(f"Arquivo de condições financeiras ausente: {financial_path}")
+    financial_conditions = (
+        _series_csv(financial_path, "NFCI") if financial_path is not None else None
+    )
     result = run_pipeline(
         factor_prices=_wide_csv(factor_path),
         factor_market_prices=_wide_csv(factor_path, "close") if needs_close else None,
@@ -83,6 +107,18 @@ def main() -> None:
             selection_fraction=args.sleeve2_top_fraction,
             stress_entry_z=args.stress_entry_z,
             stress_exit_z=args.stress_exit_z,
+        ),
+        financial_conditions=financial_conditions,
+        risk_overlay_config=(
+            RiskOverlayConfig(
+                zscore_window_months=args.overlay_window_months,
+                zscore_min_periods=args.overlay_min_periods,
+                stress_entry_z=args.stress_entry_z,
+                stress_exit_z=args.stress_exit_z,
+                max_derisk=args.max_derisk,
+            )
+            if financial_conditions is not None
+            else None
         ),
     )
     export_pipeline_result(result, args.output_dir)
