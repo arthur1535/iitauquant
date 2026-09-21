@@ -24,9 +24,10 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 CHINESE_ETFS = ["MCHI", "KWEB", "FXI", "ASHR", "CQQQ"]
 CHINESE_STOCKS = ["BABA", "PDD", "JD", "BIDU", "NIO"]
-PEER_BENCHMARKS = ["SPY", "NVDA", "VALE3.SA"]
+BRAZIL_STOCKS = ["PETR4.SA", "VALE3.SA", "ITUB4.SA", "WEGE3.SA", "PRIO3.SA"]
+GLOBAL_BENCHMARKS = ["SPY", "QQQ", "NVDA", "AAPL"]
 
-ALL_TICKERS = CHINESE_ETFS + CHINESE_STOCKS + PEER_BENCHMARKS
+ALL_TICKERS = CHINESE_ETFS + CHINESE_STOCKS + BRAZIL_STOCKS + GLOBAL_BENCHMARKS
 
 
 def fetch_or_load(ticker: str, start_date: str = "2020-01-01") -> pd.DataFrame | None:
@@ -96,7 +97,14 @@ def run_analysis():
         m = res.metrics
 
         # Determinar categoria
-        cat = "ETF China" if ticker in CHINESE_ETFS else ("Ação China" if ticker in CHINESE_STOCKS else "Benchmark/Peer")
+        if ticker in CHINESE_ETFS:
+            cat = "ETF China"
+        elif ticker in CHINESE_STOCKS:
+            cat = "Ação China"
+        elif ticker in BRAZIL_STOCKS:
+            cat = "Ação Brasil (B3)"
+        else:
+            cat = "Global / US Tech"
 
         records.append({
             "ticker": ticker,
