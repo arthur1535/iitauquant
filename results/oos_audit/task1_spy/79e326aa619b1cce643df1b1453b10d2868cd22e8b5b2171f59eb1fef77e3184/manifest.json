@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "status": "planned",
+  "reason": null,
+  "run_id": "79e326aa619b1cce643df1b1453b10d2868cd22e8b5b2171f59eb1fef77e3184",
+  "created_at_utc": "2026-09-21T04:21:00.096285+00:00",
+  "mode": "dry_run_planning",
+  "dry_run": true,
+  "classification": "retrospective_pseudo_oos",
+  "governance": {
+    "shadow_mode": true,
+    "aprovado": false,
+    "promotion_allowed": false,
+    "network_access": false,
+    "broker_connected": false,
+    "rationale": "Dados de 2023 a 2026 já integraram a pesquisa exploratória prévia em Global Leaders. Classificado estritamente como pseudo-OOS retrospectivo; não substitui holdout cego de produção."
+  },
+  "target_command": ".\\.venv\\Scripts\\python.exe scripts/run_out_of_sample_audit.py --dry-run --symbols SPY --is-end 2022-12-31 --oos-start 2023-01-01 --as-of 2026-09-21 --train-bars 504 --test-bars 63 --purge-bars 1 --embargo-bars 5 --output-dir results/oos_audit/task1_spy",
+  "inputs": {
+    "symbols": [
+      "SPY"
+    ],
+    "is_end": "2022-12-31",
+    "oos_start": "2023-01-01",
+    "as_of": "2026-09-21",
+    "train_bars": 504,
+    "test_bars": 63,
+    "purge_bars": 1,
+    "embargo_bars": 5,
+    "dry_run": true,
+    "output_dir": "results/oos_audit/task1_spy"
+  },
+  "purging_and_embargo": {
+    "purging_status": "gap_only_not_event_purged",
+    "purge_bars": 1,
+    "embargo_bars": 5,
+    "notes": "1 bar de purge e 5 barras de embargo são convenções estruturais para teste do planejador, não limites econometricamente provados. O splitter utiliza gaps planos e não recebe intervalos de eventos/trades. A reserva OOS permanece intocada."
+  },
+  "warmup_and_execution_policy": {
+    "warmup": "Barras anteriores podem aquecer indicadores sem contabilizar P&L.",
+    "execution": "Execução causal estritamente no open de t+1.",
+    "positions": "Cada partição inicia sem posição (zerada) e liquida ao final com custos teóricos.",
+    "assumed_cost_per_side": 0.0015
+  },
+  "metrics": {
+    "dsr": null,
+    "pbo": null,
+    "sharpe_is": null,
+    "sharpe_oos": null,
+    "reason": "not_computed_in_dry_run"
+  },
+  "identity": {
+    "config": {
+      "symbols": [
+        "SPY"
+      ],
+      "is_end": "2022-12-31",
+      "oos_start": "2023-01-01",
+      "as_of": "2026-09-21",
+      "train_bars": 504,
+      "test_bars": 63,
+      "purge_bars": 1,
+      "embargo_bars": 5,
+      "dry_run": true
+    },
+    "file_hashes": {
+      "SPY": "dd4c573d6f9c109d3b0e461d9cd759f3d0c7451a3650ec30f578f2cd9d1047ed"
+    },
+    "data_fingerprints": {
+      "SPY": "75b54c3a121097e615f8b2fdc6187adab532b86a94316ae976bb6b84fcda90d9"
+    },
+    "source_hashes": {
+      "run_out_of_sample_audit.py": "10da1fadee38c2986e7a0a937a65ae041689c2e9e2c734fbd2eccdaec8975abe",
+      "validation.py": "23125d5c13b08169270f91890591003691b896061120bb35129ea4812f4049a9",
+      "momentum_atr.py": "b8bde0f3efc5040e96b3b634573b1f849764ab4c00d55d5074367156887a7bdf"
+    },
+    "specification_sha256": "5c76c93fc0c54f0f963df25ed4166a4941c98f49bacc360d9ce2e35e1a238622",
+    "environment": {
+      "python_version": "3.12.10",
+      "packages": {
+        "numpy": "2.5.2",
+        "pandas": "3.0.5",
+        "pyarrow": "25.0.1",
+        "fastapi": "0.141.1"
+      },
+      "git_commit": "7a4739364a75173baac06c3cad2ff236c0ac8c42"
+    }
+  },
+  "artifacts": {
+    "manifest_json": "results\\oos_audit\\task1_spy\\79e326aa619b1cce643df1b1453b10d2868cd22e8b5b2171f59eb1fef77e3184\\manifest.json",
+    "coverage_csv": "results\\oos_audit\\task1_spy\\79e326aa619b1cce643df1b1453b10d2868cd22e8b5b2171f59eb1fef77e3184\\coverage.csv",
+    "folds_csv": "results\\oos_audit\\task1_spy\\79e326aa619b1cce643df1b1453b10d2868cd22e8b5b2171f59eb1fef77e3184\\folds.csv"
+  },
+  "summary": {
+    "symbols_requested": [
+      "SPY"
+    ],
+    "symbols_available": [
+      "SPY"
+    ],
+    "symbols_issues": [],
+    "total_folds_planned": 4,
+    "incomplete_folds": 1,
+    "oos_reserve_bars": {
+      "SPY": 922
+    }
+  }
+}
