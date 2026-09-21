@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Taiwan Semiconductor / TSMC34 — Análise Financeira, Quantitativa e Cenários</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #475569;
+      --paper: #f8fafc;
+      --card: #ffffff;
+      --line: #e2e8f0;
+      --tsmc-blue: #0284c7;
+      --tsmc-dark: #0369a1;
+      --tsmc-accent: #38bdf8;
+      --green: #15803d;
+      --green-bg: #f0fdf4;
+      --red: #b91c1c;
+      --red-bg: #fef2f2;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --navy: #091322;
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--tsmc-blue); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    .wrap { max-width: 1200px; margin: auto; padding: 32px 24px; }
+    header {
+      background: linear-gradient(135deg, #091322 0%, #0f2744 60%, #034b75 100%);
+      color: #fff;
+      border-top: 8px solid var(--tsmc-accent);
+      padding: 46px;
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      color: var(--tsmc-accent);
+      font-weight: 750;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: .8rem;
+    }
+    .meta { color: #94a3b8; font-size: .9rem; margin-top: 6px; }
+    h1 {
+      font-size: clamp(2.1rem, 4.2vw, 3.8rem);
+      line-height: 1.05;
+      margin: .4rem 0 1rem;
+      max-width: 980px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    h2 { font-size: 1.65rem; line-height: 1.25; margin: 0 0 16px; color: var(--navy); font-weight: 750; }
+    h3 { font-size: 1.1rem; margin: 0 0 8px; font-weight: 700; }
+    .verdict {
+      margin: 26px 0 0;
+      padding: 20px 24px;
+      border-left: 5px solid var(--tsmc-accent);
+      background: rgba(15, 39, 68, 0.85);
+      border-radius: 0 6px 6px 0;
+      font-size: 1.08rem;
+      backdrop-filter: blur(8px);
+    }
+    .grid { display: grid; gap: 20px; }
+    .kpis { grid-template-columns: repeat(4, 1fr); margin: 24px 0; }
+    .kpi, .card, section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+    }
+    .kpi { padding: 20px; }
+    .kpi b { display: block; font-size: 1.65rem; line-height: 1.15; color: var(--navy); }
+    .kpi span { color: var(--muted); font-size: .84rem; font-weight: 500; }
+    section { padding: 32px; margin: 22px 0; }
+    .two { grid-template-columns: 1fr 1fr; }
+    .three { grid-template-columns: repeat(3, 1fr); }
+    .four { grid-template-columns: repeat(4, 1fr); }
+    .card { padding: 22px; box-shadow: none; }
+    .card p:last-child { margin-bottom: 0; }
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      color: #334155;
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 10px;
+    }
+    .positive { border-top: 4px solid var(--green); }
+    .negative { border-top: 4px solid var(--red); }
+    .neutral { border-top: 4px solid var(--tsmc-blue); }
+    .highlight { border-top: 4px solid var(--amber); }
+    table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: right; vertical-align: top; }
+    th:first-child, td:first-child { text-align: left; }
+    thead th { background: #f1f5f9; color: #334155; font-weight: 700; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: #f8fafc; }
+    .callout {
+      padding: 20px 24px;
+      background: #f0f9ff;
+      border-left: 5px solid var(--tsmc-blue);
+      margin: 18px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .callout-warn {
+      padding: 20px 24px;
+      background: var(--amber-bg);
+      border-left: 5px solid var(--amber);
+      margin: 18px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .small { font-size: .84rem; color: var(--muted); line-height: 1.5; }
+    .barrow {
+      display: grid;
+      grid-template-columns: 190px 1fr 80px;
+      gap: 12px;
+      align-items: center;
+      margin: 12px 0;
+    }
+    .bar { height: 14px; background: #e2e8f0; border-radius: 7px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--tsmc-blue), var(--tsmc-accent)); }
+    .scenario-bear { color: var(--red); font-weight: 750; }
+    .scenario-base { color: var(--tsmc-dark); font-weight: 750; }
+    .scenario-bull { color: var(--green); font-weight: 750; }
+    ul { padding-left: 20px; }
+    li { margin: .5rem 0; }
+    .decision { font-size: 1.1rem; }
+    .sources li { margin: .75rem 0; }
+    .footer { color: var(--muted); font-size: .82rem; padding: 12px 4px 40px; text-align: center; }
+    .badge-win { color: var(--green); font-weight: 700; }
+    .badge-loss { color: var(--red); font-weight: 700; }
+    .formula-box {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 16px 20px;
+      border-radius: 6px;
+      font-family: "Fira Code", Consolas, Monaco, monospace;
+      font-size: .95rem;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    @media (max-width: 860px) {
+      .wrap { padding: 14px; }
+      header, section { padding: 22px; }
+      .kpis, .two, .three, .four { grid-template-columns: 1fr; }
+      .barrow { grid-template-columns: 130px 1fr 60px; }
+      table { font-size: .82rem; }
+      th, td { padding: 8px 6px; }
+    }
+  </style>
+</head>
+<body>
+<main class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="eyebrow">Pesquisa Quantitativa &amp; Fundamentalista • NYSE: TSM / B3: TSMC34 / TWSE: 2330</div>
+    <h1>Taiwan Semiconductor (TSMC): O Monopólio Tecnológico da Era da Inteligência Artificial</h1>
+    <p class="meta">Data-base: 21 set. 2026 • Horizonte: 12–24 meses • Moeda: US$ (ADR) e R$ (BDR) • Paridade: 1 ADR TSM = 8 BDRs TSMC34 (1/8)</p>
+    <div class="verdict">
+      <strong>Veredito: Compra Estrutural (Overweight de Qualidade) / Acúmulo em Correções.</strong><br>
+      A TSMC detém mais de 90% do mercado de semicondutores de ponta (&lt;7nm) e 100% da produção dos aceleradores de IA de última geração da Nvidia, AMD e Apple. O crescimento de receita acima de 40% a/a em 2026 com margem bruta recorde de 67,7% confirma poder de precificação ímpar. O P/L projetado para 2027 (20,3x) oferece excelente assimetria para uma líder com balanço de caixa líquido e ROE &gt; 30%, tendo a tensão geopolítica em Taiwan e a rampa do empacotamento CoWoS como os riscos centrais a monitorar.
+    </div>
+  </header>
+
+  <!-- KPI CARDS -->
+  <div class="grid kpis">
+    <div class="kpi">
+      <b>US$ 445,14</b>
+      <span>TSM (NYSE) em 21 set. 2026</span>
+    </div>
+    <div class="kpi">
+      <b>R$ 282,95</b>
+      <span>TSMC34 (B3) • Paridade R$ 284,28</span>
+    </div>
+    <div class="kpi">
+      <b>20,3x</b>
+      <span>P/L Projetado 2027 (EPS US$ 21,93)</span>
+    </div>
+    <div class="kpi">
+      <b>67,7%</b>
+      <span>Margem Bruta no 2T26 (Receita US$ 40,2 bi)</span>
+    </div>
+  </div>
+
+  <!-- CONCLUSÃO DIRETA -->
+  <section>
+    <h2>1. Conclusão Executiva em Linguagem Direta</h2>
+    <div class="grid three">
+      <div class="card positive">
+        <span class="tag">Fosso Econômico</span>
+        <h3>Insubstituível Globalmente</h3>
+        <p>Praticamente nenhum modelo avançado de inteligência artificial ou smartphone premium no planeta pode ser fabricado sem a TSMC. Sua liderança no nó N3 (3nm) e a entrada pioneira em 2nm GAA (N2) deixaram Intel Foundry e Samsung a anos de distância técnica.</p>
+      </div>
+      <div class="card positive">
+        <span class="tag">Momento Operacional</span>
+        <h3>Aceleração de Lucros</h3>
+        <p>No 2T26, a receita consolidada alcançou US$ 40,2 bilhões (+33,7% a/a) e a margem operacional ultrapassou 60%. O guidance para o ano de 2026 foi revisado para expansão superior a 40% em dólares, sustentado pela demanda incessante por chips de data centers.</p>
+      </div>
+      <div class="card neutral">
+        <span class="tag">Valuation &amp; Preço</span>
+        <h3>Múltiplo Razoável com Risco Geopolítico</h3>
+        <p>Negociando a ~33,2x lucros passados mas apenas 20,3x o EPS estimado de 2027, a TSMC não está cara quando ajustada pelo crescimento (PEG &lt; 1,0). O desconto histórico do múltiplo existe justamente pelo risco de invasão ou bloqueio naval da ilha de Taiwan pela China.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>O que o mercado está precificando hoje:</strong> Sustentação do superciclo de capex em IA dos hyperscalers (Microsoft, Meta, Google, Amazon), rampa bem-sucedida do nó de 2nm até o fim de 2026 e ampliação de capacidade do empacotamento avançado CoWoS sem disrupção militar no Estreito de Taiwan.
+    </div>
+  </section>
+
+  <!-- NÓS TECNOLÓGICOS E ESTRUTURA OPERACIONAL -->
+  <section>
+    <h2>2. Raio-X Tecnológico: Nós Avançados e o Gargalo de IA</h2>
+    <div class="grid two">
+      <div class="card highlight">
+        <h3>Composição da Receita por Nó Tecnológico (2T26)</h3>
+        <p>A fatia de nós avançados (&le; 7nm) atingiu <strong>77% do faturamento total</strong> de wafers da companhia:</p>
+        <div class="barrow">
+          <strong>5nm / 4nm (N5/N4)</strong>
+          <div class="bar"><i style="width: 33%"></i></div>
+          <b>33%</b>
+        </div>
+        <div class="barrow">
+          <strong>3nm (N3)</strong>
+          <div class="bar"><i style="width: 30%"></i></div>
+          <b>30%</b>
+        </div>
+        <div class="barrow">
+          <strong>7nm (N7)</strong>
+          <div class="bar"><i style="width: 11%"></i></div>
+          <b>11%</b>
+        </div>
+        <div class="barrow">
+          <strong>2nm (N2 GAA)</strong>
+          <div class="bar"><i style="width: 4%"></i></div>
+          <b>3% (rampa)</b>
+        </div>
+        <div class="barrow">
+          <strong>Nós Maduros (&ge; 16nm)</strong>
+          <div class="bar"><i style="width: 23%"></i></div>
+          <b>23%</b>
+        </div>
+        <p class="small">O nó N3 opera a plena capacidade (&gt;100% de utilização), saltando para 180.000 wafers/mês. A tecnologia de 2nm já entrou em produção comercial no 2T26 com meta de 100.000 wafers/mês até dezembro de 2026.</p>
+      </div>
+
+      <div class="card positive">
+        <h3>CoWoS: O Verdadeiro Gargalo de IA &amp; Capex</h3>
+        <p>A demanda por aceleradores de IA (como Nvidia Blackwell B200/GB200 e arquiteturas Rubin) não é limitada pelo corte do silício, mas sim pelo <em>advanced packaging</em> <strong>CoWoS (Chip-on-Wafer-on-Substrate)</strong>.</p>
+        <ul>
+          <li><strong>Capex 2026 Elevado:</strong> A TSMC elevou seu plano de investimentos em 2026 para a faixa de <strong>US$ 60 a US$ 64 bilhões</strong>, focando na expansão de fábricas CoWoS e equipamentos EUV High-NA.</li>
+          <li><strong>Diversificação Geográfica:</strong>
+            <ul>
+              <li><strong>EUA (Arizona Fab 21):</strong> Produção inicial de 4nm em testes de rendimento elevados; subsídios do CHIPS Act assegurados.</li>
+              <li><strong>Japão (Kumamoto JASM):</strong> Fab 1 operacional com apoio integral do governo japonês e clientes automotivos (Sony, Denso).</li>
+              <li><strong>Europa (Dresden ESMC):</strong> Foco em nós automotivos e industriais avançados na Alemanha.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTADOS DO MOTOR QUANTITATIVO DO REPOSITÓRIO -->
+  <section id="quantitativo">
+    <h2>3. Análise Quantitativa: Simulação Causal do Repositório (2020 – 2026)</h2>
+    <p>Executamos o motor de backtest do repositório (<code>src.backtest.engine</code>) com sinais estritamente causais (decisão no fechamento $t$, execução no open $t+1$), aplicando fricção de 15 bps bilateral (0,0015) e trailing stop ATR Ratchet (janela de momentum 20 dias, ATR 14 dias, multiplicador 2,5x):</p>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Ativo / Ticker</th>
+          <th>Estratégia</th>
+          <th>Retorno Total</th>
+          <th>CAGR</th>
+          <th>Vol. Anual</th>
+          <th>Sharpe</th>
+          <th>Max Drawdown</th>
+          <th>Trades / Win Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: #f0f9ff;">
+          <td><strong>TSM (ADR USD)</strong></td>
+          <td><strong>Momentum ATR</strong></td>
+          <td><strong>+179,68%</strong></td>
+          <td><strong>16,60%</strong></td>
+          <td><strong>25,37%</strong></td>
+          <td><strong>0,731</strong></td>
+          <td class="badge-win"><strong>-45,33%</strong></td>
+          <td>81 trades (40,7%)</td>
+        </tr>
+        <tr>
+          <td>TSM (ADR USD)</td>
+          <td>Buy &amp; Hold</td>
+          <td>+641,41%</td>
+          <td>34,86%</td>
+          <td>39,28%</td>
+          <td>0,811</td>
+          <td class="badge-loss">-57,14%</td>
+          <td>Buy &amp; Hold</td>
+        </tr>
+        <tr style="background: #f0fdf4;">
+          <td><strong>TSMC34.SA (BDR BRL)</strong></td>
+          <td><strong>Momentum ATR</strong></td>
+          <td><strong>+130,74%</strong></td>
+          <td><strong>13,41%</strong></td>
+          <td><strong>25,56%</strong></td>
+          <td><strong>0,618</strong></td>
+          <td class="badge-win"><strong>-48,03%</strong></td>
+          <td>72 trades (38,9%)</td>
+        </tr>
+        <tr>
+          <td>TSMC34.SA (BDR BRL)</td>
+          <td>Buy &amp; Hold</td>
+          <td>+852,57%</td>
+          <td>40,40%</td>
+          <td>38,66%</td>
+          <td>0,967</td>
+          <td class="badge-loss">-59,99%</td>
+          <td>Buy &amp; Hold</td>
+        </tr>
+        <tr>
+          <td>SMH (ETF Semicondutores)</td>
+          <td>Buy &amp; Hold</td>
+          <td>+713,46%</td>
+          <td>37,00%</td>
+          <td>37,45%</td>
+          <td>0,908</td>
+          <td>-45,30%</td>
+          <td>Benchmark Setorial</td>
+        </tr>
+        <tr>
+          <td>NVDA (Nvidia)</td>
+          <td>Buy &amp; Hold</td>
+          <td>+3.762,64%</td>
+          <td>73,11%</td>
+          <td>51,94%</td>
+          <td>1,350</td>
+          <td>-66,34%</td>
+          <td>Maior Cliente de IA</td>
+        </tr>
+        <tr>
+          <td>SPY (S&amp;P 500)</td>
+          <td>Buy &amp; Hold</td>
+          <td>+160,09%</td>
+          <td>15,44%</td>
+          <td>20,12%</td>
+          <td>0,618</td>
+          <td>-33,72%</td>
+          <td>Benchmark Global</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>Interpretação dos Resultados do Motor:</strong>
+      <ul>
+        <li><strong>Controle de Risco e Preservação de Capital:</strong> A estratégia Momentum ATR reduziu a volatilidade de TSMC34 de <strong>38,7% para 25,6%</strong> (uma queda de 34% no risco anualizado) e conteve o rebaixamento máximo de patrimônio de <strong>-60,0% para -48,0%</strong>.</li>
+        <li><strong>O Efeito Câmbio no BDR (+852% vs +641%):</strong> O investidor que comprou e manteve o BDR TSMC34.SA em reais obteve retorno superior (+852,57%) ao investidor do ADR TSM em dólares (+641,41%), beneficiado pela depreciação estrutural do Real frente ao Dólar no período (USD/BRL subindo de ~R$ 4,02 para ~R$ 5,11).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DEMONSTRAÇÕES E QUALIDADE DO LUCRO -->
+  <section>
+    <h2>4. Qualidade Financeira: Margens, Balanço e Geração de Caixa</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Métrica Financeira</th>
+          <th>Dado Atual (2T26 / TTM)</th>
+          <th>Histórico / Benchmark</th>
+          <th>Interpretação Analítica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Receita Líquida (2T26)</td>
+          <td>US$ 40,2 bi (+33,7% a/a)</td>
+          <td>US$ 30,1 bi no 2T25</td>
+          <td>Forte demanda em HPC e smartphones com nó N3.</td>
+        </tr>
+        <tr>
+          <td>Margem Bruta</td>
+          <td>67,7%</td>
+          <td>Média histórica 53%–55%</td>
+          <td>Poder monopolístico de precificação sobre Big Techs.</td>
+        </tr>
+        <tr>
+          <td>Margem Operacional</td>
+          <td>60,3%</td>
+          <td>42%–45% em ciclos anteriores</td>
+          <td>Alavancagem operacional extrema nas fabs taiwanesas.</td>
+        </tr>
+        <tr>
+          <td>Margem Líquida</td>
+          <td>49,9%</td>
+          <td>38%–40%</td>
+          <td>Praticamente metade de cada dólar faturado vira lucro líquido.</td>
+        </tr>
+        <tr>
+          <td>Posição de Caixa Líquido</td>
+          <td>Caixa &gt; Dívida (Forte Net Cash)</td>
+          <td>Dívida líquida negativa</td>
+          <td>Balanço fortaleza que autofinancia o capex recorde de US$ 60 bi.</td>
+        </tr>
+        <tr>
+          <td>Retorno sobre Patrimônio (ROE)</td>
+          <td>&gt; 32%</td>
+          <td>Média industrial 14%</td>
+          <td>Retorno de capital extraordinário sustentado por barreiras de entrada.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- VALUATION E CAMINHO DO EPS -->
+  <section>
+    <h2>5. O Debate de Valuation: Crescimento Exponencial vs. Risco Geopolítico</h2>
+    <div class="barrow">
+      <strong>EPS 2024A</strong>
+      <div class="bar"><i style="width: 32%"></i></div>
+      <b>US$ 6,55</b>
+    </div>
+    <div class="barrow">
+      <strong>EPS 2025A</strong>
+      <div class="bar"><i style="width: 53%"></i></div>
+      <b>US$ 10,80</b>
+    </div>
+    <div class="barrow">
+      <strong>EPS 2026E</strong>
+      <div class="bar"><i style="width: 82%"></i></div>
+      <b>US$ 16,70 (+55%)</b>
+    </div>
+    <div class="barrow">
+      <strong>EPS 2027E</strong>
+      <div class="bar"><i style="width: 100%"></i></div>
+      <b>US$ 21,50 (+28%)</b>
+    </div>
+
+    <p>O consenso de mercado projeta que o lucro por ação da TSMC passe de US$ 10,80 em 2025 para cerca de <strong>US$ 21,50 em 2027</strong>. A US$ 445,14 por ADR, a TSMC negocia a <strong>26,6x o lucro de 2026 e apenas 20,7x o lucro de 2027</strong>.</p>
+    
+    <div class="callout">
+      <strong>O "Desconto Taiwan":</strong> Se a TSMC estivesse sediada nos Estados Unidos, com suas margens de 67% e monopólio em IA, estaria negociando facilmente a 35x–40x lucros projetados (similar a Nvidia e ASML). A diferença para os atuais ~20x forward representa o prêmio de risco exigido pelos investidores globais contra o risco de conflito no Estreito de Taiwan.
+    </div>
+  </section>
+
+  <!-- MATRIZ DE CENÁRIOS 12-24 MESES -->
+  <section id="cenarios">
+    <h2>6. Matriz de Cenários de 12–24 Meses (TSM e TSMC34)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Cenário</th>
+          <th>EPS 2027</th>
+          <th>P/L Alvo</th>
+          <th>TSM Estimada (USD)</th>
+          <th>USD/BRL</th>
+          <th>TSMC34 Estimado (BRL)*</th>
+          <th>Retorno Esperado vs. Atual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="scenario-bear">Baixista (Disrupção / Capex Lento)</td>
+          <td>US$ 18,00</td>
+          <td>16,0x</td>
+          <td>US$ 288,00</td>
+          <td>5,30</td>
+          <td>R$ 190,80</td>
+          <td class="badge-loss">-32,6%</td>
+        </tr>
+        <tr>
+          <td class="scenario-base">Cenário Base (Consenso Cumprido)</td>
+          <td>US$ 21,50</td>
+          <td>24,0x</td>
+          <td>US$ 516,00</td>
+          <td>5,15</td>
+          <td>R$ 332,18</td>
+          <td class="badge-win">+17,4%</td>
+        </tr>
+        <tr>
+          <td class="scenario-bull">Otimista (Superciclo IA &amp; 2nm)</td>
+          <td>US$ 25,00</td>
+          <td>28,0x</td>
+          <td>US$ 700,00</td>
+          <td>5,40</td>
+          <td>R$ 472,50</td>
+          <td class="badge-win">+67,0%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="small">
+      * Fórmula de conversão oficial na B3: <code>TSMC34 = (TSM &times; USD/BRL) / 8</code>. A cotação atual considerada é TSM a US$ 445,14 e TSMC34 a R$ 282,95. Cenários são projeções probabilísticas para gestão de risco de carteira, não garantias de rentabilidade futura.
+    </p>
+  </section>
+
+  <!-- GUIA DO BDR TSMC34 PARA O INVESTIDOR BRASILEIRO -->
+  <section>
+    <h2>7. Dinâmica Operacional do BDR TSMC34 na B3</h2>
+    <div class="formula-box">
+      Preço Teórico TSMC34 = (Cotação TSM em USD &times; Taxa de Câmbio USD/BRL) &divide; 8
+    </div>
+
+    <div class="grid two">
+      <div class="card neutral">
+        <h3>Paridade e Razão de Conversão (1:8)</h3>
+        <p>Cada lote de 8 BDRs negociados na B3 corresponde a 1 ação ordinária (ADR) de Taiwan Semiconductor na Bolsa de Nova York. Com TSM a US$ 445,14 e dólar a R$ 5,11, o valor justo intrínseco é <strong>R$ 284,28</strong>. No pregão, o ativo oscila próximo de R$ 282,95, apresentando desvio irrelevante (&lt;0,5%), o que demonstra boa eficiência de arbitragem.</p>
+      </div>
+
+      <div class="card neutral">
+        <h3>Tributação e Dividendos</h3>
+        <p>A TSMC paga dividendos trimestrais (atualmente ~US$ 0,55 a 0,60 por ADR, yield anualizado ~0,9% a 1,1%). Sobre os proventos incide a retenção de 21% de imposto na fonte em Taiwan e a taxa de custódia da instituição depositária (Banco B3). O BDR deve ser encarado primariamente como tese de <strong>apreciação de capital e hedge cambial</strong>, e não de fluxo de proventos imediatos.</p>
+      </div>
+
+      <div class="card neutral">
+        <h3>Hedge Cambial Natural</h3>
+        <p>Ao deter TSMC34, o investidor brasileiro tem seu patrimônio atrelado diretamente ao Dólar norte-americano. Em cenários de instabilidade fiscal ou política no Brasil com alta do dólar, o BDR protege a carteira local mesmo em dias neutros para o papel no exterior.</p>
+      </div>
+
+      <div class="card negative">
+        <h3>Liquidez e Execução na B3</h3>
+        <p>Embora TSMC34 seja um dos BDRs mais negociados da B3, o volume diário é inferior ao da matriz na NYSE. Recomenda-se estritamente o uso de <strong>ordens limitadas</strong> em horários de sobreposição dos mercados norte-americano e brasileiro (11h30 às 17h00 de Brasília) para evitar derrapagem de spread.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FALSIFICADORES E CATALISADORES -->
+  <section>
+    <h2>8. Falsificadores da Tese &amp; Calendário de Acompanhamento</h2>
+    <div class="grid two">
+      <div class="card negative">
+        <h3>Falsificadores (O que invalidaria a tese)</h3>
+        <ul>
+          <li><strong>Escalada Bélica no Estreito de Taiwan:</strong> Bloqueio naval ou ataques contra as fabs em Hsinchu ou Tainan destruiria a cadeia global de suprimentos.</li>
+          <li><strong>Cortes de Capex das Big Techs:</strong> Desaceleração súbita no investimento de data centers por Microsoft, Meta ou Alphabet reduziria a taxa de ocupação dos nós N3/N2.</li>
+          <li><strong>Custos Excessivos nas Fabs Estrangeiras:</strong> Dificuldades sindicais e custo de mão de obra 50% superior na fábrica do Arizona comprimindo a margem bruta abaixo de 60%.</li>
+          <li><strong>Avanço Repentino de Concorrentes:</strong> Recuperação tecnológica da Intel (18A) ou Samsung atraindo clientes de ponta como Apple ou Nvidia.</li>
+        </ul>
+      </div>
+
+      <div class="card positive">
+        <h3>Catalisadores Positivos de 2026–2027</h3>
+        <ul>
+          <li><strong>Rampa Comercial Plena do Nó 2nm (N2 GAA):</strong> Clientes pagando prêmio de preço elevado por wafer pela transição para transistores nanosheet.</li>
+          <li><strong>Dobramento da Capacidade CoWoS:</strong> Alívio do gargalo permitindo entrega maciça dos novos servidores de IA.</li>
+          <li><strong>Repasse Integral de Custos de Inflação:</strong> Poder de barganha permitindo reajuste de 5% a 8% nos preços contratuais de wafers para 2027.</li>
+          <li><strong>Início da Operação em Volume no Arizona:</strong> Redução do prêmio de risco geopolítico com produção em solo americano.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- DECISÃO PRÁTICA E RECOMENDAÇÃO -->
+  <section>
+    <h2>9. Decisão Prática de Alocação</h2>
+    <p class="decision">
+      <strong>Para Novas Entradas:</strong> Ação e BDR estão em tendência de alta sólida. A recomendação tática é efetuar compras <strong>escalonadas em correções técnicas</strong> (pullbacks até a média móvel de 20 ou 50 dias, ou correções de 5% a 10%), evitando compras a mercado no topo de euforia de relatórios trimestrais.
+    </p>
+    <p class="decision">
+      <strong>Para Quem Já Está Posicionado:</strong> Manter posição integral (Overweight). Os lucros da companhia crescem mais rápido do que a expansão de múltiplos, garantindo sustentação fundamentalista para os próximos 12 a 24 meses.
+    </p>
+    <p class="small">
+      <em>Aviso de Conformidade e Governança:</em> Este material é um relatório de pesquisa quantitativa e fundamentalista desenvolvido exclusivamente para fins educacionais e de modelagem econométrica no âmbito do Desafio II Itaú Quant. Não constitui recomendação individualizada de investimento nos termos da Resolução CVM nº 20.
+    </p>
+  </section>
+
+  <!-- FONTES E AUDITORIA -->
+  <section id="fontes">
+    <h2>10. Fontes Primárias e Trilha de Auditoria</h2>
+    <ul class="sources">
+      <li><a href="https://investor.tsmc.com/">TSMC Investor Relations</a>: Relatórios oficiais de resultados trimestrais (2T26 Form 6-K e apresentações de receita por nó tecnológico).</li>
+      <li><a href="https://www.sec.gov/edgar/browse/?CIK=0001046179">SEC EDGAR — Taiwan Semiconductor Manufacturing Co Ltd (CIK: 0001046179)</a>: Arquivamentos anuais Form 20-F e reportes periódicos.</li>
+      <li><a href="https://www.b3.com.br/">B3 (Brasil, Bolsa, Balcão)</a>: Ficha técnica do programa de BDR Não Patrocinado Nível I — TSMC34 (Banco B3 Depositário, proporção 1:8).</li>
+      <li><strong>Motor Quantitativo do Repositório:</strong> Módulos causais <code>src.backtest.engine</code>, <code>src.strategies.momentum_atr</code> e dados validados em <code>data/market/TSM.parquet</code> e <code>data/market/TSMC34.SA.parquet</code>.</li>
+      <li><a href="https://stockanalysis.com/stocks/tsm/forecast/">Consenso de Mercado (FactSet / S&amp;P Global)</a>: Projeções de EPS para 2026/2027 e consensos de preço-alvo.</li>
+    </ul>
+  </section>
+
+  <div class="footer">
+    Relatório gerado pelo repositório quantitativo <strong>LASTRO / II Itaú Quant</strong> • Autor: Arthur / Pipeline Autônomo • 21 de setembro de 2026
+  </div>
+
+</main>
+</body>
+</html>
