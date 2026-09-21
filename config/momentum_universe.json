@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-09-04",
+  "description": "Manifesto local e versionado para evitar formar o universo com os sobreviventes no fim da amostra. Datas e arquivos devem ser conferidos contra a fonte licenciada antes de uma execucao oficial.",
+  "data_policy": {
+    "network_download": false,
+    "forward_fill_suspensions": false,
+    "adjustment": "OHLC deve usar uma politica point-in-time consistente e documentada",
+    "real_trading": false
+  },
+  "universes": {
+    "survivor_baseline": [
+      "PETR4.SA",
+      "VALE3.SA",
+      "ITUB4.SA",
+      "BBDC4.SA",
+      "WEGE3.SA",
+      "RENT3.SA",
+      "PRIO3.SA",
+      "VBBR3.SA",
+      "SMTO3.SA",
+      "RADL3.SA"
+    ],
+    "adverse_distressed": [
+      "AMER3.SA",
+      "OIBR3.SA",
+      "GOLL4.SA",
+      "IRBR3.SA",
+      "AMAR3.SA"
+    ],
+    "historical_delisted_or_renamed": [
+      "SMLS3.SA",
+      "HGTX3.SA"
+    ],
+    "survivorship_stress": [
+      "PETR4.SA",
+      "VALE3.SA",
+      "ITUB4.SA",
+      "BBDC4.SA",
+      "WEGE3.SA",
+      "RENT3.SA",
+      "PRIO3.SA",
+      "VBBR3.SA",
+      "SMTO3.SA",
+      "RADL3.SA",
+      "AMER3.SA",
+      "OIBR3.SA",
+      "GOLL4.SA",
+      "IRBR3.SA",
+      "AMAR3.SA",
+      "SMLS3.SA",
+      "HGTX3.SA"
+    ],
+    "global_leaders": [
+      "NVDA",
+      "MSFT",
+      "AAPL",
+      "AMZN",
+      "GOOGL",
+      "META",
+      "TSLA",
+      "QQQ",
+      "SPY",
+      "SMH",
+      "GLD"
+    ]
+  },
+  "assets": {
+    "PETR4.SA": {"local_file": "../data/market/PETR4.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "VALE3.SA": {"local_file": "../data/market/VALE3.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "ITUB4.SA": {"local_file": "../data/market/ITUB4.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "BBDC4.SA": {"local_file": "../data/market/BBDC4.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "WEGE3.SA": {"local_file": "../data/market/WEGE3.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "RENT3.SA": {"local_file": "../data/market/RENT3.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "PRIO3.SA": {"local_file": "../data/market/PRIO3.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "VBBR3.SA": {"local_file": "../data/market/VBBR3.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "SMTO3.SA": {"local_file": "../data/market/SMTO3.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "RADL3.SA": {"local_file": "../data/market/RADL3.SA.parquet", "status": "baseline", "valid_from": "2020-01-01"},
+    "AMER3.SA": {"local_file": "../data/market/AMER3.SA.parquet", "status": "adverse", "valid_from": "2020-01-01", "notes": "Manter barras reais de suspensao e cauda do historico; nao preencher lacunas."},
+    "OIBR3.SA": {"local_file": "../data/market/OIBR3.SA.parquet", "status": "adverse", "valid_from": "2020-01-01", "notes": "Metadados de grupamentos precisam acompanhar a fonte point-in-time."},
+    "GOLL4.SA": {"local_file": "../data/market/GOLL4.SA.parquet", "status": "adverse", "valid_from": "2020-01-01"},
+    "IRBR3.SA": {"local_file": "../data/market/IRBR3.SA.parquet", "status": "adverse", "valid_from": "2020-01-01"},
+    "AMAR3.SA": {"local_file": "../data/market/AMAR3.SA.parquet", "status": "adverse", "valid_from": "2020-01-01"},
+    "SMLS3.SA": {"local_file": "../data/market/SMLS3.SA.parquet", "status": "historical", "valid_from": "2020-01-01", "valid_to": "2020-12-31", "notes": "Data final e evento societario devem ser validados na fonte local licenciada."},
+    "HGTX3.SA": {"local_file": "../data/market/HGTX3.SA.parquet", "status": "historical", "valid_from": "2020-01-01", "valid_to": "2021-12-31", "notes": "Data final e evento societario devem ser validados na fonte local licenciada."},
+    "NVDA": {"local_file": "../data/market/NVDA.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "MSFT": {"local_file": "../data/market/MSFT.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "AAPL": {"local_file": "../data/market/AAPL.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "AMZN": {"local_file": "../data/market/AMZN.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "GOOGL": {"local_file": "../data/market/GOOGL.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "META": {"local_file": "../data/market/META.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "TSLA": {"local_file": "../data/market/TSLA.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "QQQ": {"local_file": "../data/market/QQQ.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "SPY": {"local_file": "../data/market/SPY.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "SMH": {"local_file": "../data/market/SMH.parquet", "status": "global_leader", "valid_from": "2020-01-01"},
+    "GLD": {"local_file": "../data/market/GLD.parquet", "status": "global_leader", "valid_from": "2020-01-01"}
+  }
+}

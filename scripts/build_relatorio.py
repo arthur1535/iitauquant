@@ -56,6 +56,15 @@ def find_chrome() -> str | None:
         path = shutil.which(name)
         if path:
             return path
+    if sys.platform == "win32":
+        for candidate in (
+            Path(r"C:\Program Files\Google\Chrome\Application\chrome.exe"),
+            Path(r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"),
+            Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"),
+            Path(r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"),
+        ):
+            if candidate.exists():
+                return str(candidate)
     return None
 
 
@@ -81,16 +90,22 @@ def main() -> int:
         if not chrome:
             print("  AVISO: Chrome/Chromium não encontrado; imprima o HTML manualmente.")
             continue
+        # Chrome no Windows pode manter silenciosamente um PDF existente. Imprime em
+        # arquivo temporário e só então substitui o artefato final de forma explícita.
+        temp_pdf = pdf_out.with_name(f"{pdf_out.stem}.tmp.pdf")
+        if temp_pdf.exists():
+            temp_pdf.unlink()
         subprocess.run(
             [
                 chrome, "--headless", "--disable-gpu", "--no-sandbox",
                 "--no-pdf-header-footer", "--run-all-compositor-stages-before-draw",
                 "--virtual-time-budget=12000",
-                f"--print-to-pdf={pdf_out}", html_out.as_uri(),
+                f"--print-to-pdf={temp_pdf}", html_out.as_uri(),
             ],
             check=True,
             capture_output=True,
         )
+        temp_pdf.replace(pdf_out)
         print(f"  PDF    {pdf_out.relative_to(ROOT)}  ({pdf_out.stat().st_size / 1e6:.2f} MB)")
     return 0
 

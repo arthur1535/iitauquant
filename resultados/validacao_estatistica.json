@@ -1,0 +1,68 @@
+{
+  "status": "exploratorio_in_sample",
+  "observacoes": 101,
+  "tentativas_grid": 36,
+  "sharpe_ativo_anual": -0.7127847936196356,
+  "probabilistic_sharpe_ratio": 0.002305940522182637,
+  "deflated_sharpe_ratio": 0.00027301511031846415,
+  "gate_alpha_95pct_aprovado": false,
+  "bootstrap_bloco_6_media_ativa_anual": {
+    "estimate": -0.027910097823492984,
+    "ci_lower": -0.06838907826580586,
+    "ci_upper": -0.0021955328901472008,
+    "standard_error": 0.017165483355893768,
+    "confidence_level": 0.95,
+    "periods_per_year": 12.0,
+    "n_bootstrap": 10000,
+    "block_length": 6,
+    "seed": 20260816
+  },
+  "percentis_placebo": {
+    "cagr": 1.0,
+    "sharpe": 1.0,
+    "max_drawdown": 42.0,
+    "mean_worst_months": 56.0
+  },
+  "comparacoes_HAC": {
+    "revisada_menos_sem_overlay": {
+      "diferenca_media_anual": -0.009303365941164328,
+      "p_valor_HAC": 0.07737903417507556
+    },
+    "revisada_menos_original": {
+      "diferenca_media_anual": 0.010083545174286383,
+      "p_valor_HAC": 0.16458262588068995
+    },
+    "revisada_menos_benchmark": {
+      "diferenca_media_anual": -0.02296071381578977,
+      "p_valor_HAC": 0.24281684789524094
+    },
+    "overlay_smallcap_menos_VB": {
+      "diferenca_media_anual": -0.027910097823492984,
+      "p_valor_HAC": 0.07737903417507554
+    }
+  },
+  "governanca": {
+    "decisao": "shadow_mode",
+    "aprovado": false,
+    "criterios": {
+      "regra_aprovacao": "todos_os_gates_devem_ser_aprovados",
+      "dsr_minimo": 0.95,
+      "bootstrap_ic95_limite_inferior_maior_que": 0.0,
+      "placebo_percentil_minimo_por_metrica": 95.0,
+      "hac_p_valor_maximo": 0.05,
+      "hac_diferenca_media_anual_maior_que": 0.0,
+      "validacao_out_of_sample_obrigatoria": true
+    },
+    "gates": {
+      "dsr_minimo_95pct": false,
+      "bootstrap_ic95_inteiramente_positivo": false,
+      "placebo_cagr_percentil_minimo_95": false,
+      "placebo_sharpe_percentil_minimo_95": false,
+      "placebo_drawdown_percentil_minimo_95": false,
+      "placebo_cauda_percentil_minimo_95": false,
+      "hac_revisada_vs_sem_overlay_positivo_e_significativo": false,
+      "validacao_out_of_sample": false
+    }
+  },
+  "nota": "Placebos circulares preservam frequencia e persistencia do sinal, mas sao falsificacao in-sample; nao substituem holdout."
+}

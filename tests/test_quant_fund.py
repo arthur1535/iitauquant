@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 import pandas as pd
-from pandas.testing import assert_series_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 
 from quant_fund.adapters import long_prices_to_wide, sec_facts_to_fundamentals
 from quant_fund.config import FundConfig, Sleeve1Config, Sleeve2Config
@@ -14,6 +14,7 @@ from quant_fund.portfolio import (
     validate_fully_invested,
 )
 from quant_fund.pipeline import run_pipeline
+from quant_fund.risk_overlay import RiskOverlayConfig
 from quant_fund.sleeve1 import build_sleeve1
 from quant_fund.sleeve2 import apply_hysteresis, build_sleeve2
 from quant_fund.sleeve3 import build_sleeve3
@@ -186,6 +187,42 @@ class Sleeve2Tests(unittest.TestCase):
         self.assertTrue(result.weights_with_regime.loc[stress_dates, "BIL"].eq(1.0).all())
         self.assertTrue(result.weights_with_regime.loc[stress_dates, prices.columns].eq(0.0).all().all())
 
+    def test_credit_only_optional_arguments_preserve_legacy_result(self) -> None:
+        dates = pd.date_range("2020-01-31", periods=18, freq="ME")
+        prices = pd.DataFrame(
+            {
+                "A": 100 * 1.03 ** np.arange(len(dates)),
+                "B": 100 * 1.01 ** np.arange(len(dates)),
+            },
+            index=dates,
+        )
+        spread = pd.Series([1.0] * 14 + [10.0] * 4, index=dates)
+        bil = pd.Series(100 * 1.001 ** np.arange(len(dates)), index=dates)
+        config = Sleeve2Config(
+            selection_fraction=0.5,
+            spread_window_months=2,
+            stress_entry_z=0.5,
+            stress_exit_z=0.0,
+        )
+        legacy = build_sleeve2(prices, spread, bil, config=config)
+        explicit_credit_only = build_sleeve2(
+            prices,
+            spread,
+            bil,
+            config=config,
+            financial_conditions=None,
+            risk_overlay_config=RiskOverlayConfig(),
+        )
+        assert_frame_equal(legacy.regime, explicit_credit_only.regime)
+        assert_frame_equal(
+            legacy.weights_with_regime,
+            explicit_credit_only.weights_with_regime,
+        )
+        assert_series_equal(
+            legacy.returns_with_regime,
+            explicit_credit_only.returns_with_regime,
+        )
+
 
 class Sleeve3AndFundTests(unittest.TestCase):
     def test_bil_adjusted_return(self) -> None:
@@ -276,6 +313,106 @@ class PipelineTests(unittest.TestCase):
         self.assertGreater(len(result.fund_security_weights), 0)
         self.assertTrue(validate_fully_invested(result.fund_security_weights).all())
         self.assertTrue(result.fund_allocations.sum(axis=1).sub(1.0).abs().lt(1e-12).all())
+
+    def test_dual_axis_overlay_is_lagged_and_graded_end_to_end(self) -> None:
+        dates = pd.date_range("2017-01-31", periods=72, freq="ME")
+        factor_tickers = [f"F{i}" for i in range(6)]
+        small_tickers = [f"S{i}" for i in range(10)]
+        factor_prices = pd.DataFrame(
+            {
+                ticker: 50 * (1.005 + position * 0.0005) ** np.arange(len(dates))
+                for position, ticker in enumerate(factor_tickers)
+            },
+            index=dates,
+        )
+        small_prices = pd.DataFrame(
+            {
+                ticker: 20 * (1.004 + position * 0.0002) ** np.arange(len(dates))
+                for position, ticker in enumerate(small_tickers)
+            },
+            index=dates,
+        )
+        fundamentals = pd.DataFrame(
+            [
+                (
+                    ticker,
+                    f"{year}-12-31",
+                    100 + ticker_position * 20 + year - 2016,
+                    40 + ticker_position * 3,
+                    80 + ticker_position * 5 + (year - 2016) * 2,
+                    15 + ticker_position,
+                )
+                for ticker_position, ticker in enumerate(factor_tickers)
+                for year in range(2016, 2022)
+            ],
+            columns=[
+                "ticker",
+                "fiscal_date",
+                "market_cap",
+                "book_equity",
+                "total_assets",
+                "gross_profit",
+            ],
+        )
+        credit = pd.Series(1.0, index=dates, name="BAA10Y")
+        credit.iloc[48:] = 10.0
+        financial = pd.Series(-1.0, index=dates, name="NFCI")
+        financial.iloc[51:] = 10.0
+        bil = pd.Series(100 * 1.002 ** np.arange(len(dates)), index=dates, name="BIL")
+
+        result = run_pipeline(
+            factor_prices,
+            fundamentals,
+            small_prices,
+            credit,
+            bil,
+            sleeve1_config=Sleeve1Config(top_n=2, rebalance_month=6),
+            sleeve2_config=Sleeve2Config(selection_fraction=0.2),
+            financial_conditions=financial,
+            risk_overlay_config=RiskOverlayConfig(
+                zscore_window_months=12,
+                zscore_min_periods=12,
+                stress_entry_z=1.0,
+                stress_exit_z=0.5,
+                max_derisk=0.5,
+            ),
+        )
+
+        one_axis_applied = pd.Timestamp("2021-02-28")
+        two_axes_applied = pd.Timestamp("2021-05-31")
+        self.assertEqual(
+            int(result.sleeve2.regime.loc["2021-01-31", "eixos_acesos"]),
+            1,
+        )
+        self.assertAlmostEqual(
+            float(result.sleeve2.regime.loc[one_axis_applied, "derisk_aplicado"]),
+            0.25,
+        )
+        np.testing.assert_allclose(
+            result.fund_allocations.loc[one_axis_applied],
+            [1 / 3, 1 / 4, 5 / 12],
+        )
+        self.assertEqual(
+            int(result.sleeve2.regime.loc["2021-04-30", "eixos_acesos"]),
+            2,
+        )
+        self.assertAlmostEqual(
+            float(result.sleeve2.regime.loc[two_axes_applied, "derisk_aplicado"]),
+            0.5,
+        )
+        np.testing.assert_allclose(
+            result.fund_allocations.loc[two_axes_applied],
+            [1 / 3, 1 / 6, 1 / 2],
+        )
+        self.assertAlmostEqual(
+            float(result.sleeve2.weights_with_regime.loc[one_axis_applied, "BIL"]),
+            0.25,
+        )
+        self.assertAlmostEqual(
+            float(result.sleeve2.weights_with_regime.loc[two_axes_applied, "BIL"]),
+            0.5,
+        )
+        self.assertTrue(validate_fully_invested(result.fund_security_weights).all())
 
 
 if __name__ == "__main__":

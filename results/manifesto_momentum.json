@@ -1,0 +1,27 @@
+{
+  "timestamp_utc": "2026-09-04T06:57:35.132128+00:00",
+  "project": "momentum-atr-laboratory",
+  "system": "paper-only",
+  "execution_rules": {
+    "entry_execution": "open_next_bar (t+1)",
+    "exit_momentum": "open_next_bar (t+1)",
+    "stop_loss": "atr_trailing_ratchet",
+    "gap_below_stop": "filled_at_open",
+    "cost_per_side": 0.0015
+  },
+  "assets_tested": [
+    "VALE3.SA",
+    "WEGE3.SA",
+    "PRIO3.SA",
+    "SMTO3.SA",
+    "RENT3.SA",
+    "VBBR3.SA",
+    "BBDC4.SA",
+    "PETR4.SA",
+    "ITUB4.SA",
+    "RADL3.SA"
+  ],
+  "median_sharpe_is": 0.0831140213743845,
+  "median_sharpe_oos": 0.3388080777891309,
+  "governance_note": "OMS paper simulation only. Sem rotas de corretoras reais."
+}

@@ -1,0 +1,155 @@
+//@version=5
+// @strategy_alert_message {"strategy":"MOMENTUM_ATR","action":"{{strategy.order.action}}","order_type":"MARKET","ticker":"{{ticker}}","close_price":{{strategy.order.price}},"quantity":{{strategy.order.contracts}},"timestamp":"{{timenow}}","nonce":"{{ticker}}-{{interval}}-{{strategy.order.id}}-{{time}}","idempotency_key":"{{ticker}}-{{interval}}-{{strategy.order.id}}-{{time}}","reason":"{{strategy.order.alert_message}}","metadata":{"exchange":"{{exchange}}","interval":"{{interval}}","bar_time":"{{time}}"}}
+strategy(
+     title="Momentum ATR — Next-Bar Open (Research)",
+     shorttitle="MomATR-NBO",
+     overlay=true,
+     initial_capital=100000,
+     pyramiding=0,
+     default_qty_type=strategy.fixed,
+     default_qty_value=1,
+     commission_type=strategy.commission.percent,
+     commission_value=0.15,
+     process_orders_on_close=false,
+     calc_on_every_tick=false,
+     calc_on_order_fills=false)
+
+// Research strategy only. Market entries and momentum exits are decided from a
+// confirmed close and are filled by TradingView on the next available tick
+// (the next bar's open in an ordinary historical backtest).
+
+float COST_PER_SIDE = 0.0015
+
+string GROUP_MOM = "1. Momentum"
+int momentumWindow = input.int(20, "Janela de momentum", minval=5, maxval=504, group=GROUP_MOM,
+     tooltip="Momentum = close / close[n] - 1. A entrada exige cruzamento de baixo para cima do zero.")
+
+string GROUP_STOP = "2. Trailing stop ATR"
+int atrWindow = input.int(14, "Janela do ATR (SMA)", minval=2, maxval=252, group=GROUP_STOP,
+     tooltip="Usa média móvel simples do True Range para manter paridade com o motor Python.")
+float stopMultiplier = input.float(2.5, "Multiplicador do ATR", minval=0.1, maxval=20.0, step=0.1, group=GROUP_STOP)
+
+string GROUP_EXECUTION = "3. Simulação e alertas"
+float orderQuantity = input.float(1.0, "Quantidade simulada", minval=0.000001, step=1.0, group=GROUP_EXECUTION)
+bool emitAlertCalls = input.bool(false, "Emitir chamadas alert()", group=GROUP_EXECUTION,
+     tooltip="Deixe desligado se usar alertas de preenchimento de ordens, evitando eventos duplicados.")
+
+string GROUP_DASHBOARD = "4. Dashboard"
+bool showDashboard = input.bool(true, "Exibir dashboard", group=GROUP_DASHBOARD)
+string dashboardLocation = input.string("Superior direito", "Posição", options=["Superior direito", "Superior esquerdo", "Inferior direito", "Inferior esquerdo"], group=GROUP_DASHBOARD)
+
+// -----------------------------------------------------------------------------
+// Factors. There is no request.security(), future leak or intrabar signal input.
+// -----------------------------------------------------------------------------
+float momentum = na(close[momentumWindow]) ? na : close / close[momentumWindow] - 1.0
+float trueRange = ta.tr(true)
+float atr = ta.sma(trueRange, atrWindow)
+bool factorsReady = not na(momentum) and not na(momentum[1]) and not na(atr)
+
+bool entryDecision = barstate.isconfirmed and factorsReady and strategy.position_size == 0 and momentum > 0.0 and momentum[1] <= 0.0
+bool momentumExitDecision = barstate.isconfirmed and factorsReady and strategy.position_size > 0 and momentum < 0.0
+
+// The receiver expects these fields. The same deterministic event key is used as
+// nonce and idempotency key so a transport retry is not interpreted as a new order.
+f_eventKey(string action, string reason) =>
+    syminfo.ticker + "-" + timeframe.period + "-" + str.tostring(time) + "-" + action + "-" + reason
+
+f_payload(string action, string reason, float referencePrice, float stopValue) =>
+    string eventKey = f_eventKey(action, reason)
+    string stopField = na(stopValue) ? "" : ",\"stop_price\":" + str.tostring(stopValue, format.mintick)
+    string payload = "{\"strategy\":\"MOMENTUM_ATR\",\"action\":\"" + action + "\",\"order_type\":\"MARKET\",\"ticker\":\"" + syminfo.ticker + "\",\"close_price\":" + str.tostring(referencePrice, format.mintick) + stopField + ",\"quantity\":" + str.tostring(orderQuantity) + ",\"timestamp\":" + str.tostring(timenow) + ",\"nonce\":\"" + eventKey + "\",\"idempotency_key\":\"" + eventKey + "\",\"reason\":\"" + reason + "\",\"metadata\":{\"exchange\":\"" + syminfo.prefix + "\",\"interval\":\"" + timeframe.period + "\",\"bar_time\":\"" + str.tostring(time) + "\"}}"
+    payload
+
+// -----------------------------------------------------------------------------
+// Position state and ATR stop.
+// -----------------------------------------------------------------------------
+var float signalAtr = na
+var float trailingStop = na
+var string lastEvent = "Aguardando dados"
+
+bool entryFilledThisBar = strategy.position_size > 0 and nz(strategy.position_size[1]) <= 0
+bool tradeClosedThisBar = ta.change(strategy.closedtrades) > 0
+bool stopFilledThisBar = false
+
+// Detect exits filled since the previous calculation. Stop fills can happen
+// intrabar; alert() is therefore emitted only when this bar later closes. For an
+// immediate fill webhook, use the order-fill alert template shipped with the repo.
+if tradeClosedThisBar
+    int lastTrade = strategy.closedtrades - 1
+    string exitComment = strategy.closedtrades.exit_comment(lastTrade)
+    float exitPrice = strategy.closedtrades.exit_price(lastTrade)
+    stopFilledThisBar := exitComment == "EXIT_STOP_TRIGGERED"
+    lastEvent := stopFilledThisBar ? "Stop ATR preenchido" : "Saída momentum preenchida"
+    if emitAlertCalls and stopFilledThisBar
+        alert(f_payload("SELL", "EXIT_STOP_TRIGGERED", exitPrice, trailingStop), alert.freq_once_per_bar_close)
+    trailingStop := na
+
+// The initial stop is submitted with the entry decision as a distance in ticks.
+// When the entry fills at the next open, TradingView anchors that distance to the
+// actual fill. This keeps the stop active during the entry bar, including gaps.
+if entryDecision
+    signalAtr := atr
+    int initialStopTicks = math.max(1, int(math.ceil(stopMultiplier * signalAtr / syminfo.mintick)))
+    strategy.entry("LONG", strategy.long, qty=orderQuantity, comment="MOMENTUM_ENTRY", alert_message="MOMENTUM_ENTRY")
+    strategy.exit("ATR_STOP", from_entry="LONG", loss=initialStopTicks, comment="EXIT_STOP_TRIGGERED", alert_message="EXIT_STOP_TRIGGERED")
+    lastEvent := "Entrada sinalizada; fill no próximo open"
+    if emitAlertCalls
+        alert(f_payload("BUY", "MOMENTUM_ENTRY", close, na), alert.freq_once_per_bar_close)
+
+if entryFilledThisBar
+    trailingStop := strategy.position_avg_price - stopMultiplier * signalAtr
+    lastEvent := "Entrada preenchida"
+
+if barstate.isconfirmed and strategy.position_size > 0
+    if momentumExitDecision
+        // A market exit decided at close must win over the resting stop on the
+        // following open, so cancel the stop before queuing strategy.close().
+        strategy.cancel("ATR_STOP")
+        strategy.close("LONG", comment="EXIT_MOMENTUM_LOSS", alert_message="EXIT_MOMENTUM_LOSS")
+        lastEvent := "Saída momentum; fill no próximo open"
+        if emitAlertCalls
+            alert(f_payload("SELL", "EXIT_MOMENTUM_LOSS", close, trailingStop), alert.freq_once_per_bar_close)
+    else
+        float initialStop = strategy.position_avg_price - stopMultiplier * signalAtr
+        float candidateStop = close - stopMultiplier * atr
+        trailingStop := na(trailingStop) ? initialStop : math.max(trailingStop, candidateStop)
+        // The updated stop becomes the resting stop for the next bar. It never
+        // moves down while the long position remains open.
+        strategy.exit("ATR_STOP", from_entry="LONG", stop=trailingStop, comment="EXIT_STOP_TRIGGERED", alert_message="EXIT_STOP_TRIGGERED")
+
+// -----------------------------------------------------------------------------
+// Visuals and on-chart telemetry.
+// -----------------------------------------------------------------------------
+plot(strategy.position_size > 0 ? trailingStop : na, title="Stop Price", color=color.new(color.orange, 0), linewidth=2, style=plot.style_linebr)
+plotshape(entryDecision, title="Entrada decidida", style=shape.triangleup, location=location.belowbar, color=color.new(color.lime, 0), size=size.tiny, text="SIG")
+plotshape(entryFilledThisBar, title="Entrada preenchida", style=shape.circle, location=location.belowbar, color=color.new(color.green, 0), size=size.tiny, text="IN")
+plotshape(stopFilledThisBar, title="Stop preenchido", style=shape.triangledown, location=location.abovebar, color=color.new(color.red, 0), size=size.tiny, text="STOP")
+plotshape(momentumExitDecision, title="Saída momentum decidida", style=shape.xcross, location=location.abovebar, color=color.new(color.orange, 0), size=size.tiny, text="MOM")
+
+string tablePosition = switch dashboardLocation
+    "Superior esquerdo" => position.top_left
+    "Inferior direito" => position.bottom_right
+    "Inferior esquerdo" => position.bottom_left
+    => position.top_right
+
+var table dashboard = table.new(tablePosition, 2, 7, border_width=1, border_color=color.new(color.gray, 30))
+
+if barstate.islast and showDashboard
+    bool inPosition = strategy.position_size > 0
+    float estimatedNetPnl = inPosition ? ((close * (1.0 - COST_PER_SIDE)) / (strategy.position_avg_price * (1.0 + COST_PER_SIDE)) - 1.0) * 100.0 : na
+    string stopText = inPosition and not na(trailingStop) ? str.tostring(trailingStop, format.mintick) : "—"
+    string pnlText = inPosition ? str.tostring(estimatedNetPnl, "#.##") + "%" : "—"
+    table.cell(dashboard, 0, 0, "Momentum ATR", bgcolor=color.new(color.navy, 10), text_color=color.white)
+    table.cell(dashboard, 1, 0, "Pesquisa", bgcolor=color.new(color.navy, 10), text_color=color.white)
+    table.cell(dashboard, 0, 1, "Posição")
+    table.cell(dashboard, 1, 1, inPosition ? "LONG" : "FLAT", text_color=inPosition ? color.lime : color.silver)
+    table.cell(dashboard, 0, 2, "Momentum")
+    table.cell(dashboard, 1, 2, na(momentum) ? "—" : str.tostring(momentum * 100.0, "#.##") + "%")
+    table.cell(dashboard, 0, 3, "ATR SMA (" + str.tostring(atrWindow) + ")")
+    table.cell(dashboard, 1, 3, na(atr) ? "—" : str.tostring(atr, format.mintick))
+    table.cell(dashboard, 0, 4, "Stop")
+    table.cell(dashboard, 1, 4, stopText)
+    table.cell(dashboard, 0, 5, "P&L líq. estimado")
+    table.cell(dashboard, 1, 5, pnlText)
+    table.cell(dashboard, 0, 6, "Último evento")
+    table.cell(dashboard, 1, 6, lastEvent, text_size=size.tiny)

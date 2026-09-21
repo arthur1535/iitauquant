@@ -14,6 +14,7 @@ from .portfolio import (
     combine_security_weights,
     validate_fully_invested,
 )
+from .risk_overlay import RiskOverlayConfig, graded_allocations
 from .sleeve1 import Sleeve1Result, build_sleeve1
 from .sleeve2 import Sleeve2Result, build_sleeve2
 from .sleeve3 import Sleeve3Result, build_sleeve3
@@ -43,8 +44,14 @@ def run_pipeline(
     sleeve1_config: Sleeve1Config | None = None,
     sleeve2_config: Sleeve2Config | None = None,
     fund_config: FundConfig | None = None,
+    financial_conditions: pd.Series | None = None,
+    risk_overlay_config: RiskOverlayConfig | None = None,
 ) -> PipelineResult:
-    """Executa os sleeves e consolida somente o histórico plenamente investido."""
+    """Executa os sleeves e consolida somente o histórico plenamente investido.
+
+    O argumento opcional ``financial_conditions`` ativa o overlay graduado de
+    dois eixos. Sua ausência mantém o caminho credit-only anterior.
+    """
 
     sleeve1_config = sleeve1_config or Sleeve1Config()
     sleeve2_config = sleeve2_config or Sleeve2Config()
@@ -62,6 +69,8 @@ def run_pipeline(
         bil_prices=sleeve3.prices,
         universe_membership=universe_membership,
         config=sleeve2_config,
+        financial_conditions=financial_conditions,
+        risk_overlay_config=risk_overlay_config,
     )
 
     common_index = (
@@ -74,8 +83,18 @@ def run_pipeline(
         sleeve2.risky_weights.reindex(common_index).sum(axis=1).sub(1.0).abs().le(1e-10)
     )
     valid_index = common_index[sleeve1_active & sleeve2_active]
-    regime_effective = sleeve2.regime.loc[valid_index, "regime_effective"]
-    allocations = build_fund_allocations(regime_effective, fund_config)
+    if financial_conditions is None:
+        regime_effective = sleeve2.regime.loc[valid_index, "regime_effective"]
+        allocations = build_fund_allocations(regime_effective, fund_config)
+    else:
+        allocations = graded_allocations(
+            sleeve2.regime.loc[valid_index, "derisk_aplicado"],
+            normal_weights=(
+                fund_config.normal_factor,
+                fund_config.normal_small_caps,
+                fund_config.normal_fixed_income,
+            ),
+        )
     security_weights = combine_security_weights(
         sleeve1.weights,
         sleeve2.risky_weights,

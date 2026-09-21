@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "receiver": {
+    "method": "POST",
+    "path": "/webhook/tradingview",
+    "content_type": "application/json",
+    "simulation_only": true
+  },
+  "recommended_alert": {
+    "name": "Momentum ATR - order fills - simulation",
+    "condition": "Order fills only",
+    "frequency": "Every time",
+    "message": "{\"strategy\":\"MOMENTUM_ATR\",\"action\":\"{{strategy.order.action}}\",\"order_type\":\"MARKET\",\"ticker\":\"{{ticker}}\",\"close_price\":{{strategy.order.price}},\"quantity\":{{strategy.order.contracts}},\"timestamp\":\"{{timenow}}\",\"nonce\":\"{{ticker}}-{{interval}}-{{strategy.order.id}}-{{time}}\",\"idempotency_key\":\"{{ticker}}-{{interval}}-{{strategy.order.id}}-{{time}}\",\"reason\":\"{{strategy.order.alert_message}}\",\"metadata\":{\"exchange\":\"{{exchange}}\",\"interval\":\"{{interval}}\",\"bar_time\":\"{{time}}\"}}"
+  },
+  "alternative_alert_call": {
+    "name": "Momentum ATR - alert calls - simulation",
+    "condition": "Any alert() function call",
+    "frequency": "Once per bar close",
+    "pine_input_required": "Emitir chamadas alert() = true",
+    "warning": "Do not send this and the order-fill alert to the same receiver. Entry and momentum messages represent decisions; stop alert() messages are observed at bar close."
+  },
+  "reason_values": [
+    "MOMENTUM_ENTRY",
+    "EXIT_STOP_TRIGGERED",
+    "EXIT_MOMENTUM_LOSS"
+  ],
+  "supported_assets": {
+    "global_leaders": [
+      "NASDAQ:NVDA",
+      "NASDAQ:MSFT",
+      "NASDAQ:AAPL",
+      "NASDAQ:AMZN",
+      "NASDAQ:GOOGL",
+      "NASDAQ:META",
+      "NASDAQ:TSLA",
+      "NASDAQ:QQQ",
+      "AMEX:SPY",
+      "NASDAQ:SMH",
+      "AMEX:GLD"
+    ],
+    "brazil_champions": [
+      "BMFBOVESPA:WEGE3",
+      "BMFBOVESPA:PRIO3",
+      "BMFBOVESPA:ITUB4",
+      "BMFBOVESPA:BOVA11"
+    ]
+  },
+  "authentication": {
+    "mode": "edge_hmac_sha256",
+    "signature_header": "X-Webhook-Signature",
+    "signature_format": "sha256=<lowercase hex HMAC-SHA256 of the exact raw request body>",
+    "secret_location": "TRADINGVIEW_WEBHOOK_SECRET on the signing gateway and receiver only",
+    "important": "TradingView alerts cannot calculate this HMAC or add the signature header. Point TradingView at a controlled signing gateway, which must forward the unchanged body with the signature header. Never place the HMAC secret in Pine code or this JSON."
+  }
+}
+

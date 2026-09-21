@@ -10,9 +10,10 @@ que sustentam a revisão da estratégia:
   4. contabilidade do overlay como seguro (prêmio anual x alívio de cauda).
 
 Todos os parâmetros vêm de `quant_fund.risk_overlay.RiskOverlayConfig` e são
-registrados com hash no manifesto. Nenhum número aqui foi escolhido depois de
-olhar o retorno: as revisões partem de um argumento econômico e o grid existe
-justamente para mostrar que a conclusão não depende do ponto escolhido.
+registrados com hash no manifesto. A revisão nasceu de um diagnóstico da própria
+amostra (inclusive 2022); portanto o grid é análise exploratória de sensibilidade,
+não validação fora da amostra. Placebos temporais, bootstrap em blocos e Deflated
+Sharpe Ratio são calculados separadamente para não confundir ajuste com evidência.
 """
 
 from __future__ import annotations
@@ -38,7 +39,12 @@ from quant_fund.risk_overlay import (  # noqa: E402
     RiskOverlayConfig,
     hysteresis_state,
     insurance_ledger,
-    rolling_zscore,
+)
+from quant_fund.validation import (  # noqa: E402
+    circular_shift_placebo_test,
+    deflated_sharpe_ratio,
+    moving_block_bootstrap_mean,
+    probabilistic_sharpe_ratio,
 )
 
 DATA = ROOT / "dados"
@@ -48,6 +54,15 @@ TABLES = RESULTS / "tabelas"
 CFG = RiskOverlayConfig()
 COST_BPS = 10.0
 MONTHS = 12
+GOVERNANCE_CRITERIA = {
+    "regra_aprovacao": "todos_os_gates_devem_ser_aprovados",
+    "dsr_minimo": 0.95,
+    "bootstrap_ic95_limite_inferior_maior_que": 0.0,
+    "placebo_percentil_minimo_por_metrica": 95.0,
+    "hac_p_valor_maximo": 0.05,
+    "hac_diferenca_media_anual_maior_que": 0.0,
+    "validacao_out_of_sample_obrigatoria": True,
+}
 
 # Séries macro. Ambas oficiais, gratuitas e com histórico longo — requisito para
 # calibrar contra crises documentadas em vez de calibrar contra o próprio payoff.
@@ -70,7 +85,12 @@ def fred_monthly(series_id: str) -> pd.Series:
     return monthly
 
 
-def load_inputs() -> tuple[pd.DataFrame, pd.DataFrame, dict[str, pd.Series]]:
+def load_inputs() -> tuple[
+    pd.DataFrame,
+    pd.DataFrame,
+    dict[str, pd.Series],
+    pd.DataFrame,
+]:
     prices = pd.read_csv(DATA / "precos_mensais_ajustados.csv", index_col=0)
     prices.index = pd.PeriodIndex(prices.index, freq="M")
     factors = pd.read_csv(DATA / "fatores_fama_french_mensais.csv", index_col=0)
@@ -86,7 +106,15 @@ def load_inputs() -> tuple[pd.DataFrame, pd.DataFrame, dict[str, pd.Series]]:
             cached.index = pd.PeriodIndex(cached.index, freq="M")
             series = cached
         macro[label] = series
-    return prices, factors, macro
+    point_in_time_path = DATA / "macro_point_in_time_mensal.csv"
+    if not point_in_time_path.exists():
+        raise FileNotFoundError(
+            "Auditoria de vintages ausente. Rode antes: "
+            "python scripts/auditar_vintages_macro.py"
+        )
+    point_in_time = pd.read_csv(point_in_time_path, index_col=0)
+    point_in_time.index = pd.PeriodIndex(point_in_time.index, freq="M")
+    return prices, factors, macro, point_in_time
 
 
 def turnover_cost(weights: pd.DataFrame, bps: float = COST_BPS) -> pd.Series:
@@ -115,7 +143,31 @@ def metrics(returns: pd.Series, cash: pd.Series, label: str = "") -> dict[str, f
 
 def main() -> int:
     TABLES.mkdir(parents=True, exist_ok=True)
-    prices, factors, macro = load_inputs()
+    manifest = {
+        "gerado_utc": datetime.now(timezone.utc).isoformat(),
+        "config_overlay": asdict(CFG),
+        "custo_bps": COST_BPS,
+        "series_macro": FRED_SERIES,
+        "fonte_backtest_macro": "ALFRED point-in-time; vintage no fechamento mensal",
+        "sha256_config": hashlib.sha256(
+            json.dumps(asdict(CFG), sort_keys=True, default=list).encode()
+        ).hexdigest(),
+        "status_inferencia": "exploratorio; hash identifica a execucao, nao e pre-registro",
+        "tentativas_grid": 36,
+        "governanca": {
+            "decisao": "shadow_mode",
+            "aprovado": False,
+            "criterios": GOVERNANCE_CRITERIA,
+            "gates": {"validacao_out_of_sample": False},
+        },
+    }
+    # Grava a identidade da execução antes dos cálculos. Isso garante
+    # rastreabilidade, mas não transforma uma revisão in-sample em holdout.
+    (RESULTS / "manifesto_revisao.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False, default=list), encoding="utf-8"
+    )
+
+    prices, factors, _macro_final, point_in_time = load_inputs()
     returns = prices.pct_change(fill_method=None)
     panel = returns.dropna(subset=["VFMF", "VB", "BIL", "SPY"])
     index, cash, market = panel.index, panel["BIL"], panel["SPY"]
@@ -123,14 +175,20 @@ def main() -> int:
     # ------------------------------------------------------------------ sinais
     states = {}
     zscores = {}
-    for label, series in macro.items():
-        z = rolling_zscore(series.rename(label), CFG.zscore_window_months, CFG.zscore_min_periods)
+    macro = {}
+    for label, series_id in FRED_SERIES.items():
+        z = pd.to_numeric(
+            point_in_time[f"{series_id}_z_36_point_in_time"], errors="coerce"
+        ).rename(label)
         zscores[label] = z
+        macro[label] = pd.to_numeric(
+            point_in_time[f"{series_id}_point_in_time"], errors="coerce"
+        ).rename(label)
+        state_signal = pd.to_numeric(
+            point_in_time[f"{series_id}_state_point_in_time"], errors="coerce"
+        ).fillna(0)
         states[label] = (
-            hysteresis_state(z, CFG.stress_entry_z, CFG.stress_exit_z)
-            .shift(1)
-            .reindex(index)
-            .fillna(0)
+            state_signal.shift(1).reindex(index).fillna(0).astype(int)
         )
     credit_only = states["credito"]
     graded = CFG.max_derisk * sum(states.values()) / len(states)
@@ -141,11 +199,17 @@ def main() -> int:
         )
         return (weights * panel[["VFMF", "VB", "BIL"]]).sum(axis=1) - turnover_cost(weights)
 
+    fund_no_overlay = fund(pd.Series(0.0, index=index, dtype=float))
     fund_current, fund_revised = fund(credit_only), fund(graded)
     benchmark = (2 / 3) * market + (1 / 3) * cash
 
     table = pd.DataFrame(
         [
+            metrics(
+                fund_no_overlay,
+                cash,
+                "Fundo — sem overlay (1/3 VFMF + 1/3 VB + 1/3 BIL)",
+            ),
             metrics(fund_current, cash, "Fundo — overlay de crédito binário"),
             metrics(fund_revised, cash, "Fundo — overlay dois eixos graduado"),
             metrics(benchmark, cash, "Benchmark 2/3 SPY + 1/3 BIL"),
@@ -205,18 +269,25 @@ def main() -> int:
 
     # -------------------------------------------------- 3. grid de sensibilidade
     grid = []
+    active_paths: list[pd.Series] = []
     baseline = metrics(panel["VB"], cash, "sempre ligado")
     for window in (24, 36, 48):
         for entry, exit_ in ((0.75, 0.25), (1.0, 0.5), (1.25, 0.75)):
             for cap in (0.33, 0.50, 0.67, 1.00):
                 votes = []
-                for label, series in macro.items():
-                    z = rolling_zscore(series.rename(label), window, max(2, int(window * 0.7)))
+                for label, series_id in FRED_SERIES.items():
+                    z = pd.to_numeric(
+                        point_in_time[f"{series_id}_z_{window}_point_in_time"],
+                        errors="coerce",
+                    ).rename(label)
                     votes.append(hysteresis_state(z, entry, exit_).shift(1).reindex(index).fillna(0))
                 level = cap * sum(votes) / len(votes)
                 hedged = panel["VB"] * (1 - level) + cash * level
                 weights = pd.DataFrame({"VB": 1 - level, "BIL": level}, index=index)
-                row = metrics(hedged - turnover_cost(weights), cash)
+                net = hedged - turnover_cost(weights)
+                active = net - panel["VB"]
+                active_paths.append(active.rename(f"{window}_{entry}_{exit_}_{cap}"))
+                row = metrics(net, cash)
                 row.update({"janela": window, "entrada": entry, "saida": exit_, "cap_derisk": cap})
                 grid.append(row)
     grid_df = pd.DataFrame(grid).drop(columns=["serie"])
@@ -233,7 +304,154 @@ def main() -> int:
         .to_string(float_format=lambda v: f"{v:.4f}")
     )
 
-    # ------------------------------------------------ 4. overlay como seguro
+    # ------------------------------------ 4. gate estatístico e falsificação
+    revised_small = panel["VB"] * (1 - graded) + cash * graded
+    revised_small_weights = pd.DataFrame({"VB": 1 - graded, "BIL": graded}, index=index)
+    revised_small_net = revised_small - turnover_cost(revised_small_weights)
+    active_revised = (revised_small_net - panel["VB"]).dropna()
+    active_std = float(active_revised.std(ddof=1))
+    active_sharpe = (
+        float(active_revised.mean() / active_std * math.sqrt(MONTHS))
+        if active_std > 0
+        else np.nan
+    )
+    active_trial_sharpes = pd.Series(
+        [
+            path.mean() / path.std(ddof=1) * math.sqrt(MONTHS)
+            for path in active_paths
+            if path.std(ddof=1) > 0
+        ],
+        dtype=float,
+    )
+    active_skew = float(active_revised.skew())
+    active_kurtosis = float(active_revised.kurt() + 3.0)
+    psr = probabilistic_sharpe_ratio(
+        active_sharpe,
+        observations=len(active_revised),
+        skewness=active_skew,
+        kurtosis=active_kurtosis,
+        periods_per_year=MONTHS,
+    )
+    dsr = deflated_sharpe_ratio(
+        active_sharpe,
+        observations=len(active_revised),
+        num_trials=len(active_trial_sharpes),
+        sharpe_std=float(active_trial_sharpes.std(ddof=1)),
+        mean_sharpe=0.0,
+        skewness=active_skew,
+        kurtosis=active_kurtosis,
+        periods_per_year=MONTHS,
+    )
+    bootstrap = moving_block_bootstrap_mean(
+        active_revised,
+        periods_per_year=MONTHS,
+        block_length=6,
+        n_bootstrap=10_000,
+        confidence_level=0.95,
+        seed=20260816,
+    )
+    placebo = circular_shift_placebo_test(
+        panel["VB"], cash, graded, cost_bps=COST_BPS, periods_per_year=MONTHS, worst_periods=5
+    )
+    placebo.placebo_metrics.to_csv(TABLES / "placebos_deslocamento_circular.csv")
+    placebo.percentiles.to_csv(TABLES / "percentis_placebo.csv")
+
+    def hac_difference(left: pd.Series, right: pd.Series) -> dict[str, float]:
+        difference = (left - right).dropna()
+        model = sm.OLS(difference, np.ones(len(difference))).fit(
+            cov_type="HAC", cov_kwds={"maxlags": 3}
+        )
+        return {
+            "diferenca_media_anual": float(difference.mean() * MONTHS),
+            "p_valor_HAC": float(model.pvalues.iloc[0]),
+        }
+
+    hac_revised_vs_no_overlay = hac_difference(fund_revised, fund_no_overlay)
+    gates = {
+        "dsr_minimo_95pct": bool(dsr >= GOVERNANCE_CRITERIA["dsr_minimo"]),
+        "bootstrap_ic95_inteiramente_positivo": bool(
+            bootstrap.ci_lower
+            > GOVERNANCE_CRITERIA["bootstrap_ic95_limite_inferior_maior_que"]
+        ),
+        "placebo_cagr_percentil_minimo_95": bool(
+            placebo.percentiles["cagr"]
+            >= GOVERNANCE_CRITERIA["placebo_percentil_minimo_por_metrica"]
+        ),
+        "placebo_sharpe_percentil_minimo_95": bool(
+            placebo.percentiles["sharpe"]
+            >= GOVERNANCE_CRITERIA["placebo_percentil_minimo_por_metrica"]
+        ),
+        "placebo_drawdown_percentil_minimo_95": bool(
+            placebo.percentiles["max_drawdown"]
+            >= GOVERNANCE_CRITERIA["placebo_percentil_minimo_por_metrica"]
+        ),
+        "placebo_cauda_percentil_minimo_95": bool(
+            placebo.percentiles["mean_worst_months"]
+            >= GOVERNANCE_CRITERIA["placebo_percentil_minimo_por_metrica"]
+        ),
+        "hac_revisada_vs_sem_overlay_positivo_e_significativo": bool(
+            hac_revised_vs_no_overlay["diferenca_media_anual"]
+            > GOVERNANCE_CRITERIA["hac_diferenca_media_anual_maior_que"]
+            and hac_revised_vs_no_overlay["p_valor_HAC"]
+            <= GOVERNANCE_CRITERIA["hac_p_valor_maximo"]
+        ),
+        # A revisão e todos os testes acima nasceram da mesma amostra.
+        "validacao_out_of_sample": False,
+    }
+    approved = bool(all(gates.values()))
+    governance = {
+        "decisao": "aprovado_producao" if approved else "shadow_mode",
+        "aprovado": approved,
+        "criterios": GOVERNANCE_CRITERIA,
+        "gates": gates,
+    }
+
+    statistical = {
+        "status": "exploratorio_in_sample",
+        "observacoes": int(len(active_revised)),
+        "tentativas_grid": int(len(active_trial_sharpes)),
+        "sharpe_ativo_anual": active_sharpe,
+        "probabilistic_sharpe_ratio": psr,
+        "deflated_sharpe_ratio": dsr,
+        "gate_alpha_95pct_aprovado": bool(dsr >= 0.95),
+        "bootstrap_bloco_6_media_ativa_anual": asdict(bootstrap),
+        "percentis_placebo": {key: float(value) for key, value in placebo.percentiles.items()},
+        "comparacoes_HAC": {
+            "revisada_menos_sem_overlay": hac_revised_vs_no_overlay,
+            "revisada_menos_original": hac_difference(fund_revised, fund_current),
+            "revisada_menos_benchmark": hac_difference(fund_revised, benchmark),
+            "overlay_smallcap_menos_VB": hac_difference(revised_small_net, panel["VB"]),
+        },
+        "governanca": governance,
+        "nota": (
+            "Placebos circulares preservam frequencia e persistencia do sinal, mas sao "
+            "falsificacao in-sample; nao substituem holdout."
+        ),
+    }
+    (RESULTS / "validacao_estatistica.json").write_text(
+        json.dumps(statistical, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    manifest["governanca"] = governance
+    (RESULTS / "manifesto_revisao.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False, default=list), encoding="utf-8"
+    )
+    print("\n=== GATE ESTATÍSTICO ===")
+    print(f"  PSR ativo vs zero         : {psr:.1%}")
+    print(f"  DSR após {len(active_trial_sharpes)} tentativas : {dsr:.1%}")
+    print(
+        "  IC95% média ativa anual   : "
+        f"[{bootstrap.ci_lower:.2%}, {bootstrap.ci_upper:.2%}]"
+    )
+    print(
+        "  percentil placebo         : "
+        f"DD {placebo.percentiles['max_drawdown']:.0f} | "
+        f"cauda {placebo.percentiles['mean_worst_months']:.0f} | "
+        f"Sharpe {placebo.percentiles['sharpe']:.0f} | "
+        f"CAGR {placebo.percentiles['cagr']:.0f}"
+    )
+    print(f"  decisão de governança      : {governance['decisao']} (aprovado={approved})")
+
+    # ------------------------------------------------ 5. overlay como seguro
     print("\n=== OVERLAY COMO SEGURO ===")
     ledger = []
     for label, level in (("binário 100%", credit_only), ("dois eixos graduado", graded)):
@@ -283,19 +501,6 @@ def main() -> int:
     print("\n=== CONTEXTO: prêmios de fator na janela testada ===")
     print(context.to_string(float_format=lambda v: f"{v:.4f}"))
 
-    manifest = {
-        "gerado_utc": datetime.now(timezone.utc).isoformat(),
-        "config_overlay": asdict(CFG),
-        "custo_bps": COST_BPS,
-        "series_macro": FRED_SERIES,
-        "sha256_config": hashlib.sha256(
-            json.dumps(asdict(CFG), sort_keys=True, default=list).encode()
-        ).hexdigest(),
-        "nota": "Revisões motivadas por argumento econômico; grid publicado para mostrar dependência de parâmetro.",
-    }
-    (RESULTS / "manifesto_revisao.json").write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False, default=list), encoding="utf-8"
-    )
     print(f"\nOK | período {index.min()}..{index.max()} | {len(index)} meses")
     return 0
 

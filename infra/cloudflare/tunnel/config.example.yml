@@ -1,0 +1,11 @@
+# Copy to a private, untracked config file and replace both placeholders.
+tunnel: REPLACE_WITH_TUNNEL_UUID
+credentials-file: C:/Users/REPLACE_ME/.cloudflared/REPLACE_WITH_TUNNEL_UUID.json
+
+ingress:
+  - hostname: origin.example.com
+    service: http://127.0.0.1:8000
+    originRequest:
+      connectTimeout: 2s
+      noTLSVerify: false
+  - service: http_status:404

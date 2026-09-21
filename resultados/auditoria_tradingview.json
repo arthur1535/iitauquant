@@ -1,0 +1,56 @@
+{
+  "gerado_utc": "2026-08-16T23:55:03.642857+00:00",
+  "origem": "TradingView Premium Desktop; intervalo 1M; janela Todos",
+  "arquivos_brutos": {
+    "BAA10Y": {
+      "nome": "FRED_BAA10Y, 1M_3ca63.csv",
+      "sha256": "d4599ddb70d1267d13d685e98f7c662b417d003d790e39facd05f121c7d8ea09"
+    },
+    "NFCI": {
+      "nome": "FRED_NFCI, 1M_a27db.csv",
+      "sha256": "4c8cce498237d54a83998a5439d5291922a7b1dd5b42a05938bbc26bb0e39596"
+    }
+  },
+  "arquivo_sanitizado": "dados/tradingview/lastro_tradingview_mensal.csv",
+  "linhas_sanitizadas": 488,
+  "periodo_exportado": [
+    "1986-01",
+    "2026-08"
+  ],
+  "colunas_privadas_descartadas": true,
+  "divergencias_entre_exports_nos_plots_lastro": 0,
+  "reconciliacao_repositorio": {
+    "BAA10Y": {
+      "meses_comparados": 488,
+      "primeiro_mes": "1986-01",
+      "ultimo_mes": "2026-08",
+      "divergencias": 0,
+      "maior_diferenca_absoluta": 0.0,
+      "meses_divergentes": {}
+    },
+    "NFCI": {
+      "meses_comparados": 488,
+      "primeiro_mes": "1986-01",
+      "ultimo_mes": "2026-08",
+      "divergencias": 0,
+      "maior_diferenca_absoluta": 0.0,
+      "meses_divergentes": {}
+    }
+  },
+  "estado_operacional": {
+    "mes_corrente_parcial": "2026-08",
+    "ultimo_mes_fechado": "2026-07",
+    "BAA10Y_fechado": 1.63,
+    "NFCI_fechado": -0.546,
+    "z_BAA10Y_aplicado": -0.15913427774835498,
+    "z_NFCI_aplicado": -1.3131270394353012,
+    "eixos_acesos": 0,
+    "regime": "NORMAL",
+    "derisk_do_sleeve_tatico": 0.0,
+    "pesos": {
+      "factor": 0.3333333333333333,
+      "small_caps": 0.3333333333333333,
+      "bil_renda_fixa": 0.3333333333333333
+    }
+  }
+}

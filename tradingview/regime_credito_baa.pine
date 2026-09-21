@@ -1,46 +1,111 @@
 //@version=6
-indicator("Fundo Multi-Sleeve — Regime de Crédito Baa", overlay=false)
+indicator("LASTRO — Overlay de Risco", shorttitle="LASTRO Overlay", overlay=false)
 
-// Spread entre títulos corporativos Baa da Moody's e Treasury de 10 anos.
-fredSymbol = input.symbol("FRED:BAA10Y", "Série do spread Baa")
-lookback = input.int(36, "Janela do z-score (meses)", minval=12)
-entryZ = input.float(1.0, "Entrada em estresse", step=0.1)
-exitZ = input.float(0.5, "Saída do estresse", step=0.1)
+// Monitor operacional de quant_fund/risk_overlay.py.
+// Cada eixo usa o último fechamento mensal exibido pelo FRED no TradingView.
+// Atenção: séries macro podem ser revisadas; por isso o histórico visual não é
+// a fonte do backtest point-in-time, que usa vintages ALFRED no Python.
 
-spread = request.security(fredSymbol, "M", close, barmerge.gaps_off, barmerge.lookahead_off)
-meanSpread = ta.sma(spread, lookback)
-stdSpread = ta.stdev(spread, lookback)
-z = stdSpread > 0 ? (spread - meanSpread) / stdSpread : na
+string GROUP_MACRO = "Séries macro"
+string GROUP_MODEL = "Parâmetros do modelo"
+string GROUP_GOVERNANCE = "Governança de capital"
+string GROUP_VIEW = "Visualização"
 
-var bool stress = false
-if barstate.isconfirmed and not na(z)
-    if not stress and z > entryZ
-        stress := true
-    else if stress and z < exitZ
-        stress := false
+creditSymbol = input.symbol("FRED:BAA10Y", "Spread de crédito Baa", group=GROUP_MACRO)
+conditionsSymbol = input.symbol("FRED:NFCI", "Condições financeiras (NFCI)", group=GROUP_MACRO)
 
-factorWeight = 33.0
-smallWeight = stress ? 0.0 : 33.0
-bilWeight = stress ? 67.0 : 33.0
+lookback = input.int(36, "Janela do z-score (meses)", minval=12, group=GROUP_MODEL)
+entryZ = input.float(1.0, "Entrada em estresse", step=0.05, group=GROUP_MODEL)
+exitZ = input.float(0.5, "Saída do estresse", step=0.05, group=GROUP_MODEL)
+maxDerisk = input.float(0.50, "De-risking máximo do sleeve tático", minval=0.05, maxval=1.0, step=0.05, group=GROUP_MODEL)
 
-plot(z, "z-score Baa", color=color.rgb(29, 78, 121), linewidth=2)
+capitalApproved = input.bool(false, "Aprovar overlay para capital", group=GROUP_GOVERNANCE, tooltip="Desligado por padrão. Os sinais continuam em modo shadow, mas os pesos executáveis permanecem em 1/3 por sleeve.")
+
+showBackground = input.bool(true, "Colorir o sinal candidato", group=GROUP_VIEW)
+showSignals = input.bool(true, "Marcar mudanças do sinal candidato", group=GROUP_VIEW)
+
+if exitZ >= entryZ
+    runtime.error("O limiar de saída deve ser menor que o limiar de entrada.")
+
+// Calculada no contexto mensal de cada série. ta.stdev(..., false) usa o
+// desvio-padrão amostral, igual ao ddof=1 adotado no código Python.
+f_axis(int window, float entryThreshold, float exitThreshold) =>
+    float rollingMean = ta.sma(close, window)
+    float rollingStd = ta.stdev(close, window, false)
+    float zscore = rollingStd > 0 ? (close - rollingMean) / rollingStd : na
+    var bool stressed = false
+    if not na(zscore)
+        if not stressed and zscore > entryThreshold
+            stressed := true
+        else if stressed and zscore < exitThreshold
+            stressed := false
+    [close[1], zscore[1], stressed[1]]
+
+// O offset [1] evita usar o mês corrente ainda aberto. Ele não elimina revisões
+// posteriores da fonte: o corte de disponibilidade é auditado via ALFRED.
+[creditLevel, creditZ, creditStressed] = request.security(creditSymbol, "M", f_axis(lookback, entryZ, exitZ), barmerge.gaps_off, barmerge.lookahead_on)
+[conditionsLevel, conditionsZ, conditionsStressed] = request.security(conditionsSymbol, "M", f_axis(lookback, entryZ, exitZ), barmerge.gaps_off, barmerge.lookahead_on)
+
+creditVote = creditStressed ? 1.0 : 0.0
+conditionsVote = conditionsStressed ? 1.0 : 0.0
+activeAxes = creditVote + conditionsVote
+
+// Mesmo cálculo de build_risk_overlay: cap × votos / número de eixos.
+// O candidato é sempre observado; só alcança capital com aprovação explícita.
+candidateDerisk = maxDerisk * activeAxes / 2.0
+executableDerisk = capitalApproved ? candidateDerisk : 0.0
+
+// Mesmo cálculo de graded_allocations: o sleeve Factor permanece estrutural;
+// somente Small Caps migra proporcionalmente para renda fixa/caixa.
+factorWeight = 1.0 / 3.0
+smallWeight = (1.0 / 3.0) * (1.0 - executableDerisk)
+fixedIncomeWeight = (1.0 / 3.0) * (1.0 + executableDerisk)
+
+regimeChanged = not na(activeAxes[1]) and activeAxes != activeAxes[1]
+regimeText = activeAxes == 0 ? "NORMAL" : activeAxes == 1 ? "DEFENSIVO 1/2" : "DEFENSIVO 2/2"
+regimeColor = activeAxes == 0 ? color.rgb(42, 157, 143) : activeAxes == 1 ? color.rgb(233, 166, 59) : color.rgb(194, 65, 59)
+capitalStatusText = capitalApproved ? "LIVE / APROVADO" : "SHADOW / NÃO APROVADO"
+capitalStatusColor = capitalApproved ? color.rgb(42, 157, 143) : color.rgb(92, 103, 112)
+
+plot(creditZ, "z-score BAA10Y (fechado)", color=color.rgb(29, 78, 121), linewidth=2)
+plot(conditionsZ, "z-score NFCI (fechado)", color=color.rgb(116, 78, 153), linewidth=2)
+hline(0.0, "Média", color=color.new(color.gray, 65))
 hline(entryZ, "Entrada", color=color.red, linestyle=hline.style_dashed)
 hline(exitZ, "Saída", color=color.teal, linestyle=hline.style_dotted)
-bgcolor(stress ? color.new(color.red, 84) : color.new(color.green, 91), title="Estado")
+bgcolor(showBackground ? color.new(regimeColor, 87) : na, title="Sinal candidato")
+// O título do plot é mantido por compatibilidade com o sanitizador de CSV.
+plotshape(showSignals and regimeChanged, title="Mudança de regime", style=shape.circle, location=location.top, size=size.tiny, color=regimeColor)
 
-alertcondition(stress and not stress[1], "ENTRADA EM ESTRESSE", "Regime Baa entrou em estresse. Aplicar no próximo mês: Factor 33%, Small Caps 0%, BIL 67%.")
-alertcondition(not stress and stress[1], "VOLTA AO NORMAL", "Regime Baa normalizou. Aplicar no próximo mês: Factor 33%, Small Caps 33%, BIL 33%.")
+// A condição genérica funciona no diálogo tradicional de alertas. alert() inclui
+// o gate e os pesos executáveis; use "Any alert() function call".
+alertcondition(regimeChanged, "LASTRO — MUDANÇA MENSAL", "O sinal candidato LASTRO mudou. Consulte no painel o gate de capital e os pesos executáveis.")
+if regimeChanged
+    string alertMessage = "LASTRO | CANDIDATO " + regimeText + " | " + capitalStatusText + " | PESOS EXECUTÁVEIS: Factor " + str.tostring(factorWeight * 100, "#.##") + "% | Small Caps " + str.tostring(smallWeight * 100, "#.##") + "% | BIL " + str.tostring(fixedIncomeWeight * 100, "#.##") + "%"
+    alert(alertMessage, alert.freq_once_per_bar)
 
-var table panel = table.new(position.top_right, 2, 5, border_width=1)
+var table panel = table.new(position.top_right, 2, 12, border_width=1)
 if barstate.islast
-    stateColor = stress ? color.rgb(194, 65, 59) : color.rgb(42, 157, 143)
-    table.cell(panel, 0, 0, "REGIME", text_color=color.white, bgcolor=color.rgb(18, 48, 74))
-    table.cell(panel, 1, 0, stress ? "ESTRESSE" : "NORMAL", text_color=color.white, bgcolor=stateColor)
-    table.cell(panel, 0, 1, "z-score")
-    table.cell(panel, 1, 1, str.tostring(z, "#.##"))
-    table.cell(panel, 0, 2, "Factor")
-    table.cell(panel, 1, 2, str.tostring(factorWeight, "#") + "%")
-    table.cell(panel, 0, 3, "Small Caps")
-    table.cell(panel, 1, 3, str.tostring(smallWeight, "#") + "%")
-    table.cell(panel, 0, 4, "BIL")
-    table.cell(panel, 1, 4, str.tostring(bilWeight, "#") + "%")
+    table.cell(panel, 0, 0, "LASTRO", text_color=color.white, bgcolor=color.rgb(18, 48, 74))
+    table.cell(panel, 1, 0, capitalStatusText, text_color=color.white, bgcolor=capitalStatusColor)
+    table.cell(panel, 0, 1, "SINAL CANDIDATO", text_color=color.white, bgcolor=color.rgb(18, 48, 74))
+    table.cell(panel, 1, 1, regimeText, text_color=color.white, bgcolor=regimeColor)
+    table.cell(panel, 0, 2, "BAA10Y (t-1)")
+    table.cell(panel, 1, 2, str.tostring(creditLevel, "#.###") + " | z " + str.tostring(creditZ, "#.##"))
+    table.cell(panel, 0, 3, "NFCI (t-1)")
+    table.cell(panel, 1, 3, str.tostring(conditionsLevel, "#.###") + " | z " + str.tostring(conditionsZ, "#.##"))
+    table.cell(panel, 0, 4, "Eixos candidatos")
+    table.cell(panel, 1, 4, str.tostring(activeAxes, "#") + "/2")
+    table.cell(panel, 0, 5, "De-risking candidato")
+    table.cell(panel, 1, 5, str.tostring(candidateDerisk * 100, "#.##") + "% do sleeve tático")
+    table.cell(panel, 0, 6, "Gate de capital")
+    table.cell(panel, 1, 6, capitalStatusText, text_color=color.white, bgcolor=capitalStatusColor)
+    table.cell(panel, 0, 7, "De-risking executável")
+    table.cell(panel, 1, 7, str.tostring(executableDerisk * 100, "#.##") + "% do sleeve tático")
+    table.cell(panel, 0, 8, "PESOS EXECUTÁVEIS", text_color=color.white, bgcolor=color.rgb(18, 48, 74))
+    table.cell(panel, 1, 8, "ALOCAÇÃO", text_color=color.white, bgcolor=color.rgb(18, 48, 74))
+    table.cell(panel, 0, 9, "Factor")
+    table.cell(panel, 1, 9, str.tostring(factorWeight * 100, "#.##") + "%")
+    table.cell(panel, 0, 10, "Small Caps")
+    table.cell(panel, 1, 10, str.tostring(smallWeight * 100, "#.##") + "%")
+    table.cell(panel, 0, 11, "BIL / renda fixa")
+    table.cell(panel, 1, 11, str.tostring(fixedIncomeWeight * 100, "#.##") + "%")

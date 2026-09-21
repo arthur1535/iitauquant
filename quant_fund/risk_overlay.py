@@ -9,11 +9,14 @@ Motivação empírica (ver `scripts/diagnostico_overlay.py`):
    no maior drawdown da amostra — não por calibração ruim, mas por construção.
    O segundo eixo (índice amplo de condições financeiras) cobre esse ângulo.
 
-2. Migrar 100% do sleeve de risco em um único passo tem custo côncavo: a maior
-   parte da proteção vem da primeira fração de-riscada e o resto é quase todo
-   custo de oportunidade. Num grid de 36 configurações, 100% delas melhoraram o
-   drawdown máximo, mas apenas 44% melhoraram o Sharpe — e o de-risking parcial
-   dominou o binário em CAGR e Sharpe com proteção de cauda equivalente.
+2. Migrar 100% do sleeve de risco em um único passo pode concentrar o resultado
+   em poucos acertos de timing. A intensidade parcial torna o custo da proteção
+   explícito e evita tratar um único episódio como evidência de generalização.
+
+Os parâmetros abaixo descrevem a especificação exploratória do relatório. O
+hash do manifesto identifica exatamente o que foi executado, mas não equivale a
+pré-registro. A significância é avaliada separadamente com placebos temporais,
+bootstrap em blocos e Deflated Sharpe Ratio.
 
 O overlay resultante não é mais complexo que o anterior: mesma arquitetura de
 z-score com histerese, um insumo a mais, e uma saída graduada em vez de binária.
@@ -21,7 +24,7 @@ z-score com histerese, um insumo a mais, e uma saída graduada em vez de binári
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -31,7 +34,7 @@ from .utils import monthly_last
 
 @dataclass(frozen=True)
 class RiskOverlayConfig:
-    """Parâmetros do overlay. Congelados antes do backtest; não otimizar por retorno."""
+    """Parâmetros identificados do overlay; não selecionar pelo melhor backtest."""
 
     zscore_window_months: int = 36
     zscore_min_periods: int = 24

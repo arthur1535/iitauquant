@@ -1,0 +1,175 @@
+//@version=5
+// @strategy_alert_message {"strategy":"MOMENTUM_ATR","action":"{{strategy.order.action}}","order_type":"MARKET","ticker":"{{ticker}}","close_price":{{strategy.order.price}},"quantity":{{strategy.order.contracts}},"timestamp":"{{timenow}}","nonce":"{{ticker}}-{{interval}}-{{strategy.order.id}}-{{time}}","idempotency_key":"{{ticker}}-{{interval}}-{{strategy.order.id}}-{{time}}","reason":"{{strategy.order.alert_message}}","metadata":{"exchange":"{{exchange}}","interval":"{{interval}}","bar_time":"{{time}}"}}
+strategy(
+     title="Adaptive Trend & Volatility-Targeted Momentum ATR",
+     shorttitle="VolTarget-MomATR",
+     overlay=true,
+     initial_capital=100000,
+     default_qty_type=strategy.cash,
+     default_qty_value=100000,
+     commission_type=strategy.commission.percent,
+     commission_value=0.15,
+     process_orders_on_close=false,
+     calc_on_every_tick=false,
+     calc_on_order_fills=false)
+
+// =============================================================================
+// Estratégia Quantitativa: Tendência Adaptativa com Volatility Targeting
+// Laboratório Momentum ATR — Desafio Quant AI 2026
+//
+// Diferenciais Quantitativos:
+// 1. Dimensionamento por Meta de Volatilidade (Volatility Targeting):
+//    O tamanho do trade é calculado para arriscar uma volatilidade anualizada fixa
+//    (ex: 12% a.a.), reduzindo o tamanho em ativos voláteis e aumentando em ativos calmos.
+// 2. Trailing Stop ATR Dinâmico com Ratchet (sem repainting).
+// 3. Execução Causal: Decisão no fechamento confirmado, fill no open seguinte (t+1).
+// 4. Integração Paper-Only via Webhook JSON com Nonce e Chave de Idempotência.
+// =============================================================================
+
+// --- 1. Parâmetros de Tendência e Momentum ---
+string GRP_TREND = "1. Filtro de Tendência e Momentum"
+int fastLen = input.int(20, "Média Rápida (EMA)", minval=5, group=GRP_TREND)
+int slowLen = input.int(60, "Média Lenta (EMA)", minval=10, group=GRP_TREND)
+int momWindow = input.int(20, "Janela de Momentum", minval=5, group=GRP_TREND)
+
+// --- 2. Gestão de Risco e Volatility Targeting ---
+string GRP_RISK = "2. Volatility Targeting & ATR Stop"
+float targetVol = input.float(0.15, "Meta de Volatilidade Anualizada (ex: 0.15 = 15%)", minval=0.01, maxval=1.0, step=0.01, group=GRP_RISK)
+int atrWindow = input.int(14, "Janela do ATR (SMA)", minval=2, group=GRP_RISK)
+float stopMultiplier = input.float(2.5, "Multiplicador do Stop ATR", minval=0.5, step=0.1, group=GRP_RISK)
+float maxLeverage = input.float(1.5, "Alavancagem Máxima Permitida", minval=0.1, maxval=3.0, step=0.1, group=GRP_RISK)
+
+// --- 3. Execução e Webhook ---
+string GRP_EXEC = "3. Alertas e Integração Webhook"
+bool emitWebhooks = input.bool(true, "Emitir chamadas de Alerta JSON", group=GRP_EXEC)
+
+// -----------------------------------------------------------------------------
+// Indicadores Quantitativos
+// -----------------------------------------------------------------------------
+float emaFast = ta.ema(close, fastLen)
+float emaSlow = ta.ema(close, slowLen)
+float momentum = na(close[momWindow]) ? na : (close / close[momWindow] - 1.0)
+float trueRange = ta.tr(true)
+float atr = ta.sma(trueRange, atrWindow)
+
+// Volatilidade anualizada realizada do ativo
+float dailyReturn = ta.change(close) / close[1]
+float realizedVolDaily = ta.stdev(dailyReturn, 20)
+float realizedVolAnnual = realizedVolDaily * math.sqrt(252)
+
+// -----------------------------------------------------------------------------
+// Dimensionamento de Posição Dinâmico (Volatility Targeting)
+// -----------------------------------------------------------------------------
+f_calcVolTargetContracts() =>
+    float currentEquity = strategy.equity
+    float assetVol = math.max(realizedVolAnnual, 0.05) // Floor de 5% de vol
+    float rawNotional = (currentEquity * targetVol) / assetVol
+    float cappedNotional = math.min(rawNotional, currentEquity * maxLeverage)
+    float calculatedQty = cappedNotional / close
+    math.max(math.floor(calculatedQty), 1.0)
+
+f_eventKey(string action, string reason) =>
+    syminfo.ticker + "-" + timeframe.period + "-" + str.tostring(time) + "-" + action + "-" + reason
+
+f_payload(string action, string reason, float referencePrice, float stopValue, float qty) =>
+    string eventKey = f_eventKey(action, reason)
+    string stopField = na(stopValue) ? "" : ",\"stop_price\":" + str.tostring(stopValue, format.mintick)
+    string payload = "{\"strategy\":\"MOMENTUM_ATR\",\"action\":\"" + action + "\",\"order_type\":\"MARKET\",\"ticker\":\"" + syminfo.ticker + "\",\"close_price\":" + str.tostring(referencePrice, format.mintick) + stopField + ",\"quantity\":" + str.tostring(qty) + ",\"timestamp\":" + str.tostring(timenow) + ",\"nonce\":\"" + eventKey + "\",\"idempotency_key\":\"" + eventKey + "\",\"reason\":\"" + reason + "\",\"metadata\":{\"exchange\":\"" + syminfo.prefix + "\",\"interval\":\"" + timeframe.period + "\",\"bar_time\":\"" + str.tostring(time) + "\"}}"
+    payload
+
+// -----------------------------------------------------------------------------
+// Condições de Entrada e Saída
+// -----------------------------------------------------------------------------
+bool trendBullish = emaFast > emaSlow and close > emaSlow
+bool momentumBullish = not na(momentum) and momentum > 0.0 and momentum[1] <= 0.0
+bool entrySignal = barstate.isconfirmed and trendBullish and momentumBullish and strategy.position_size == 0 and not na(atr)
+
+bool trendBearish = emaFast < emaSlow or close < emaSlow
+bool momentumBearish = not na(momentum) and momentum < 0.0
+bool exitSignal = barstate.isconfirmed and (trendBearish or momentumBearish) and strategy.position_size > 0
+
+// -----------------------------------------------------------------------------
+// Gerenciamento de Posição e Trailing Stop com Ratchet
+// -----------------------------------------------------------------------------
+var float trailingStop = na
+var float signalAtr = na
+
+bool entryFilledThisBar = strategy.position_size > 0 and nz(strategy.position_size[1]) <= 0
+bool tradeClosedThisBar = ta.change(strategy.closedtrades) > 0
+bool stopFilledThisBar = false
+
+if tradeClosedThisBar
+    int lastTrade = strategy.closedtrades - 1
+    string exitComment = strategy.closedtrades.exit_comment(lastTrade)
+    float exitPrice = strategy.closedtrades.exit_price(lastTrade)
+    float exitQty = strategy.closedtrades.size(lastTrade)
+    stopFilledThisBar := exitComment == "EXIT_STOP_TRIGGERED"
+    if emitWebhooks and stopFilledThisBar
+        alert(f_payload("SELL", "EXIT_STOP_TRIGGERED", exitPrice, trailingStop, exitQty), alert.freq_once_per_bar_close)
+    trailingStop := na
+
+// Entrada
+if entrySignal
+    signalAtr := atr
+    float targetQty = f_calcVolTargetContracts()
+    int initialStopTicks = math.max(1, int(math.ceil(stopMultiplier * signalAtr / syminfo.mintick)))
+    
+    strategy.entry("LONG_VOL", strategy.long, qty=targetQty, comment="MOMENTUM_ENTRY", alert_message="MOMENTUM_ENTRY")
+    strategy.exit("STOP_ATR", from_entry="LONG_VOL", loss=initialStopTicks, comment="EXIT_STOP_TRIGGERED", alert_message="EXIT_STOP_TRIGGERED")
+    
+    if emitWebhooks
+        alert(f_payload("BUY", "MOMENTUM_ENTRY", close, na, targetQty), alert.freq_once_per_bar_close)
+
+// Atualização do Trailing Stop no preenchimento e nas barras subsequentes (Ratchet)
+if entryFilledThisBar
+    trailingStop := strategy.position_avg_price - stopMultiplier * signalAtr
+
+if barstate.isconfirmed and strategy.position_size > 0 and not entryFilledThisBar and not na(atr)
+    float initialStop = strategy.position_avg_price - stopMultiplier * signalAtr
+    float prospectiveStop = close - stopMultiplier * atr
+    trailingStop := na(trailingStop) ? initialStop : math.max(trailingStop, prospectiveStop)
+    strategy.exit("STOP_ATR", from_entry="LONG_VOL", stop=trailingStop, comment="EXIT_STOP_TRIGGERED", alert_message="EXIT_STOP_TRIGGERED")
+
+// Saída Discricionária por Momentum/Trend
+if exitSignal
+    strategy.cancel("STOP_ATR")
+    strategy.close("LONG_VOL", comment="EXIT_MOMENTUM_LOSS", alert_message="EXIT_MOMENTUM_LOSS")
+    if emitWebhooks
+        alert(f_payload("SELL", "EXIT_MOMENTUM_LOSS", close, trailingStop, strategy.position_size), alert.freq_once_per_bar_close)
+
+// -----------------------------------------------------------------------------
+// Linhas e Visualização no Gráfico
+// -----------------------------------------------------------------------------
+plot(emaFast, "EMA Rápida", color=color.new(#00e676, 0), linewidth=1)
+plot(emaSlow, "EMA Lenta", color=color.new(#2979ff, 0), linewidth=2)
+plot(strategy.position_size > 0 ? trailingStop : na, "Stop ATR Ratchet", color=color.new(#ff1744, 0), style=plot.style_linebr, linewidth=2)
+
+// -----------------------------------------------------------------------------
+// Painel Informativo HUD
+// -----------------------------------------------------------------------------
+var table hud = table.new(position.top_right, 4, 5, bgcolor=color.new(#131722, 10), border_color=color.new(#363c4e, 30), border_width=1)
+
+if barstate.islast
+    table.cell(hud, 0, 0, "VOLATILITY TARGET ENGINE", bgcolor=color.new(#651fff, 20), text_color=color.white, text_size=size.small)
+    table.cell(hud, 1, 0, strategy.position_size > 0 ? "POSICIONADO" : "LÍQUIDO", bgcolor=strategy.position_size > 0 ? color.new(#00c853, 20) : color.new(#787b86, 20), text_color=color.white, text_size=size.small)
+    table.merge_cells(hud, 1, 0, 3, 0)
+    
+    table.cell(hud, 0, 1, "Meta Vol Anual", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 1, str.tostring(targetVol * 100, "#.0") + "%", text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 2, 1, "Vol Realizada", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 1, str.tostring(realizedVolAnnual * 100, "#.1") + "%", text_color=color.yellow, text_size=size.tiny)
+    
+    table.cell(hud, 0, 2, "Tamanho Contratos", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 2, str.tostring(strategy.position_size, "#.##"), text_color=color.white, text_size=size.tiny)
+    table.cell(hud, 2, 2, "Stop ATR Vigente", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 2, na(trailingStop) ? "N/A" : str.tostring(trailingStop, "#.##"), text_color=color.red, text_size=size.tiny)
+    
+    table.cell(hud, 0, 3, "P&L Fechado Total", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 3, str.tostring(strategy.netprofit, "#.##"), text_color=strategy.netprofit >= 0 ? color.green : color.red, text_size=size.tiny)
+    table.cell(hud, 2, 3, "Trades Realizados", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 3, str.tostring(strategy.closedtrades), text_color=color.white, text_size=size.tiny)
+    
+    table.cell(hud, 0, 4, "Modo", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 1, 4, "PAPER-ONLY", bgcolor=color.new(color.orange, 30), text_color=color.orange, text_size=size.tiny)
+    table.cell(hud, 2, 4, "Custo por Ponta", text_color=color.gray, text_size=size.tiny)
+    table.cell(hud, 3, 4, "15 bps (0.15%)", text_color=color.white, text_size=size.tiny)

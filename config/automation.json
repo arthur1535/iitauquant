@@ -1,0 +1,7 @@
+{
+  "mode": "paper",
+  "manifest_path": "config/momentum_universe.json",
+  "output_root": "results/automation",
+  "workers": 1,
+  "interval_seconds": 3600
+}

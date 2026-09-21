@@ -1,6 +1,6 @@
 # Backtest preliminar e auditoria metodológica
 
-Gerado em 2026-08-02 22:54 UTC · configuração `a870cbd4d3f3`.
+Gerado em 2026-08-16 23:56 UTC · configuração `a870cbd4d3f3`.
 
 ## Escopo e veredito
 
@@ -26,13 +26,13 @@ Sharpe calculado sobre o excesso em relação ao BIL. Séries “líquidas” de
 
 |                                | inicio   | fim     |   meses | CAGR   | volatilidade_anual   | Sharpe_excesso_BIL   | max_drawdown   | retorno_acumulado   |
 |:-------------------------------|:---------|:--------|--------:|:-------|:---------------------|:---------------------|:---------------|:--------------------|
-| factor_proxy_VFMF              | 2018-03  | 2026-07 |     101 | 12.78% | 18.66%               | 0.61                 | -30.35%        | 175.22%             |
+| factor_proxy_VFMF              | 2018-03  | 2026-07 |     101 | 12.78% | 18.66%               | 0.61                 | -30.35%        | 175.25%             |
 | smallcap_VB_sempre_ligada      | 2018-03  | 2026-07 |     101 | 10.35% | 20.68%               | 0.46                 | -30.06%        | 129.04%             |
 | smallcap_VB_com_regime_bruto   | 2018-03  | 2026-07 |     101 | 7.61%  | 17.51%               | 0.36                 | -24.43%        | 85.45%              |
 | smallcap_VB_com_regime_liquido | 2018-03  | 2026-07 |     101 | 7.59%  | 17.50%               | 0.36                 | -24.43%        | 85.09%              |
 | renda_fixa_BIL                 | 2018-03  | 2026-07 |     101 | 2.55%  | 0.57%                | n/a                  | -0.16%         | 23.65%              |
 | fundo_proxy_bruto              | 2018-03  | 2026-07 |     101 | 8.04%  | 11.50%               | 0.51                 | -13.69%        | 91.71%              |
-| fundo_proxy_liquido            | 2018-03  | 2026-07 |     101 | 8.03%  | 11.50%               | 0.51                 | -13.72%        | 91.58%              |
+| fundo_proxy_liquido            | 2018-03  | 2026-07 |     101 | 8.03%  | 11.50%               | 0.51                 | -13.72%        | 91.59%              |
 | benchmark_2_3_SPY_1_3_BIL      | 2018-03  | 2026-07 |     101 | 10.73% | 10.96%               | 0.76                 | -16.13%        | 135.83%             |
 | SPY                            | 2018-03  | 2026-07 |     101 | 14.53% | 16.44%               | 0.76                 | -23.93%        | 213.24%             |
 

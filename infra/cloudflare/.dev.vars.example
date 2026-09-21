@@ -1,0 +1,5 @@
+# Generate independent secrets locally; placeholders deliberately fail closed.
+# INGRESS_ROUTE_SECRET: 32 cryptographically random bytes encoded as base64url (43 chars).
+INGRESS_ROUTE_SECRET=
+# Same independent HMAC secret as FastAPI WEBHOOK_SECRET (at least 32 bytes).
+ORIGIN_HMAC_SECRET=
