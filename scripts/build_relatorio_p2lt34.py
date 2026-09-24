@@ -1,37 +1,49 @@
-"""Gerador do relatório institucional HTML para Palantir / P2LT34 no laboratório iitauquant."""
-
+"""Renderiza offline o relatório histórico de Palantir, sem atualizar pesquisa ou preços."""
 from __future__ import annotations
 
 import base64
 import json
-import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results" / "palantir_research"
 RELATORIOS_DIR = ROOT / "relatorios"
-GRAFICOS_DIR = RELATORIOS_DIR / "graficos"
-GRAFICOS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Copiar imagens para relatorios/graficos
-shutil.copy(RESULTS_DIR / "p2lt34_trade_setup.png", GRAFICOS_DIR / "p2lt34_trade_setup.png")
-shutil.copy(RESULTS_DIR / "palantir_equity_drawdown.png", GRAFICOS_DIR / "palantir_equity_drawdown.png")
+# Os arquivos de pesquisa e as imagens originais são apenas lidos.
+b64_trade_setup = base64.b64encode((RESULTS_DIR / "p2lt34_trade_setup.png").read_bytes()).decode("ascii")
+b64_equity_drawdown = base64.b64encode((RESULTS_DIR / "palantir_equity_drawdown.png").read_bytes()).decode("ascii")
+user_data = json.loads((RESULTS_DIR / "user_position_summary.json").read_text(encoding="utf-8"))
+entry = user_data["user_entry_price"]
+bdr = user_data["p2lt_close"]
+us_price = user_data["pltr_close"]
+fx = user_data["usd_brl"]
+ratio = user_data["bdr_ratio"]
+atr = user_data["atr14_bdr"]
+if min(entry, bdr, us_price, fx, ratio, atr) <= 0 or ratio != 3:
+    raise ValueError("Snapshot inválido ou proporção divergente do programa BDR documentado.")
+parity = us_price * fx / ratio
+spread = (bdr / parity - 1) * 100
+paper_return = (bdr / entry - 1) * 100
+stop20, stop25 = bdr - 2 * atr, bdr - 2.5 * atr
 
-with open(RESULTS_DIR / "p2lt34_trade_setup.png", "rb") as f:
-    b64_trade_setup = base64.b64encode(f.read()).decode("utf-8")
+def br(value: float, digits: int = 2) -> str:
+    return f"{value:,.{digits}f}".replace(",", "_").replace(".", ",").replace("_", ".")
 
-with open(RESULTS_DIR / "palantir_equity_drawdown.png", "rb") as f:
-    b64_equity_drawdown = base64.b64encode(f.read()).decode("utf-8")
-
-with open(RESULTS_DIR / "user_position_summary.json", "r", encoding="utf-8") as f:
-    user_data = json.load(f)
+# Valores em milhares de US$, conforme 10-Q 2T26; FCF simples = CFO - capex.
+revenue, prior_revenue = 1_935_464, 1_003_697
+gross_margin = 1_638_594 / revenue * 100
+prior_gross_margin = 810_763 / prior_revenue * 100
+operating_margin = 912_004 / revenue * 100
+prior_operating_margin = 269_317 / prior_revenue * 100
+net_margin = 1_061_890 / revenue * 100
+fcf_h1 = (2_115_332 - 21_955) / 1_000_000
 
 html_content = f"""<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Palantir Technologies / P2LT34 — Análise Quantitativa, Fundamentalista e Gestão de Posição</title>
+  <title>Palantir / P2LT34 — fundamentos e revisão de evidência histórica</title>
   <style>
     :root {{
       --ink: #0f172a;
@@ -236,224 +248,83 @@ html_content = f"""<!doctype html>
 <body>
 <main class="wrap">
   <header>
-    <div class="eyebrow">Auditoria Quantitativa de Posição & Relatório Fundamentalista • Laboratório iitauquant</div>
-    <h1>Palantir Technologies (P2LT34 / PLTR): Acelerador da Era de IA e Gestão Operacional da Posição</h1>
-    <p class="meta">Data-base: 24 de setembro de 2026 • Custo de Aquisição Informado: <strong>R$ 309,03</strong> • Paridade B3: 3 BDRs = 1 Ação Ordinária (1:3)</p>
-    <div class="verdict">
-      <strong>Veredito Institucional: MANTER COM TRAILING STOP DE PROTEÇÃO & ALVOS ESCALADOS.</strong><br>
-      O investidor adquiriu a ação em um ponto técnico e algorítmico perfeito a <strong>R$ 309,03</strong>, exatamente no momento em que o modelo <i>Momentum ATR</i> do laboratório <code>iitauquant</code> gerou compra na B3 (preço de abertura R$ 307,10 em 21/09/2026). A posição acumula lucro imediato de <strong>+8,09% a +8,60% (+R$ 25,00 por BDR)</strong>. A Palantir vive seu trimestre de maior aceleração operacional da história (+93% de receita líquida a/a, margem bruta de 84,8% e fluxo de caixa livre > US$ 2,1 bi impulsionados por AIP e defesa). O momento agora é de <strong>disciplina quantitativa: proteger o lucro garantido elevando o stop móvel para R$ 312,96 (ou breakeven em R$ 309,03)</strong> e executar saídas parciais nas faixas de <strong>R$ 350,00</strong> e <strong>R$ 373,83 (topo histórico)</strong>.
-    </div>
+    <div class="eyebrow">Pesquisa de ações • Laboratório iitauquant • revisão de 24/09/2026</div>
+    <h1>Palantir (P2LT34 / PLTR): forte crescimento, preço e risco ainda importam</h1>
+    <p class="meta">Data-base preservada: 24/09/2026 • Nasdaq: PLTR / B3: P2LT34 • 3 BDRs = 1 ação • horizonte analítico: 12–24 meses</p>
+    <div class="verdict"><strong>Postura: aprofundar valuation antes de uma decisão de compra.</strong><br>
+      O 2T26 confirma crescimento de receita de 93% e margem operacional GAAP de 47,1%. Isso sustenta a tese operacional, mas não estabelece preço justo nem elimina perdas. Os valores de posição abaixo são uma ilustração histórica bruta, sem comprovação de execução. Stops não garantem preço de venda, lucro ou perda máxima.</div>
   </header>
 
+  <div class="callout"><strong>Revisão e procedência:</strong> esta edição corrige narrativa, fórmulas e fontes; não refaz o backtest, não atualiza os dados de pesquisa e não certifica preços executáveis. O arquivo local tem data de 24/09/2026, mas não registra horário/fuso de coleta nem comprova fechamento definitivo. Seus campos chamados <code>close</code> são tratados aqui como <strong>snapshot histórico de horário desconhecido</strong>; a barra do próprio dia pode estar incompleta. Métricas e gráficos que a utilizam são preliminares.</div>
   <div class="grid kpis">
-    <div class="kpi highlight">
-      <b>+{user_data['user_return_pct']:.2f}%</b>
-      <span>Rentabilidade da Posição (Compra R$ {user_data['user_entry_price']:.2f} ➔ R$ {user_data['p2lt_close']:.2f})</span>
-    </div>
-    <div class="kpi">
-      <b>US$ {user_data['pltr_close']:.2f}</b>
-      <span>PLTR (NYSE), Fechamento 24 set. 2026</span>
-    </div>
-    <div class="kpi">
-      <b>R$ {user_data['p2lt_close']:.2f}</b>
-      <span>P2LT34 (B3) • Teórico: R$ {user_data['theoretical_bdr']:.2f} (Spread: {user_data['parity_spread_pct']:.2f}%)</span>
-    </div>
-    <div class="kpi">
-      <b>R$ {user_data['stop_20_atr']:.2f}</b>
-      <span>Stop de Proteção Recomendado (2.0x ATR • Lucro +1,27% Travado)</span>
-    </div>
+    <div class="kpi highlight"><b>+{br(paper_return)}%</b><span>Variação bruta ilustrativa: R$ {br(entry)} → R$ {br(bdr)}; não realizada</span></div>
+    <div class="kpi"><b>US$ {br(us_price)}</b><span>PLTR (Nasdaq), snapshot local de 24/09; horário não documentado</span></div>
+    <div class="kpi"><b>R$ {br(bdr)}</b><span>P2LT34, snapshot local; paridade calculada R$ {br(parity)}</span></div>
+    <div class="kpi"><b>R$ {br(stop20)}</b><span>Gatilho ilustrativo: snapshot − 2 × ATR; execução não garantida</span></div>
   </div>
 
-  <!-- SEÇÃO 1: AUDITORIA DA POSIÇÃO DO USUÁRIO -->
   <section>
-    <h2>1. Diagnóstico Executivo da Posição Adquirida a R$ 309,03</h2>
-    
-    <div class="user-card">
-      <h3 style="color: var(--green); margin-top:0;">Status da Sua Operação no Laboratório Quantitativo</h3>
-      <p style="font-size: 1.05rem; margin-bottom: 12px;">
-        Você comprou <strong>P2LT34 a R$ 309,03</strong>. No fechamento atual de <strong>R$ 334,04 (com máxima intradiária de R$ 335,99)</strong>, você acumula um ganho líquido de <strong>+{user_data['user_return_pct']:.2f}% (+R$ {user_data['user_gain_per_bdr']:.2f} por BDR)</strong>.
-      </p>
-      <div class="grid three" style="margin-top: 15px;">
-        <div class="card" style="background:#fff; border: 1px solid #bbf7d0;">
-          <span class="tag" style="background:#dcfce7; color:#15803d;">Timing Algorítmico</span>
-          <p><strong>Entrada em Confluência Exata:</strong> A compra a R$ 309,03 coincidiu com o breakout do modelo <i>Momentum ATR</i> do laboratório <code>iitauquant</code> disparado na barra de 21/09/2026 a R$ 307,10. Você capturou o início do rali institucional antes do mercado esticar.</p>
-        </div>
-        <div class="card" style="background:#fff; border: 1px solid #bbf7d0;">
-          <span class="tag" style="background:#dcfce7; color:#15803d;">Preservação de Capital</span>
-          <p><strong>Risco Financeiro Zerado:</strong> Com o ganho acumulado superior a 2,5x a volatilidade diária média (ATR14 de R$ 10,54), a posição atinge o limiar quantitativo onde o stop deve ser movido para o preço de entrada (breakeven) ou acima dele.</p>
-        </div>
-        <div class="card" style="background:#fff; border: 1px solid #bbf7d0;">
-          <span class="tag" style="background:#dcfce7; color:#15803d;">Assimetria Restante</span>
-          <p><strong>Espaço até o Topo de 52 Semanas:</strong> O topo histórico anual de P2LT34 é de <strong>R$ 373,83</strong> (distância de +11,9% da cotação atual e +20,97% da sua compra), oferecendo um excelente alvo para realização parcial de lucros.</p>
-        </div>
-      </div>
-    </div>
-
-    <h3>As Três Opções de Gestão de Stop para o seu Trade:</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Estratégia de Stop</th>
-          <th>Preço Gatilho</th>
-          <th>Resultado vs Sua Compra (R$ 309,03)</th>
-          <th>Comportamento & Recomendação de Uso</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background:#ecfdf5; font-weight:700;">
-          <td><span class="badge-quant" style="background:#10b981; color:#fff;">RECOMENDADA</span> Stop Lucro Móvel (2.0x ATR)</td>
-          <td>R$ {user_data['stop_20_atr']:.2f}</td>
-          <td style="color:var(--green)">+1,27% de Lucro Líquido Travado (+R$ 3,93/BDR)</td>
-          <td>Garante matematicamente que o trade termine no positivo mesmo com taxas e emolumentos. Protege contra reversões abruptas após dias de alta forte.</td>
-        </tr>
-        <tr>
-          <td>Stop Padrão de Governança (2.5x ATR)</td>
-          <td>R$ {user_data['stop_25_atr']:.2f}</td>
-          <td style="color:#d97706">-0,43% do Custo Inicial (-R$ 1,34/BDR)</td>
-          <td>Parâmetro oficial do backtest do laboratório. Dá maior folga contra oscilações de ruído (whip-saws) intradiárias causadas pelo câmbio dólar/real.</td>
-        </tr>
-        <tr>
-          <td>Stop de Ponto de Equilíbrio (Breakeven)</td>
-          <td>R$ 309,03</td>
-          <td style="color:#0284c7">0,00% (Risco Financeiro Zero)</td>
-          <td>Simples e direto: ordene a sua corretora que encerre a posição caso o ativo volte ao seu exato preço de entrada. Risco financeiro nulo.</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- SEÇÃO 2: GRÁFICO TÁTICO DA OPERAÇÃO -->
-  <section>
-    <h2>2. Visualização Técnica e Mapa Tático da Posição</h2>
-    <p>O gráfico abaixo foi gerado diretamente a partir da base histórica auditada pelo motor do <code>iitauquant</code>. Note a confluência da média móvel de curto prazo (SMA20 em azul tracejado), a zona de compra a R$ 309,03 e os níveis de alvos e proteção:</p>
-    
-    <div class="img-box">
-      <img src="data:image/png;base64,{b64_trade_setup}" alt="Mapa Tático da Posição P2LT34" />
-      <p class="small" style="margin-top:8px;">Figura 1: Mapeamento da posição P2LT34.SA (Março a Setembro de 2026). Linha azul/ponto de compra do usuário a R$ 309,03, faixa verde de ganho realizado, trailing stop e alvos de realização de lucros.</p>
-    </div>
-  </section>
-
-  <!-- SEÇÃO 3: FUNDAMENTOS DA PALANTIR E CATALISADORES RECENTES -->
-  <section>
-    <h2>3. Fundamentos da Companhia: O Superciclo AIP e Contratos Governamentais (Setembro/2026)</h2>
-    <div class="grid two">
-      <div class="card positive">
-        <span class="tag">Diferencial Tecnológico</span>
-        <h3>AIP e a Ontologia Empresarial</h3>
-        <p>Ao contrário da maioria das empresas que criaram simples "wrappers" em torno de modelos de linguagem (LLMs), a Palantir possui a <strong>Ontologia</strong> (Foundry & AIP). Ela mapeia e conecta bancos de dados heterogêneos, sensores operacionais e regras de conformidade corporativa em tempo real. Isso permite que modelos de IA executem ações autônomas seguras (<i>agentic workflows</i>) com auditoria ponta a ponta.</p>
-      </div>
-      <div class="card positive">
-        <span class="tag">Hiper-Aceleração Comercial</span>
-        <h3>Crescimento de +149% no Segmento Privado dos EUA</h3>
-        <p>No 2T26, as receitas comerciais nos Estados Unidos explodiram <strong>+149% a/a</strong>, atingindo US$ 764 milhões. Os <i>bootcamps</i> práticos da Palantir continuam convertendo pilotos em contratos plurianuais de dezenas de milhões de dólares em tempo recorde em setores como aviação, manufatura, logística e farmacêutico.</p>
-      </div>
-      <div class="card positive">
-        <span class="tag">Defesa & Geopolítica</span>
-        <h3>Novos Contratos Militares (Setembro/2026)</h3>
-        <p>No final de setembro de 2026, o Exército dos EUA premiou a Palantir com um novo contrato de <strong>US$ 48,1 milhões</strong> para unificar 9 sistemas legados de gestão de munições. No ano fiscal de 2026, a Palantir superou <strong>US$ 1 bilhão em obrigações contratuais com o governo dos EUA</strong>. Além disso, o teto orçamentário do <strong>Projeto Maven (IA de mira tática militar)</strong> foi ampliado para ~US$ 1,3 bilhão.</p>
-      </div>
-      <div class="card neutral">
-        <span class="tag">Balanço Fortaleza</span>
-        <h3>US$ 9,41 Bilhões em Caixa e Dívida Zero</h3>
-        <p>A Palantir ostenta uma das estruturas patrimoniais mais robustas do setor de tecnologia global: <strong>US$ 9,41 bilhões em caixa líquido e investimentos de curto prazo</strong>, contra apenas US$ 211 milhões em dívidas totais. Isso confere caixa líquido de mais de US$ 9,2 bilhões, permitindo autofinanciar inovação e aquisições estratégicas sem depender de crédito bancário.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SEÇÃO 4: DEMONSTRAÇÕES FINANCEIRAS -->
-  <section>
-    <h2>4. Demonstrações Financeiras Consolidadas (2T26 / 1S26)</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Linha Financeira</th>
-          <th>Resultado 2T26</th>
-          <th>Variação Anual (a/a)</th>
-          <th>Interpretação e Qualidade Contábil</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Receita Líquida Consolidada</td>
-          <td><strong>US$ 1,935 bilhão</strong></td>
-          <td style="color:var(--green)">+93,0% a/a</td>
-          <td>Forte aceleração frente aos trimestres anteriores, impulsionada pela demanda inelástica por AIP corporativo.</td>
-        </tr>
-        <tr>
-          <td>Receita Comercial EUA</td>
-          <td>US$ 764 milhões</td>
-          <td style="color:var(--green)">+149,0% a/a</td>
-          <td>Segmento mais lucrativo e dinâmico, reduzindo a dependência histórica de contratos federais.</td>
-        </tr>
-        <tr>
-          <td>Receita Governamental EUA</td>
-          <td>US$ 809 milhões</td>
-          <td style="color:var(--green)">+90,0% a/a</td>
-          <td>Reconhecimento de contratos de defesa de grande escala (DoD, Maven, Exército e agências de inteligência).</td>
-        </tr>
-        <tr>
-          <td>Margem Bruta (Gross Margin)</td>
-          <td><strong>84,8%</strong></td>
-          <td>+310 bps a/a</td>
-          <td>Margem de software puro de altíssimo valor agregado; poder de precificação incontestável.</td>
-        </tr>
-        <tr>
-          <td>Margem Operacional GAAP</td>
-          <td>47,1%</td>
-          <td>+1.850 bps a/a</td>
-          <td>Alavancagem operacional massiva: os custos fixos são diluídos com a expansão da base de clientes.</td>
-        </tr>
-        <tr>
-          <td>Lucro Líquido GAAP (Net Income)</td>
-          <td><strong>US$ 1,062 bilhão</strong></td>
-          <td style="color:var(--green)">Margem Líquida de 55,0%</td>
-          <td>Transformação completa da empresa em máquina geradora de lucro contábil positivo e recorrente.</td>
-        </tr>
-        <tr>
-          <td>Fluxo de Caixa Livre (FCF)</td>
-          <td>US$ 2,159 bilhões (TTM)</td>
-          <td>Forte expansão</td>
-          <td>Conversão de caixa impecável, permitindo remuneração e estabilidade.</td>
-        </tr>
-        <tr>
-          <td>Caixa Líquido / Posição Financeira</td>
-          <td>US$ 9,41 bi em caixa vs US$ 211 mi dívida</td>
-          <td>Caixa Líquido > US$ 9,2 bi</td>
-          <td>Imune a estresses de taxa de juros ou aperto monetário global.</td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="small">Fonte: Relatórios oficiais 10-Q/10-K arquivados na SEC pela Palantir Technologies Inc. (trimestre encerrado em 30 de junho de 2026 e atualizações operacionais de setembro de 2026).</p>
-  </section>
-
-  <!-- SEÇÃO 5: ENQUADRAMENTO NO IITAUQUANT -->
-  <section>
-    <h2>5. Como o Portfólio Multi-Sleeve do iitauquant Enxerga a Palantir</h2>
-    <p>O repositório <code>iitauquant</code> opera com uma estrutura de gestão quantitativa baseada em fatores acadêmicos, momentum sistemático e overlay de risco macroeconômico:</p>
+    <h2>1. Exemplo histórico de posição: cálculo, não instrução de negociação</h2>
+    <div class="user-card"><h3>Referência de entrada de R$ {br(entry)}</h3><p>A diferença até R$ {br(bdr)} é R$ {br(bdr-entry)} por BDR, ou {br(paper_return)}%, antes de corretagem, emolumentos, impostos e eventual slippage. A valorização marcada no snapshot não comprova lucro realizado nem confirma que uma ordem do investidor foi executada.</p></div>
     <div class="grid three">
-      <div class="card amber">
-        <span class="tag">Sleeve 1: Fatores</span>
-        <h3>Qualidade Imbatível, Valuation Exigente</h3>
-        <p>No modelo de fatores (Tamanho, Valor, Rentabilidade e Investimento), a Palantir pontua no <strong>percentil 99 de Rentabilidade e Qualidade</strong> (Margem Bruta de 84,8% e ROIC elevado). Em contrapartida, é severamente penalizada no fator Valor devido aos múltiplos esticados (P/L projetado de 83x e P/S de 75x). Não é uma ação de "barganha", mas sim de hiper-crescimento.</p>
-      </div>
-      <div class="card positive">
-        <span class="tag">Sleeve 2: Momentum</span>
-        <h3>Liderança Absoluta no Ranking 12-1</h3>
-        <p>No Sleeve 2 (seleção dos 5% ativos com maior momentum 12-1 e controle de reversão), a Palantir figura no <strong>topo do universo tecnológico global</strong>. O modelo identifica a aceleração de lucros e a confluência de contratos de defesa como o motor perfeito para estratégias seguidoras de tendência sistemática.</p>
-      </div>
-      <div class="card neutral">
-        <span class="tag">Risk Overlay: Macro</span>
-        <h3>Sensibilidade ao NFCI e Spreads de Crédito</h3>
-        <p>Múltiplos elevados como os de PLTR sofrem forte compressão em momentos de estresse de liquidez. O overlay de risco do <code>iitauquant</code> (monitorando o spread <code>BAA10Y</code> e as condições financeiras <code>NFCI</code>) protege a carteira: se o z-score macro superar 1,0, até 50% da alocação migra automaticamente para ativos de preservação (BIL/Caixa), blindando o capital.</p>
-      </div>
+      <div class="card neutral"><span class="tag">Sinal histórico</span><h3>Proximidade não comprova eficácia</h3><p>O relatório original associou a referência de entrada ao sinal de 21/09/2026, a R$ 307,10. O log de execução não foi revalidado nesta revisão. A coincidência com um sinal não caracteriza ponto ótimo nem prova fluxo institucional.</p></div>
+      <div class="card neutral"><span class="tag">Volatilidade</span><h3>ATR é uma medida histórica</h3><p>O snapshot registra ATR14 de R$ {br(atr)}. O ganho ilustrativo corresponde a {br((bdr-entry)/atr)} ATR, abaixo de 2,5 ATR. Essa relação não define, por si só, uma regra ótima de saída.</p></div>
+      <div class="card neutral"><span class="tag">Nível de referência</span><h3>Máxima anterior não é preço justo</h3><p>R$ 373,83 é o nível histórico citado na edição original, sem data da observação revalidada. Sua distância do snapshot é {br((373.83/bdr-1)*100)}%; não há garantia de retorno a esse nível.</p></div>
+    </div>
+    <h3>Comparação ilustrativa de gatilhos</h3>
+    <div style="overflow-x:auto"><table><thead><tr><th>Regra aritmética</th><th>Gatilho</th><th>Variação bruta se executado exatamente no gatilho</th><th>Limitação</th></tr></thead><tbody>
+      <tr><td>Snapshot − 2,0 × ATR</td><td>R$ {br(stop20)}</td><td>+{br((stop20/entry-1)*100)}% / R$ {br(stop20-entry)}</td><td>Gaps, leilões e liquidez podem levar a execução abaixo do gatilho; não assegura lucro líquido.</td></tr>
+      <tr><td>Snapshot − 2,5 × ATR</td><td>R$ {br(stop25)}</td><td>{br((stop25/entry-1)*100)}% / R$ {br(stop25-entry)}</td><td>Usa o multiplicador descrito no backtest; isso não comprova adequação à posição.</td></tr>
+      <tr><td>Referência de entrada</td><td>R$ {br(entry)}</td><td>0,00% antes dos custos</td><td>Execução no preço de entrada ainda pode gerar perda líquida; stop limitado pode não executar.</td></tr>
+    </tbody></table></div>
+    <p class="small">São níveis estáticos calculados sobre um snapshot. Um trailing stop exige regra de atualização definida e suporte da corretora. <a href="https://www.finra.org/investors/insights/stop-orders-factors-consider-during-volatile-markets">FINRA: riscos de execução de ordens stop</a>.</p>
+  </section>
+
+  <section>
+    <h2>2. Gráfico histórico preservado</h2>
+    <p>A imagem original foi preservada sem reprocessar dados. Suas faixas e rótulos de compra, alvos, proteção ou lucro são anotações do exercício original, não ordens nem evidência de execução. Não existe comprovação de venda realizada.</p>
+    <div class="img-box"><img src="data:image/png;base64,{b64_trade_setup}" alt="Gráfico histórico P2LT34 com níveis ilustrativos, sem garantia de execução" /><p class="small">Figura 1: gráfico original, março–setembro de 2026. A faixa de valorização representa ganho bruto hipotético/não realizado. A última barra pode estar incompleta.</p></div>
+  </section>
+
+  <section>
+    <h2>3. Fundamentos: expansão real, expectativas elevadas</h2>
+    <div class="grid two">
+      <div class="card positive"><span class="tag">Produto</span><h3>Integração de dados e IA</h3><p>Foundry, Gotham, Apollo e AIP integram análise e operações de clientes. A tese é que adoção e expansão dos contratos sustentem crescimento; não há evidência aqui de monopólio, demanda inelástica ou superioridade incontestável frente aos concorrentes.</p></div>
+      <div class="card positive"><span class="tag">Receita comercial</span><h3>EUA: US$ 764 milhões no 2T26</h3><p>A companhia reportou crescimento de 149% nessa linha. O ritmo é forte, mas sua manutenção depende de novas vendas, expansão e retenção de clientes. Crescimento passado não garante crescimento futuro. <a href="https://investors.palantir.com/reports-2026.html">Divulgação de 03/08/2026</a>.</p></div>
+      <div class="card neutral"><span class="tag">Governo</span><h3>Contrato não equivale a receita garantida</h3><p>O 10-Q permite distinguir receita reconhecida, compromissos e opções: vários contratos podem ser encerrados por conveniência. Os valores de contratos de setembro/Maven citados antes foram retirados da tese quantitativa por falta de ligação primária específica validada nesta revisão.</p></div>
+      <div class="card neutral"><span class="tag">Liquidez</span><h3>Caixa e títulos: US$ 9,409 bilhões</h3><p>Em 30/06/2026, a companhia não tinha saldo utilizado na linha de crédito. Os US$ 211,4 milhões são passivos não circulantes de arrendamento operacional, não dívida bancária total. A liquidez reduz risco de financiamento, mas não protege o preço da ação.</p></div>
     </div>
   </section>
 
-  <!-- SEÇÃO 6: BACKTEST MOMENTUM ATR VS BUY & HOLD -->
   <section>
-    <h2>6. Evidência Quantitativa Auditada: Momentum ATR vs Buy & Hold (2020–2026)</h2>
-    <p>Executamos o motor de simulação de eventos causal do <code>iitauquant</code> (parâmetros de governança: janela de momentum de 20 barras, ATR de 14 barras, multiplicador de stop de 2,5x e fricção de execução de 15 bps por lado com ordens preenchidas no Open de t+1):</p>
-    
+    <h2>4. Demonstrações financeiras: períodos e definições reconciliados</h2>
+    <div style="overflow-x:auto"><table><thead><tr><th>Métrica</th><th>Período e valor</th><th>Comparação / leitura</th></tr></thead><tbody>
+      <tr><td>Receita consolidada</td><td>2T26: US$ 1,935 bi</td><td>+92,8% a/a, arredondado para 93% pela companhia.</td></tr>
+      <tr><td>Receita comercial / governamental EUA</td><td>2T26: US$ 764 mi / US$ 809 mi</td><td>+149% / +90% a/a conforme divulgação de resultados; não representa margem por produto.</td></tr>
+      <tr><td>Margem bruta GAAP</td><td>2T26: {br(gross_margin,1)}%</td><td>2T25: {br(prior_gross_margin,1)}%; aumento de aproximadamente {br((gross_margin-prior_gross_margin)*100,0)} pontos-base.</td></tr>
+      <tr><td>Margem operacional GAAP</td><td>2T26: {br(operating_margin,1)}%</td><td>2T25: {br(prior_operating_margin,1)}%; aumento de aproximadamente {br((operating_margin-prior_operating_margin)*100,0)} pontos-base.</td></tr>
+      <tr><td>Lucro atribuível aos acionistas</td><td>2T26: US$ 1,062 bi</td><td>Margem de {br(net_margin,1)}%. Resultado inclui receitas financeiras e outros ganhos; não extrapolar essa margem mecanicamente.</td></tr>
+      <tr><td>Caixa operacional / capex</td><td>1S26: US$ 2,115 bi / US$ 0,022 bi</td><td>FCF simples calculado: US$ {br(fcf_h1,3)} bi no semestre. Não é TTM nem FCF ajustado divulgado pela companhia.</td></tr>
+      <tr><td>Caixa, equivalentes e títulos negociáveis</td><td>30/06/2026: US$ 9,409 bi</td><td>Somatório de US$ 2,030 bi e US$ 7,379 bi. Não equivale a patrimônio líquido ou ausência de obrigações.</td></tr>
+    </tbody></table></div>
+    <p class="small">Fonte: <a href="https://investors.palantir.com/files/2026%20Q2%20PLTR%2010-Q.pdf">10-Q do trimestre encerrado em 30/06/2026, divulgado em 03/08/2026, pp. 3–4, 8, 13 e 17</a>. Demonstrações trimestrais não auditadas. Margens calculadas a partir dos valores sem arredondamento.</p>
+    <div class="callout"><strong>Qualidade do resultado:</strong> no 2T26, juros geraram US$ 77,5 mi, outros resultados US$ 91,8 mi e despesa tributária US$ 15,4 mi sobre lucro antes de impostos de US$ 1,081 bi (taxa efetiva ~1,4%). A remuneração em ações foi US$ 265,2 mi: entra no lucro GAAP, é adicionada de volta no fluxo operacional e pode diluir acionistas. Caixa forte não dispensa atenção à recorrência do lucro.</div>
+  </section>
+
+  <section>
+    <h2>5. Valuation e limites dos modelos do laboratório</h2>
+    <div class="grid three">
+      <div class="card amber"><span class="tag">Valuation</span><h3>Múltiplos precisam de denominador</h3><p>As referências originais a P/L projetado de 83x e P/S de 75x não tinham data, provedor e período reconciliados. Foram retiradas da conclusão. Não há preço justo validado ou margem de segurança demonstrada neste relatório.</p></div>
+      <div class="card neutral"><span class="tag">Fatores e momentum</span><h3>Ranking não validado</h3><p>Não foi demonstrado percentil 99 nem liderança do universo. O snapshot registra momentum 12–1 PLTR de {br(user_data['momentum_12_1_pltr_pct'])}%, sem universo comparável validado. O sinal ATR de 20 barras é outro indicador e não comprova liderança no ranking 12–1.</p></div>
+      <div class="card negative"><span class="tag">Overlay</span><h3>SHADOW: desligado para capital</h3><p>O <a href="AAKR.html">relatório AAKR/LASTRO</a> informa que o overlay falhou no teste com dados disponíveis à época. Stock-picking não foi validado. O mecanismo não deve ser descrito como proteção automática ou garantia de diversificação.</p></div>
+    </div>
+    <p>Uma empresa pode crescer e sua ação cair se o mercado reduzir o múltiplo pago. Antes de inferir retorno, é necessário atualizar cotação e estimativas com a mesma data, distinguir EPS GAAP de ajustado e testar desaceleração, diluição e compressão de múltiplos.</p>
+  </section>
+
+  <section>
+    <h2>6. Backtest histórico preservado: Momentum ATR versus buy &amp; hold</h2>
+    <p>Resultados herdados da pesquisa original de 2020–2026, <strong>não reexecutados e não auditados nesta revisão</strong>. Configuração descrita no relatório original: momentum de 20 barras, ATR14, stop 2,5 × ATR, custo de 15 bps por lado e execução no Open de t+1. Não foram revalidados integridade dos preços, janelas por ativo, tratamento de caixa, slippage ou robustez fora da amostra.</p>
+    <div style="overflow-x:auto">
     <table>
       <thead>
         <tr>
@@ -474,7 +345,7 @@ html_content = f"""<!doctype html>
       </thead>
       <tbody>
         <tr style="background:#f0f9ff;font-weight:700">
-          <td>PLTR (NYSE)</td>
+          <td>PLTR (Nasdaq)</td>
           <td>1.503</td>
           <td>67</td>
           <td>41,8%</td>
@@ -482,7 +353,7 @@ html_content = f"""<!doctype html>
           <td>5,12%</td>
           <td>40,1%</td>
           <td>0,321</td>
-          <td style="color:var(--green)">-53,49%</td>
+          <td style="color:var(--red)">-53,49%</td>
           <td>1,35</td>
           <td>36,8%</td>
           <td>+1.940,1%</td>
@@ -497,7 +368,7 @@ html_content = f"""<!doctype html>
           <td>-2,26%</td>
           <td>36,4%</td>
           <td>0,116</td>
-          <td style="color:var(--green)">-46,51%</td>
+          <td style="color:var(--red)">-46,51%</td>
           <td>1,09</td>
           <td>32,4%</td>
           <td>+634,32%</td>
@@ -565,160 +436,71 @@ html_content = f"""<!doctype html>
         </tr>
       </tbody>
     </table>
-
-    <div class="img-box">
-      <img src="data:image/png;base64,{b64_equity_drawdown}" alt="Curva de Patrimônio e Drawdown Auditados" />
-      <p class="small">Figura 2: Curva de patrimônio acumulado normalizado e histórico de rebaixamento de capital (drawdown) auditados no iitauquant.</p>
     </div>
-
-    <div class="callout">
-      <strong>Lições Cruciais da Auditoria Quantitativa:</strong>
-      <ul>
-        <li><strong>A Queda Devastadora de Buy & Hold:</strong> Investidores que mantiveram PLTR sem disciplina de stop sofreram uma queda implacável de <strong>-84,62%</strong> durante o mercado de baixa de 2021/2022 (e o BDR caiu <strong>-79,33%</strong>). O sistema com stop móvel reduziu esse rebaixamento em mais de 30 pontos percentuais.</li>
-        <li><strong>Eficiência com Exposição Reduzida:</strong> O motor quantitativo permaneceu comprado em apenas <strong>36,8% do tempo</strong>, permitindo que os 63,2% restantes do tempo fossem alocados em caixa rendendo juros compostos (Sleeve 3 / CDI).</li>
-        <li><strong>Fricção de Câmbio Noturno em BDRs:</strong> No BDR negociado no Brasil, gaps entre a abertura da B3 e o fechamento de Nova York geram ruído operacional para trades de curtíssimo prazo. Para quem compra via BDR, o ideal é o modelo de <i>swing trade posicional estruturado</i> com stop ATR mais elástico (2,0x a 2,5x ATR).</li>
-      </ul>
-    </div>
+    <div class="img-box"><img src="data:image/png;base64,{b64_equity_drawdown}" alt="Curva histórica de patrimônio e drawdown, preservada sem reexecução" /><p class="small">Figura 2: imagem original do experimento; não é trajetória de capital real nem previsão.</p></div>
+    <div class="callout"><strong>Leitura dos números preservados:</strong><ul>
+      <li>No BDR, o sistema registrou retorno de −10,94%, CAGR de −2,26% e queda máxima de −46,51%. Isso não sustenta uma afirmação de eficácia de compra ou proteção integral.</li>
+      <li>Em PLTR, o drawdown registrado do sistema (−53,49%) foi menor que no buy &amp; hold (−84,62%), mas continuou severo; o retorno acumulado foi muito menor. Uma amostra histórica não demonstra superioridade futura.</li>
+      <li>Exposição de 36,8% em PLTR não comprova remuneração do restante do tempo por CDI. BIL é um instrumento em dólares; CDI é uma referência em reais. Não foram adicionados juros hipotéticos ao resultado original.</li>
+      <li>Janelas diferentes, seleção posterior dos ativos e custos reais limitam a comparação. A tabela não é ranking de estratégias prontas para capital.</li>
+    </ul></div>
   </section>
 
-  <!-- SEÇÃO 7: PARIDADE CAMBIAL DO BDR P2LT34 -->
   <section>
-    <h2>7. Paridade Cambial do BDR P2LT34: Dólar vs Real</h2>
+    <h2>7. BDR: paridade aritmética e risco cambial</h2>
     <div class="grid two">
-      <div class="card neutral">
-        <h3>Fórmula Oficial da Paridade</h3>
-        <p>O programa de BDRs da B3 define a proporção de <strong>3 BDRs para cada 1 ação ordinária da Palantir (1:3)</strong>. A fórmula do valor justo do BDR é dada por:</p>
-        <div style="background:#f1f5f9; padding:12px; border-radius:6px; font-family:monospace; font-weight:700; text-align:center; margin:10px 0;">
-          Preço Teórico BDR = (Cotação PLTR na NYSE × USD/BRL) ÷ 3
-        </div>
-        <p>No fechamento de referência: (US$ {user_data['pltr_close']:.2f} × {user_data['usd_brl']:.4f}) ÷ 3 = <strong>R$ {user_data['theoretical_bdr']:.2f}</strong>. Como o BDR fechou a <strong>R$ {user_data['p2lt_close']:.2f}</strong>, ele negocia praticamente com paridade perfeita (spread de apenas {user_data['parity_spread_pct']:.2f}%).</p>
-      </div>
-
-      <div class="card neutral">
-        <h3>Duplo Motor: Crescimento em Dólar + Hedge Cambial</h3>
-        <p>Ao deter P2LT34, sua rentabilidade depende de duas variáveis multiplicativas:</p>
-        <ul>
-          <li><strong>Desempenho da Palantir em Dólar (PLTR):</strong> A expansão dos contratos e lucros da empresa.</li>
-          <li><strong>Taxa de Câmbio USD/BRL:</strong> Se o dólar se valorizar contra o real, o BDR sobe em reais mesmo que a ação fique estável lá fora. Historicamente, essa proteção cambial foi um dos principais propulsores do retorno para o investidor brasileiro.</li>
-        </ul>
-      </div>
+      <div class="card neutral"><h3>3 BDRs para 1 ação</h3><p>O <a href="https://finservices.b3.com.br/documents/823983/1006460/Programa_BRP2LTBDR001.pdf/514d74d7-b525-3f62-121f-9abec804de55">programa P2LT34 do Banco B3</a> identifica paridade BDR:ação de 3:1. Banco B3 é o depositário do programa.</p><p>Paridade simplificada = PLTR × USD/BRL ÷ 3. No snapshot: US$ {br(us_price)} × {br(fx,4)} ÷ 3 = <strong>R$ {br(parity)}</strong>; desvio de {br(spread)}% frente a R$ {br(bdr)}. Preços sem horário sincronizado não demonstram arbitragem nem spread executável.</p></div>
+      <div class="card neutral"><h3>Câmbio pode ajudar ou prejudicar</h3><p>Antes de custos, mantendo a proporção do programa, retorno aproximado em reais = (1 + retorno PLTR em US$) × (1 + variação USD/BRL) − 1. Ação +10% e dólar −10% resultam em −1%, não em proteção integral.</p><p>Taxas, impostos, liquidez, bid–ask e eventos do programa afetam o retorno do BDR. A cotação é preço de mercado; paridade não é avaliação econômica da empresa.</p></div>
     </div>
   </section>
 
-  <!-- SEÇÃO 8: MATRIZ DE CENÁRIOS -->
   <section id="cenarios">
-    <h2>8. Matriz de Cenários para 12–24 Meses (PLTR & P2LT34)</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Cenário</th>
-          <th>PLTR (US$)</th>
-          <th>Câmbio (USD/BRL)</th>
-          <th>P2LT34 Estimado (R$)</th>
-          <th>Retorno vs Sua Compra (R$ 309,03)</th>
-          <th>Probabilidade & Gatilhos Operacionais</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="scenario-bear">Baixista (Bear)</td>
-          <td>US$ 125,00</td>
-          <td>R$ 4,90</td>
-          <td><strong>R$ 204,17</strong></td>
-          <td class="scenario-bear">-33,9%</td>
-          <td><strong>20%</strong> • Compressão de múltiplos por repique inflacionário / juros altos nos EUA; corte em orçamentos federais de TI ou desaceleração em adoção de IA comercial. <i>(Mitigado pelo seu stop móvel em R$ 312,96!)</i></td>
-        </tr>
-        <tr>
-          <td class="scenario-base">Base (Consenso)</td>
-          <td>US$ 215,00</td>
-          <td>R$ 5,20</td>
-          <td><strong>R$ 372,67</strong></td>
-          <td class="scenario-base"><strong>+20,6%</strong></td>
-          <td><strong>55%</strong> • Continuidade da expansão comercial (+80-100% a/a), consolidação do Projeto Maven e novos contratos da OTAN; estabilidade da margem líquida acima de 50%.</td>
-        </tr>
-        <tr>
-          <td class="scenario-bull">Otimista (Bull)</td>
-          <td>US$ 265,00</td>
-          <td>R$ 5,40</td>
-          <td><strong>R$ 477,00</strong></td>
-          <td class="scenario-bull"><strong>+54,4%</strong></td>
-          <td><strong>25%</strong> • Monopolização de fato dos fluxos de trabalho autônomos por IA no complexo industrial e militar dos EUA; entrada massiva em governos europeus e asiáticos; desvalorização do Real.</td>
-        </tr>
-      </tbody>
-    </table>
+    <h2>8. Sensibilidade de preço e câmbio para 12–24 meses</h2>
+    <p>Hipóteses de preço preservadas para ilustrar sensibilidade, sem probabilidades calibradas, consenso confirmado ou modelo que as transforme em preço-alvo. O retorno de uma compra nova deve usar seu preço de execução, e não a referência histórica de R$ {br(entry)}.</p>
+    <div style="overflow-x:auto"><table><thead><tr><th>Hipótese</th><th>PLTR (US$)</th><th>USD/BRL</th><th>BDR pela paridade</th><th>vs. R$ {br(entry)}</th><th>vs. snapshot R$ {br(bdr)}</th></tr></thead><tbody>
+      <tr><td class="scenario-bear">Baixista</td><td>125,00</td><td>4,90</td><td>R$ {br(125*4.9/ratio)}</td><td>{br((125*4.9/ratio/entry-1)*100,1)}%</td><td>{br((125*4.9/ratio/bdr-1)*100,1)}%</td></tr>
+      <tr><td class="scenario-base">Intermediária</td><td>215,00</td><td>5,20</td><td>R$ {br(215*5.2/ratio)}</td><td>+{br((215*5.2/ratio/entry-1)*100,1)}%</td><td>+{br((215*5.2/ratio/bdr-1)*100,1)}%</td></tr>
+      <tr><td class="scenario-bull">Otimista</td><td>265,00</td><td>5,40</td><td>R$ {br(265*5.4/ratio)}</td><td>+{br((265*5.4/ratio/entry-1)*100,1)}%</td><td>+{br((265*5.4/ratio/bdr-1)*100,1)}%</td></tr>
+    </tbody></table></div>
+    <p class="small">Variações de preço antes de custos e impostos, sem dividendos. Não há piso de perda na linha baixista: perdas maiores são possíveis. Uma ordem stop não limita garantidamente esse resultado.</p>
   </section>
 
-  <!-- SEÇÃO 9: FALSIFICADORES DA TESE -->
   <section>
-    <h2>9. Falsificadores da Tese: O que Destrói e o que Confirma o Trade</h2>
+    <h2>9. Evidências a acompanhar</h2>
     <div class="grid two">
-      <div class="card positive">
-        <h3>Fatos Confirmadores (Manter Posição)</h3>
-        <ul>
-          <li>Crescimento de receita comercial nos EUA sustentado acima de 100% nos próximos balanços.</li>
-          <li>Conversão da expansão do teto de gastos do Projeto Maven (~US$ 1,3 bi) em faturamento efetivo no 3T26/4T26.</li>
-          <li>Sustentação do preço de P2LT34 acima da média móvel de 20 dias (R$ 305,33).</li>
-          <li>Novos contratos corporativos globais divulgados após o sucesso da AIPCon 11.</li>
-          <li>Rompimento definitivo da barreira psicológica de US$ 200,00 na NYSE (rumo a US$ 215+).</li>
-        </ul>
-      </div>
-      <div class="card negative">
-        <h3>Falsificadores da Tese (Executar Venda pelo Stop)</h3>
-        <ul>
-          <li>Desaceleração expressiva no ritmo de conversão dos <i>bootcamps</i> em receita faturada.</li>
-          <li>Fechamento do BDR abaixo do Trailing Stop de R$ 307,69 ou Stop de Lucro em R$ 312,96.</li>
-          <li>Disparo do Risk Overlay do laboratório por salto nos spreads de crédito (BAA10Y Z > 1.0).</li>
-          <li>Disputas orçamentárias no Congresso americano que congelem verbas do Departamento de Defesa.</li>
-          <li>Perda do suporte estrutural da média móvel de 50 dias (R$ 278,80).</li>
-        </ul>
-      </div>
+      <div class="card positive"><h3>O que fortalece a tese operacional</h3><ul><li>Expansão de clientes e receita comercial convertida em caixa.</li><li>Crescimento governamental sustentado por receita reconhecida e opções efetivamente exercidas.</li><li>Margens operacionais e geração de caixa sustentáveis após remuneração em ações e impostos normalizados.</li></ul></div>
+      <div class="card negative"><h3>O que exige reavaliação</h3><ul><li>Desaceleração, cancelamentos, competição ou menores orçamentos dos clientes.</li><li>Diluição ou resultado financeiro mascarando enfraquecimento operacional.</li><li>Compressão de múltiplos, mesmo com lucro crescente. Rompimentos de médias móveis não comprovam nem refutam sozinhos a tese fundamentalista.</li></ul></div>
     </div>
   </section>
 
-  <!-- SEÇÃO 10: PLANO DE EXECUÇÃO PRÁTICA PASSO A PASSO -->
   <section>
-    <h2>10. Checklist de Ação Imediata para o Usuário (Posição a R$ 309,03)</h2>
+    <h2>10. Critérios antes de usar capital</h2>
     <div class="grid three">
-      <div class="card positive" style="border: 2px solid var(--green);">
-        <span class="tag" style="background:#dcfce7; color:#15803d;">Passo 1: Proteção Imediata</span>
-        <h3>Ajustar o Stop na Corretora</h3>
-        <p>Cadastre uma ordem de <strong>Stop Móvel (Trailing Stop) ou Stop Loss em R$ 312,96</strong> (ou no seu preço de compra de <strong>R$ 309,03</strong>). Dessa forma, seu risco de perder dinheiro nesta operação torna-se estritamente <strong>ZERO</strong>.</p>
-      </div>
-      <div class="card neutral" style="border: 2px solid var(--palantir);">
-        <span class="tag" style="background:#e0f2fe; color:#0369a1;">Passo 2: Realização Parcial</span>
-        <h3>Cadastrar Ordens de Alvo</h3>
-        <p>Defina realização parcial de <strong>30% a 40% da posição na faixa de R$ 348,00 a R$ 352,00</strong> (+12,6% a +13,9% de lucro) e mais <strong>30% no topo anual em R$ 373,83</strong> (+20,97% de lucro), guardando o lote final para o superciclo.</p>
-      </div>
-      <div class="card amber" style="border: 2px solid var(--amber);">
-        <span class="tag" style="background:#fef3c7; color:#b45309;">Passo 3: Dimensionamento</span>
-        <h3>Tamanho de Posição (Sizing)</h3>
-        <p>Devido à volatilidade elevada da Palantir (~67% ao ano), a alocação máxima sugerida pela governança do <code>iitauquant</code> é de <strong>5% a 8% do seu patrimônio total em bolsa</strong>, garantindo que o portfólio permaneça descorrelacionado e resiliente.</p>
-      </div>
+      <div class="card neutral"><span class="tag">Preço</span><h3>Atualizar a evidência</h3><p>Comparar cotação, spread, câmbio e estimativas de lucro com horários e definições claros. Este snapshot não fornece ordem pronta.</p></div>
+      <div class="card neutral"><span class="tag">Risco</span><h3>Dimensionamento depende da carteira</h3><p>Horizonte, liquidez necessária, perdas toleráveis e exposição conjunta a IA, tecnologia e dólar importam. Uma faixa fixa de 5%–8% não foi validada e não garante descorrelação.</p></div>
+      <div class="card amber"><span class="tag">Execução</span><h3>Entender o tipo de ordem</h3><p>Stop a mercado pode vender abaixo do gatilho; stop limitado pode permanecer sem execução. Os níveis ilustrativos deste relatório não substituem uma política de risco definida.</p></div>
     </div>
   </section>
 
-  <!-- SEÇÃO 11: FONTES E GOVERNANÇA -->
   <section id="fontes">
-    <h2>11. Fontes Primárias, Governança e Metodologia</h2>
+    <h2>11. Fontes, revisão e limitações</h2>
     <ul class="small">
-      <li><strong>Palantir Investor Relations:</strong> Relatório financeiro e conferência de resultados do 2T26 (receitas de US$ 1,935 bi, lucro GAAP de US$ 1,062 bi e métricas de expansão de AIP).</li>
-      <li><strong>SEC EDGAR:</strong> Palantir Technologies Inc. — Formulários oficiais 10-K e 10-Q auditados.</li>
-      <li><strong>Departamento de Defesa dos EUA (DoD) & U.S. Army:</strong> Contratos governamentais e atualização orçamentária do Projeto Maven (US$ 1,3 bi) e Munitions Enterprise System (US$ 48,1 mi).</li>
-      <li><strong>B3 Brasil, Bolsa, Balcão:</strong> Regulamento oficial do programa de BDRs Não Patrocinados (código P2LT34, proporção 1:3, custodiante Banco B3 S.A.).</li>
-      <li><strong>Laboratório Quantitativo iitauquant:</strong> Módulos <code>src/backtest/engine.py</code>, <code>src/strategies/momentum_atr.py</code>, <code>quant_fund/risk_overlay.py</code> e scripts executados <code>scripts/analisar_p2lt34.py</code>.</li>
+      <li><a href="https://investors.palantir.com/files/2026%20Q2%20PLTR%2010-Q.pdf">Palantir: 10-Q 2T26</a>, divulgado em 03/08/2026, consultado nesta revisão de 24/09/2026. Período encerrado em 30/06/2026; demonstrações não auditadas, caixa/arrendamentos, remuneração em ações e riscos contratuais.</li>
+      <li><a href="https://investors.palantir.com/reports-2026.html">Palantir: divulgação 2T26 e materiais de resultados de 03/08/2026</a>. Dados comerciais publicados pela companhia; projeções não são resultados realizados.</li>
+      <li><a href="https://finservices.b3.com.br/documents/823983/1006460/Programa_BRP2LTBDR001.pdf/514d74d7-b525-3f62-121f-9abec804de55">Banco B3: programa BRP2LTBDR001, P2LT34</a>, consultado em 24/09/2026: 3 BDRs por ação, Nasdaq e identificação do depositário. Eventuais mudanças posteriores precisam ser conferidas.</li>
+      <li><a href="https://www.finra.org/investors/insights/stop-orders-factors-consider-during-volatile-markets">FINRA: riscos de ordens stop</a>, consultado em 24/09/2026. O gatilho não garante preço de execução.</li>
+      <li><a href="../results/palantir_research/user_position_summary.json">Snapshot local de 24/09/2026</a>: preços, ATR e referência de entrada. Sem horário de coleta ou comprovantes de execução; não estabelece posição atual de uma pessoa.</li>
+      <li><a href="AAKR.html">AAKR/LASTRO</a>: overlay SHADOW, desligado para capital; seleção individual de ações não validada. Não é proteção implementada nesta posição.</li>
+      <li>Backtest e imagens do diretório <code>results/palantir_research</code> preservados. O gerador apenas lê arquivos locais e calcula derivados aritméticos. Não houve atualização dos dados, reexecução ou certificação da estratégia.</li>
     </ul>
+    <p class="small">Pesquisa educacional geral; não é recomendação personalizada, ordem de compra/venda, preço-alvo validado ou promessa de rentabilidade. Confiança alta nas demonstrações citadas; limitada para snapshot, sinal, comparabilidade do backtest e valuation.</p>
   </section>
-
-  <div class="footer">
-    Relatório de Análise e Auditoria de Posição gerado em 24 de setembro de 2026 • Repositório iitauquant (Laboratório de Finanças Quantitativas) • Conteúdo para fins de pesquisa quantitativa e educacional institucional.
-  </div>
+  <div class="footer">Data-base e revisão editorial: 24/09/2026 • iitauquant • Valores arredondados. Fontes históricas preservadas, sem atualização automática de preços.</div>
 </main>
 </body>
 </html>
 """
 
 report_file = RELATORIOS_DIR / "palantir_p2lt34_analise_2026-09-24.html"
-with open(report_file, "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-print(f"Relatório gerado com sucesso em: {report_file}")
+report_file.write_text(html_content, encoding="utf-8")
+print(f"Relatório histórico renderizado offline: {report_file}")
