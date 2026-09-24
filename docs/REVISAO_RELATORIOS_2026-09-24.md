@@ -22,6 +22,6 @@ Os gráficos de Micron foram regenerados a partir de data/market e dos resultado
 - geração offline de MUTC34, P2LT34 e dos três gráficos de Micron;
 - git diff --check;
 - inspeção textual dos cinco HTMLs para eliminar alegações de garantia, auditoria trimestral, cotação em tempo real e consenso apresentado como fato;
-- suíte histórica do repositório preservada: 139 testes Python e 37 testes Node aprovados no checkpoint de 21/09/2026. A revisão de relatórios não altera a lógica do motor de ordens paper-only.
+- suíte do repositório executada nesta revisão: 139 testes Python e 37 testes Node aprovados em 24/09/2026. A revisão de relatórios não altera a lógica do motor de ordens paper-only.
 
 Nenhuma decisão de investimento deve ser tomada apenas com estes arquivos. É necessária revisão humana, atualização dos dados e confirmação da paridade/liquidez antes de qualquer operação.
