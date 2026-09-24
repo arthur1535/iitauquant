@@ -25,6 +25,7 @@ Para evitar conflitos de merge, sobrescrita de código e regressões enquanto o 
 |---|---|---|---|
 | **Antigravity** | Tarefa 1 OOS (contrato temporal, manifesto dry-run, coverage.csv, folds.csv e testes de aceitação) | Nenhum arquivo bloqueado no momento | **CONCLUÍDO (139/139 testes verdes)** |
 | **ChatGPT / OpenAI Codex** | Tarefa 1: auditoria dos artefatos em `results/oos_audit/task1_spy/79e326aa619b1cce643df1b1453b10d2868cd22e8b5b2171f59eb1fef77e3184/` | `docs/AUDITORIA_OOS_TAREFA1.md` | **AGUARDANDO AUDITORIA CONCORRENTE** |
+| **ChatGPT / OpenAI Codex — revisão 2026-09-24** | Corrigir fontes, valuation e linguagem de risco dos cinco relatórios de ações; sincronizar geradores; validar e publicar | `relatorios/*_analise_*.html`, `scripts/build_relatorio_mutc34.py`, `scripts/build_relatorio_p2lt34.py`, `docs/REVISAO_RELATORIOS_2026-09-24.md`, `log_uso_genai.csv` | **EM ANDAMENTO** |
 
 ---
 
