@@ -26,6 +26,7 @@ Para evitar conflitos de merge, sobrescrita de código e regressões enquanto o 
 | **Antigravity** | Tarefa 1 OOS (contrato temporal, manifesto dry-run, coverage.csv, folds.csv e testes de aceitação) | Nenhum arquivo bloqueado no momento | **CONCLUÍDO (139/139 testes verdes)** |
 | **ChatGPT / OpenAI Codex** | Tarefa 1: auditoria dos artefatos em `results/oos_audit/task1_spy/79e326aa619b1cce643df1b1453b10d2868cd22e8b5b2171f59eb1fef77e3184/` | `docs/AUDITORIA_OOS_TAREFA1.md` | **AGUARDANDO AUDITORIA CONCORRENTE** |
 | **ChatGPT / OpenAI Codex — revisão 2026-09-24** | Corrigir fontes, valuation e linguagem de risco dos cinco relatórios de ações; sincronizar geradores; validar e publicar | `relatorios/*_analise_*.html`, `scripts/build_relatorio_mutc34.py`, `scripts/build_relatorio_p2lt34.py`, `docs/REVISAO_RELATORIOS_2026-09-24.md`, `log_uso_genai.csv` | **EM ANDAMENTO** |
+| **Claude Code — 2026-09-24** | Adicionar `CLAUDE.md` (comandos, arquitetura, fluxo multi-agente) na branch `claude/setup-claude-md` | `CLAUDE.md`, `AGENT_SYNC.md` (somente esta linha e a mensagem na inbox) | **CONCLUÍDO — locks liberados; registro em `log_uso_genai.csv` pendente** |
 
 ---
 
@@ -192,3 +193,11 @@ O pedido do usuário foi respondido separando ranking de momentum de recomendaç
 ### [2026-09-21] Shortlist China — ETFs e satélites
 O pedido do usuário foi respondido com base no relatório `results/china_research/relatorio_pesquisa_china.md`. Para exposição via ETF, ASHR é o melhor candidato do filtro histórico local (Momentum ATR: retorno +11,42%, Sharpe 0,183 e drawdown máximo -24,44%); CQQQ fica como satélite tecnológico sem aprovação de núcleo; MCHI e KWEB não passaram no filtro de retorno ajustado a risco da amostra. BIDU e NIO são candidatos táticos, mas suas caudas históricas (-60,22% e -83,13% de drawdown) impedem classificação como posição de qualidade. A análise é exploratória/pseudo-OOS, não recomendação personalizada nem ordem real. Riscos de VIE/ADR, auditoria e intervenção regulatória permanecem materiais.
 <!-- CHATGPT_INBOX_END -->
+
+### [2026-09-24] De: `Claude Code` → Para: `Antigravity` e `ChatGPT / OpenAI Codex`
+> Adicionei o `CLAUDE.md` na raiz, na branch `claude/setup-claude-md`, para servir de contexto às sessões do Claude Code. Ele cobre os comandos de teste e execução, a arquitetura (backtest causal `close[t]` → `open[t+1]`, caminho webhook → OMS paper) e as regras de coordenação deste arquivo. Não mexi em código, testes, dados nem nos arquivos sob lock do ChatGPT/Codex.
+>
+> **Pendência:** o registro desta intervenção em `log_uso_genai.csv` ficou para depois porque o arquivo está sob lock do ChatGPT/Codex (revisão de 2026-09-24). Linha proposta, para incluir quando o lock for liberado:
+> `2026-09-24,Claude Code (Claude Opus 5.5),"Criar CLAUDE.md com comandos, arquitetura e fluxo multi-agente; mapear métodos quantitativos implementados vs. propostos",CLAUDE.md; AGENT_SYNC.md,"Revisar o conteúdo do CLAUDE.md antes do merge na main"`
+>
+> Observação: `docs/PESQUISA_METODOS_QUANTITATIVOS.md` lista HRP, Ledoit-Wolf, ERC, HMM, L1 trend filtering, CPCV, PBO e Almgren-Chriss, mas esses métodos ainda não estão implementados no código. O manifesto OOS grava `pbo: null` de propósito.
