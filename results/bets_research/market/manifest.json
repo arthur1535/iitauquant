@@ -1,0 +1,67 @@
+{
+  "downloaded_at_utc": "2026-09-28T15:11:40.697729+00:00",
+  "requested_cutoff": "2026-09-25",
+  "source": "Yahoo Finance chart service via yfinance",
+  "benchmark": "^BVSP adjusted close; Ibovespa total return index proxy",
+  "python": "3.12.10",
+  "pandas": "3.0.5",
+  "numpy": "2.5.2",
+  "yfinance": "1.7.0",
+  "symbols": [
+    "LREN3.SA",
+    "CEAB3.SA",
+    "RIAA3.SA",
+    "MGLU3.SA",
+    "AZZA3.SA",
+    "VIVA3.SA",
+    "MULT3.SA",
+    "IGTI11.SA",
+    "ALOS3.SA",
+    "B3SA3.SA",
+    "BPAC11.SA",
+    "ITUB4.SA",
+    "BBDC4.SA",
+    "^BVSP"
+  ],
+  "actual_benchmark_last_date": "2026-09-25",
+  "beta": "OLS with intercept on last 252 paired simple daily returns; minimum 200; no filling missing prices; raw returns not excess returns.",
+  "uncertainty": "95% asymptotic normal CI, Newey-West HAC Bartlett lags=5 with n/(n-2) finite sample correction; implemented directly in numpy.",
+  "liquidity": "60-observation mean of Close * Volume, auto_adjust=False: estimated BRL turnover, not official financial volume. Never use Adj Close * Volume.",
+  "weekly_beta": "Last 52 Friday-to-Friday simple returns, minimum 40; no market-timing interpretation.",
+  "technical_screen": "Momentum20=C[t]/C[t-20]-1; momentum12_1=C[t-21]/C[t-252]-1; sigma60=std(last60 daily returns,ddof=1)*sqrt252; score=momentum12_1/sigma60. Eligible: both momentums>0, close>SMA200, ADV60>=BRL20m, 0.7<=beta252<=1.8, current data. Rank top6 among eligible. Does not include betting regulatory/attention regime and is NOT a trade signal.",
+  "corporate_actions": "Current RIAA3 replaces GUAR3 effective 2026-02-05; Yahoo historical series under current symbol used as returned, no custom splice. AZZA3 combines predecessor corporate history in provider data; production use needs corporate action audit.",
+  "limitations": [
+    "Beta measures broad market covariance, not domestic investment-flow sensitivity or causal exposure to betting regulation.",
+    "Survivorship and point-in-time instrument-universe reconstruction still required for strategy backtesting.",
+    "Public Yahoo data are exploratory; reconcile with B3 before execution.",
+    "No claim that a liquid candidate meets the strategy's full entry conditions."
+  ],
+  "primary_sources": [
+    {
+      "title": "B3 previa IBOV: tickers",
+      "url": "https://sistemaswebb3-listados.b3.com.br/indexPage/preview/IBOV?language=pt-br"
+    },
+    {
+      "title": "B3 calendario de resultados 2T2026",
+      "url": "https://borainvestir.b3.com.br/objetivos-financeiros/investir-melhor/temporada-de-balancos-confira-o-calendario-de-divulgacao-dos-resultados-do-segundo-trimestre-2/"
+    },
+    {
+      "title": "RI Guararapes: GUAR3 muda para RIAA3 em 2026-02-05",
+      "url": "https://filemanager-cdn.mziq.com/published/0c51b75c-1d63-4db0-85ed-6a34ac67fccc/21ea0526-a74a-4ab8-93f7-a3ee5a9329ca_comunicado_ao_mercado_novo_codigo_de_negociacao.pdf"
+    },
+    {
+      "title": "B3: BDRs INBR32, ROXO34, XPBR31 em 2026",
+      "url": "https://borainvestir.b3.com.br/tipos-de-investimentos/renda-variavel/bdrs/mercado-brasileiro-ja-negocia-mais-de-r-1-bi-em-bdrs-por-dia/"
+    },
+    {
+      "title": "B3: conversao SOMA3 e ARZZ3 para AZZA3",
+      "url": "https://www.b3.com.br/data/files/FE/11/55/95/09BE09105FE89209AC094EA8/OC%20012-2024-VNC%20Tratamento%20Carteiras%20de%20%C3%8Dndices%20da%20B3%20-%20Evento%20de%20Incorpora%C3%A7%C3%A3o%20do%20Grupo%20de%20Moda%20Soma%20pela%20Arezzo_PT.pdf"
+    }
+  ],
+  "files_sha256": {
+    "adjusted_close.csv": "00d7a228cf888a517ddad521edc533b30e93e08aa2859bdf19df230e5dc7bbbd",
+    "daily_returns.csv": "70d97bfed5e037ec892abb58f4610aa68a9a8bcc804f723bca16a04243b3a151",
+    "market_snapshot.csv": "f6546988880c7a3954697b3b83b2eb0f3c6ce883b8e55c50d877b951c97968b1",
+    "yahoo_daily_snapshot.csv": "28667505bd7d47c25ba55b0359846ccd06ef79df422214537bbb72518ba519a3"
+  }
+}
