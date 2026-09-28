@@ -1,0 +1,116 @@
+================================================================================
+DOSSIÊ DE PRÉ-PESQUISA & PROMPT INSTITUCIONAL: NU HOLDINGS (NU / ROXO34)
+AVALIAÇÃO DE M&A MONZO, CANAL DAS "BETS", NPL/PDD E VALUATION PÓS-QUEDA
+================================================================================
+Destinatário: ChatGPT Astra
+Origem: Estrategista Quantitativo Sênior & Equity Research (B3 / FinTechs)
+Data: Setembro de 2026
+Repositório Base: iitauquant (Desafio Quant AI / Fundo LASTRO)
+================================================================================
+
+--------------------------------------------------------------------------------
+PARTE 1: DOSSIÊ DE PRÉ-PESQUISA MASTIGADA (FATOS, NÚMEROS E CONTEXTO)
+--------------------------------------------------------------------------------
+
+1. O EVENTO DE M&A — NEGOCIAÇÕES PARA AQUISIÇÃO DO MONZO BANK (UK)
+- Rumores e Notícia: Revelado pela Sky News e confirmado por Reuters, Financial Times e Bloomberg.
+- Valuation Discutido: Entre £ 8 bilhões e £ 10 bilhões (US$ 10,6 bilhões a US$ 13,25 bilhões). Em 2024, o Monzo foi avaliado em £ 4,5 bilhões (prêmio de mais de 120%).
+- Múltiplos Pagos: O Monzo gerou lucro antes de impostos de £ 87,3 milhões no último ano fiscal e receita anual de £ 1,7 bilhão. Avaliar a £ 10 bilhões significa pagar mais de 110x o lucro pré-impostos e entre 4,7x e 5,9x a receita.
+- Estrutura da Transação: Combinação de dinheiro e troca de ações. Como o Nubank vale cerca de US$ 60 a 65 bilhões, a transação causará uma diluição estimada entre 16% e 20% para os atuais acionistas da Nu Holdings.
+- Ativos e Balanço Incorporados:
+  * £ 25,7 bilhões em depósitos de varejo em libras esterlinas (funding barato e de alta qualidade).
+  * 15 a 16 milhões de clientes ativos premium no Reino Unido.
+  * Licença bancária plena junto à Prudential Regulation Authority (PRA) e Financial Conduct Authority (FCA).
+- Reação do Mercado: Queda de ~12,5% nas ações NYSE:NU (de US$ 13,58 para ~US$ 12,34) e de ~10,5% nos BDRs B3:ROXO34 (de R$ 11,63 para R$ 10,68), refletindo aversão ao risco de execução fora da América Latina e preço elevado.
+
+2. A TESE MICROECONÔMICA DAS "BETS" NO BRASIL (CANAL DE TRANSMISSÃO DE CRÉDITO)
+- Volume Drenado: O Banco Central do Brasil estimou que entre R$ 20 bi e R$ 30 bi mensais saíram do orçamento familiar via PIX para plataformas de apostas eletrônicas desreguladas.
+- Exposição do Nubank: Sendo a instituição líder em transações PIX e maior emissora de cartões para classes C/D/E (>100 milhões de clientes no Brasil), o Nubank sentiu na pele a pressão no crédito rotativo e na capacidade de pagamento das famílias.
+- Marco Regulatório e Restrições: Com a Lei 14.790/2023, bloqueio de mais de 2.000 sites ilegais pela Anatel/Fazenda, tributação (12% sobre GGR e 15% sobre prêmios) e proibição de cartões de crédito e Bolsa Família para apostas:
+  * A sangria de renda é interrompida.
+  * Redução esperada da rolagem de crédito podre no rotativo.
+  * Alívio direto nas despesas com Provisão para Devedores Duvidosos (PDD).
+  * Retorno do saldo para Caixinhas, poupança e consumo de bens essenciais/discricionários.
+
+3. DADOS FINANCEIROS OFICIAIS DO NUBANK (Q2 2026)
+- Lucro Líquido: US$ 1,061 bilhão (+49% YoY em base neutra de câmbio; primeiro trimestre da história acima de US$ 1 bilhão).
+- Rentabilidade (ROE): 33% anualizado (contra ~22% do Itaú Unibanco).
+- Índice de Eficiência: 19,5% (referência global).
+- Carteira de Crédito Total: US$ 39,4 bilhões (+37% YoY FXN).
+- Depósitos Totais: US$ 45,3 bilhões (+18% YoY FXN).
+- Qualidade do Crédito / Inadimplência:
+  * NPL 15 a 90 dias: 4,8% (melhora sequencial de 16 bps).
+  * NPL 90+ dias: 6,9% (alta de 35 bps QoQ).
+- Visão Sell-Side: Itaú BBA rebaixou recentemente para Market Perform com Preço-Alvo de US$ 18,00 para o fim de 2027, alertando para desaceleração dos lucros em 2027 (+14% projetado) e valuation esticado em 17x forward P/E.
+
+4. MODELAGEM QUANTITATIVA LOCAL (REPOSITÓRIO IITAUQUANT)
+- No backtest oficial do motor Momentum ATR causal (Open t+1, 15 bps de custos e trailing stop ratchet via ATR):
+  * ROXO34.SA apresentou a maior taxa de acerto da cesta de consumo/bets (Win Rate de 39,0%).
+  * O trailing stop ATR de 2,5x reduziu o Max Drawdown histórico de -76,35% (Buy & Hold passivo) para -55,55% no modelo sistemático.
+
+================================================================================
+PARTE 2: PROMPT COMPLETO PRONTO PARA COPIAR E COLAR NO CHATGPT ASTRA
+================================================================================
+
+# BRIEFING INSTITUCIONAL DE EQUITY RESEARCH: NU HOLDINGS (NYSE: NU / B3: ROXO34)
+**Perfil do Analista**: Estrategista Quantitativo Sênior & Analista Sênior de Instituições Financeiras (LatAm & Global FinTechs).
+**Mandato**: Avaliar se a recente queda de ~12% nas ações da Nu Holdings (precipitada pelos rumores de aquisição do banco britânico Monzo por £8-10 bilhões) representa uma assimetria compradora ("overreaction" do mercado) ou uma deterioração estrutural de governança e alocação de capital, integrando os impactos da regulação das plataformas de apostas ("bets") no Brasil.
+
+---
+
+### CONTEXTO FACTUAL & DADOS MASTIGADOS PARA SUA ANÁLISE
+
+1. **O Evento de M&A (Monzo Bank - UK)**:
+   - **Valuation em Discussão**: Monzo avaliado entre £8 bilhões e £10 bilhões (aprox. US$ 10,6 bi a US$ 13,25 bi), uma valorização de mais de 120% sobre a rodada privada de 2024 (£4,5 bi).
+   - **Múltiplos Pagos**: Monzo gerou lucro antes de impostos de £87,3 milhões no último ano fiscal. Isso implica pagar um P/L pré-impostos > 110x e Price/Sales de 4,7x a 5,9x sobre receitas de £1,7 bilhão.
+   - **Estrutura de Pagamento & Diluição**: Estrutura mista em caixa e troca de ações. Representando 16% a 20% do market cap atual do Nubank (~US$ 65 bilhões), haverá diluição acionária relevante ou alavancagem de balanço.
+   - **Ativos Absorvidos**: O Nubank passaria a incorporar £25,7 bilhões em depósitos de varejo em libras esterlinas (funding barato) e uma base de 16 milhões de clientes premium no Reino Unido, além da licença bancária plena na PRA/FCA.
+
+2. **A Tese Macroeconômica das "Bets" no Brasil**:
+   - O Banco Central do Brasil estimou que entre R$ 20 bi e R$ 30 bi mensais saíram do orçamento familiar via PIX em direção às plataformas de apostas eletrônicas desreguladas entre 2023 e 2024.
+   - O Nubank, como o maior ecossistema de transações PIX e maior emissor de cartões de crédito para as classes C/D/E do país (>100M clientes), sofreu impacto direto na rolagem do crédito rotativo e na qualidade de ativos.
+   - Com o endurecimento regulatório (Lei 14.790/2023, bloqueios de mais de 2.000 sites ilegais pela Anatel/Fazenda, e proibição de cartões e benefícios sociais para apostar), espera-se estancamento da sangria financeira familiar e desalavancagem das famílias.
+
+3. **Métricas Financeiras Consolidadas do Nubank (Q2 2026)**:
+   - **Lucro Líquido**: US$ 1,061 bilhão (+49% YoY FX-neutral; recorde histórico).
+   - **ROE Anualizado**: 33% (contra ~22% do Itaú Unibanco).
+   - **Índice de Eficiência**: 19,5%.
+   - **Carteira de Crédito Total**: US$ 39,4 bilhões (+37% YoY FXN).
+   - **Depósitos Totais**: US$ 45,3 bilhões (+18% YoY FXN).
+   - **Inadimplência NPL 15–90 dias**: 4,8% (melhora de 16 bps QoQ).
+   - **Inadimplência NPL 90+ dias**: 6,9% (piora de 35 bps QoQ).
+   - **Sell-Side**: Itaú BBA rebaixou recentemente para Market Perform com Preço-Alvo de US$ 18,00 para o fim de 2027, alertando para desaceleração do lucro em 2027 (+14% YoY) e risco macroeconômico local.
+
+---
+
+### SUAS TAREFAS DE ANÁLISE OBRIGATÓRIAS
+
+Com base nos dados acima, elabore um relatório aprofundado respondendo estruturadamente aos 5 pilares:
+
+#### 1. Risco de Execução, Alocação de Capital e M&A (Monzo)
+- Analise a racionalidade estratégica da compra do Monzo. Por que os investidores puniram a ação com queda de 12%? 
+- Como a diluição estimada de 16% a 20% impacta o Lucro por Ação (EPS) projetado para 2026 e 2027? Em quanto tempo as sinergias de custos e a incorporação dos £25,7 bilhões em depósitos compensariam essa diluição?
+- Avalie o risco de distração da gestão: tentar disputar o mercado europeu contra Revolut e bancos britânicos de varejo enquanto ainda consolida México e Colômbia é um erro clássico de sobre-expansão (empire building) ou uma visão acertada de construir um banco global em moeda forte?
+
+#### 2. Valuation Comparativo & Sensibilidade Pós-Queda
+- A US$ 12,34 (NYSE: NU) e R$ 10,68 (B3: ROXO34), qual é o valuation implícito do Nubank em P/L (2026e e 2027e) e P/VP?
+- Compare esses múltiplos com bancos tradicionais brasileiros (ex: Itaú ITUB4 P/L ~7,5x, P/VP 1,6x) e neobanks globais.
+- O prêmio de valuation de um ROE de 33% com índice de eficiência de 19,5% ainda se sustenta após o rebaixamento de bancos como Itaú BBA? A queda atual já precifica integralmente o risco Monzo?
+
+#### 3. O Vetor Oculto: Qualidade do Crédito e o Alívio das "Bets"
+- Faça uma leitura técnica do NPL (curto prazo de 15-90d vs longo prazo de 90+ dias). O recuo do NPL curto (4,8%) já indica uma inflexão positiva na safra recente de concessão?
+- Qual é o impacto financeiro estimado nas despesas com PDD (Provisão para Devedores Duvidosos) e na margem financeira líquida (NIM) caso a regulação das apostas devolva R$ 15 a R$ 20 bilhões mensais para o orçamento de consumo e pagamento de dívidas no Brasil?
+- O crédito colateralizado (Nu Consignado e Nu Limite Garantido) possui escala suficiente para neutralizar eventuais repiques de inadimplência no rotativo de cartões?
+
+#### 4. Cenários Regulatórios no Reino Unido vs Regulação Brasileira
+- Quais barreiras regulatórias o Nubank enfrentará junto à PRA (Bank of England) e à FCA para aprovar a troca societária e operar no Reino Unido?
+- Compare a rigidez das exigências de capital próprio (Basileia / CET1) do Banco Central do Brasil com as exigências prudenciais britânicas para bancos com £25+ bi em depósitos.
+
+#### 5. Veredito de Alocação: Compra Oportunística ou Aguardar?
+- Apresente uma recomendação de investimento clara dividida em:
+  - Investidor Institucional / Fundamentalista de Longo Prazo: Tese de carrego com base em ROE e lucros > US$ 4 bi/ano.
+  - Mesa Tática / Swing Trade: Ponto de entrada ideal, níveis de suporte técnico após a queda e assimetria de risco/retorno considerando um stop dinâmico de proteção.
+- Estabeleça uma matriz de cenários (Bear, Base e Bull Case) com preços-alvo estimados para o fim de 2026.
+================================================================================
+FIM DO ARQUIVO
+================================================================================

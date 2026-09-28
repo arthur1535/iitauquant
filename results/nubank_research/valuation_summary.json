@@ -1,0 +1,17 @@
+{
+  "ticker_nyse": "NU",
+  "ticker_b3": "ROXO34.SA",
+  "preco_atual_nu_usd": 12.34000015258789,
+  "preco_atual_roxo34_brl": 10.680000305175781,
+  "market_cap_usd": 59232000732.421875,
+  "pe_forward_2026e": 13.95664484741326,
+  "pe_forward_2027e": 11.165315877930608,
+  "roe_anualizado": 0.33,
+  "efficiency_ratio": 0.195,
+  "itub4_pe": 7.5,
+  "itub4_roe": 0.22,
+  "nu_momentum_sharpe": -0.1365888879784349,
+  "nu_momentum_max_dd": -0.5658912491843798,
+  "roxo_momentum_sharpe": -0.0016519172996757945,
+  "roxo_momentum_max_dd": -0.5554686183470908
+}

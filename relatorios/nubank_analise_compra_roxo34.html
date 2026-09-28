@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nu Holdings (NU / ROXO34) — Relatório de Equity Research & Tese de Compra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --nu-primary: #820AD1;
+      --nu-vibrant: #8A05BE;
+      --nu-dark: #4C0677;
+      --nu-deep: #19002E;
+      --nu-navy: #0F001C;
+      --nu-light: #F4ECFB;
+      --nu-soft: #F9F5FD;
+      --nu-border: #E8D7F8;
+      --nu-purple-hover: #9B12E8;
+      --ink: #111827;
+      --ink-muted: #4B5563;
+      --ink-soft: #9CA3AF;
+      --paper: #FAF8FD;
+      --card: #FFFFFF;
+      --line: #EDE5F5;
+      --green: #059669;
+      --green-bg: #ECFDF5;
+      --green-border: #A7F3D0;
+      --red: #DC2626;
+      --red-bg: #FEF2F2;
+      --red-border: #FECACA;
+      --amber: #D97706;
+      --amber-bg: #FFFBEB;
+      --amber-border: #FDE68A;
+      --shadow-sm: 0 2px 4px rgba(130, 10, 209, 0.04);
+      --shadow-md: 0 8px 24px -4px rgba(130, 10, 209, 0.08), 0 4px 8px -2px rgba(15, 0, 28, 0.04);
+      --shadow-lg: 0 16px 36px -6px rgba(130, 10, 209, 0.12), 0 6px 12px -3px rgba(15, 0, 28, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 80px;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* Top Brand Bar */
+    .brand-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo-badge {
+      background: var(--nu-primary);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      padding: 6px 14px;
+      border-radius: 12px;
+      letter-spacing: -0.04em;
+      box-shadow: 0 4px 14px rgba(130, 10, 209, 0.35);
+    }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--nu-deep);
+      letter-spacing: -0.01em;
+    }
+    .nav-tags {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-tag {
+      background: var(--nu-light);
+      color: var(--nu-primary);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--nu-border);
+    }
+
+    /* Header Banner */
+    header {
+      background: linear-gradient(135deg, var(--nu-navy) 0%, var(--nu-deep) 45%, var(--nu-dark) 80%, var(--nu-primary) 100%);
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 48px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(138, 5, 190, 0.45) 0%, rgba(130, 10, 209, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: -60px;
+      left: 10%;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(232, 215, 248, 0.15) 0%, rgba(130, 10, 209, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      color: #D8B4FE;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .eyebrow::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #D8B4FE;
+    }
+
+    h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      max-width: 980px;
+    }
+    .header-sub {
+      font-size: 1.12rem;
+      line-height: 1.6;
+      color: #E9D5FF;
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 13px;
+      color: #C084FC;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 20px;
+    }
+    .meta-item b {
+      color: #fff;
+    }
+
+    /* Decision Banner */
+    .decision-banner {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px 30px;
+      border: 2px solid var(--nu-border);
+      border-left: 8px solid var(--nu-primary);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .decision-left {
+      flex: 1;
+      min-width: 280px;
+    }
+    .decision-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--nu-primary);
+      margin-bottom: 6px;
+    }
+    .decision-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--nu-deep);
+      letter-spacing: -0.02em;
+    }
+    .decision-desc {
+      font-size: 14px;
+      color: var(--ink-muted);
+      margin-top: 4px;
+    }
+    .decision-targets {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .target-pill {
+      background: var(--nu-light);
+      border: 1px solid var(--nu-border);
+      border-radius: 12px;
+      padding: 10px 18px;
+      text-align: center;
+    }
+    .target-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .target-price {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--nu-primary);
+    }
+    .target-upside {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--nu-primary);
+    }
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .kpi-card.green::before { background: var(--green); }
+    .kpi-card.amber::before { background: var(--amber); }
+    .kpi-card.purple::before { background: linear-gradient(90deg, var(--nu-primary), var(--nu-vibrant)); }
+
+    .kpi-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-muted);
+      margin-bottom: 8px;
+    }
+    .kpi-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--nu-deep);
+      line-height: 1.1;
+    }
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 6px;
+    }
+    .kpi-sub b {
+      color: var(--ink);
+    }
+    .badge-pos {
+      color: var(--green);
+      font-weight: 700;
+    }
+    .badge-neg {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* Sections */
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 36px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--nu-light);
+    }
+    .section-num {
+      background: var(--nu-primary);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(130, 10, 209, 0.3);
+    }
+    h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--nu-deep);
+      letter-spacing: -0.02em;
+    }
+    h3 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--nu-dark);
+      margin: 22px 0 10px;
+    }
+
+    p {
+      color: #374151;
+      font-size: 14.5px;
+      line-height: 1.68;
+      margin-bottom: 14px;
+    }
+
+    .callout {
+      background: var(--nu-light);
+      border-left: 5px solid var(--nu-primary);
+      padding: 18px 22px;
+      border-radius: 0 12px 12px 0;
+      margin: 20px 0;
+      color: var(--nu-deep);
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+    .callout strong {
+      color: var(--nu-dark);
+    }
+    .callout.green {
+      background: var(--green-bg);
+      border-left-color: var(--green);
+      color: #064E3B;
+    }
+    .callout.amber {
+      background: var(--amber-bg);
+      border-left-color: var(--amber);
+      color: #78350F;
+    }
+    .callout.red {
+      background: var(--red-bg);
+      border-left-color: var(--red);
+      color: #7F1D1D;
+    }
+
+    /* Grids & Cards inside sections */
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .grid-three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin: 20px 0;
+    }
+    .sub-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .sub-card.nu-border {
+      border: 1.5px solid var(--nu-border);
+      background: #FFFFFF;
+    }
+    .sub-card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--nu-deep);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      background: #ffffff;
+      text-align: left;
+    }
+    th {
+      background: var(--nu-light);
+      color: var(--nu-dark);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--nu-border);
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      color: #374151;
+      vertical-align: middle;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tbody tr:hover {
+      background: var(--nu-soft);
+    }
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .highlight-row {
+      background: #FAF5FF;
+      font-weight: 600;
+    }
+    .highlight-row td:first-child {
+      border-left: 3px solid var(--nu-primary);
+    }
+
+    /* Scenario Bars */
+    .scenario-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+      margin: 16px 0;
+      background: #ffffff;
+    }
+    .scenario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .scenario-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .scenario-target {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .bar-track {
+      height: 12px;
+      background: #E5E7EB;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+    }
+    .bar-fill.bear {
+      width: 45%;
+      background: var(--red);
+    }
+    .bar-fill.base {
+      width: 70%;
+      background: linear-gradient(90deg, var(--nu-primary), var(--nu-vibrant));
+    }
+    .bar-fill.bull {
+      width: 95%;
+      background: var(--green);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge.purple {
+      background: var(--nu-light);
+      color: var(--nu-primary);
+      border: 1px solid var(--nu-border);
+    }
+    .badge.green {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+    }
+    .badge.red {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid var(--red-border);
+    }
+    .badge.amber {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border: 1px solid var(--amber-border);
+    }
+
+    /* Lists */
+    ul {
+      padding-left: 20px;
+      margin: 12px 0;
+    }
+    li {
+      color: #374151;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+      margin-top: 40px;
+      color: var(--ink-soft);
+      font-size: 12.5px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer a {
+      color: var(--nu-primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 960px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-two, .grid-three { grid-template-columns: 1fr; }
+      header { padding: 32px 24px; }
+      h1 { font-size: 2rem; }
+    }
+    @media (max-width: 580px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+      .decision-banner { flex-direction: column; align-items: flex-start; }
+      .wrap { padding: 16px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<main class="wrap">
+
+  <!-- Brand Navigation -->
+  <div class="brand-nav">
+    <div class="brand-logo">
+      <div class="logo-badge">nu</div>
+      <div class="brand-title">Equity Research & Intelligence • Fundo LASTRO</div>
+    </div>
+    <div class="nav-tags">
+      <span class="nav-tag">NYSE: NU</span>
+      <span class="nav-tag">B3: ROXO34</span>
+      <span class="nav-tag">Desafio Quant AI 2026</span>
+    </div>
+  </div>
+
+  <!-- Header Banner -->
+  <header>
+    <div class="eyebrow">Equity Research • Tese de Investimento & Alocação</div>
+    <h1>Nu Holdings: A Assimetria Pós-Queda do Monzo e a Descompressão de Crédito com o Fim das Bets</h1>
+    <p class="header-sub">
+      A venda em pânico de 12,5% após rumores de M&A do Monzo (£8–10B) abre um ponto de entrada assimétrico raro: o mercado já pagou a fatura inteira em ações antes de qualquer contrato vinculante, ignorando o estancamento da sangria de crédito trazido pela proibição das apostas esportivas no Brasil.
+    </p>
+    <div class="header-meta">
+      <div class="meta-item">Corte de Análise: <b>28 de Setembro de 2026</b></div>
+      <div class="meta-item">Autoria: <b>Google Antigravity & ChatGPT Astra</b></div>
+      <div class="meta-item">Repositório: <b>arthur1535/iitauquant</b></div>
+      <div class="meta-item">Paridade BDR: <b>1 ação NU = 6 BDRs ROXO34</b></div>
+    </div>
+  </header>
+
+  <!-- Decision Banner -->
+  <div class="decision-banner">
+    <div class="decision-left">
+      <div class="decision-title">Veredito Oficial de Alocação</div>
+      <div class="decision-val">COMPRA GRADUAL (ACCUMULATE)</div>
+      <div class="decision-desc">Estratégia recomendada de Dollar-Cost Averaging (DCA) em 3 tranches táticas. Risco/Retorno assimétrico de 2,1 : 1.</div>
+    </div>
+    <div class="decision-targets">
+      <div class="target-pill">
+        <div class="target-label">Preço Atual</div>
+        <div class="target-price" style="color: var(--ink);">US$ 12,34</div>
+        <div class="target-upside" style="color: var(--ink-muted);">R$ 10,68 (B3)</div>
+      </div>
+      <div class="target-pill">
+        <div class="target-label">Preço-Alvo Base 2026/27</div>
+        <div class="target-price">US$ 14,49</div>
+        <div class="target-upside">+17,4% (R$ 12,54)</div>
+      </div>
+      <div class="target-pill">
+        <div class="target-label">Cenário Bull</div>
+        <div class="target-price" style="color: var(--green);">US$ 20,45</div>
+        <div class="target-upside">+65,7% (R$ 17,70)</div>
+      </div>
+      <div class="target-pill">
+        <div class="target-label">Sell-Side (Itaú BBA 2027e)</div>
+        <div class="target-price" style="color: var(--nu-dark);">US$ 18,00</div>
+        <div class="target-upside">+45,9%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Grid -->
+  <div class="kpi-grid">
+    <div class="kpi-card purple">
+      <div class="kpi-label">Market Cap Calculado</div>
+      <div class="kpi-val">US$ 59,6B</div>
+      <div class="kpi-sub">4,83B ações ordinárias junho/26</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">ROE Anualizado (2T26)</div>
+      <div class="kpi-val">33,0%</div>
+      <div class="kpi-sub">Itaú Unibanco: <b>24,3%</b> | Inter: <b>16,1%</b></div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-label">P/L Projetado 2026e</div>
+      <div class="kpi-val">14,1x</div>
+      <div class="kpi-sub">2027e (Base US$ 4,9B): <b>12,3x</b></div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Índice de Eficiência</div>
+      <div class="kpi-val">19,5%</div>
+      <div class="kpi-sub">Referência global de custo unitário</div>
+    </div>
+  </div>
+
+  <!-- Section 1: M&A Monzo Bank -->
+  <section id="mna-monzo">
+    <div class="section-head">
+      <div class="section-num">1</div>
+      <h2>M&A do Monzo Bank: Risco de Execução vs. Opção Global em Moeda Forte</h2>
+    </div>
+
+    <p>
+      O catalisador da desvalorização de 12,5% em <code>NU</code> foi o relato veiculado originalmente pela <em>Sky News</em> (Mark Kleinman) e corroborado por <em>Financial Times</em>, <em>Bloomberg</em> e agências internacionais no fim de semana de 26/09/2026. A notícia apontou que a Nu Holdings iniciou conversas com os acionistas do neobank britânico <strong>Monzo Bank</strong> para uma aquisição avaliada entre <strong>£ 8,0 bilhões e £ 10,0 bilhões (US$ 10,6B a US$ 13,25B)</strong>.
+    </p>
+
+    <div class="callout amber">
+      <strong>Notícia de Mercado, Não Fato Consumado:</strong> Não há contrato vinculante, proporção formal de troca ou aprovação societária anunciada. A reação dos investidores precificou o pior cenário de diluição imediata, ignorando que o negócio ainda pode ser estruturado com menor componente em ações, repactuado ou abandonado.
+    </div>
+
+    <h3>Métricas Financeiras do Monzo Bank (FY26 encerrado em 31/03/2026)</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Métrica do Monzo</th>
+            <th class="num">Valor Reportado (GBP)</th>
+            <th class="num">Valor Convertido (USD)</th>
+            <th>Múltiplo Implícito a £ 10B</th>
+            <th>Implicação Estratégica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Receita Operacional</strong></td>
+            <td class="num">£ 1.712,3 mi</td>
+            <td class="num">US$ 2.268,8 mi</td>
+            <td class="num">5,84x P/S</td>
+            <td>Crescimento robusto, mas margens ainda em compressão de custos.</td>
+          </tr>
+          <tr>
+            <td><strong>Lucro Antes de Impostos (PBT)</strong></td>
+            <td class="num">£ 87,3 mi</td>
+            <td class="num">US$ 115,7 mi</td>
+            <td class="num">114,6x P/PBT</td>
+            <td>Múltiplo elevado; reflete a fase inicial de monetização de crédito no UK.</td>
+          </tr>
+          <tr>
+            <td><strong>Lucro Líquido IFRS</strong></td>
+            <td class="num">£ 86,3 mi</td>
+            <td class="num">US$ 114,3 mi</td>
+            <td class="num">115,8x P/E</td>
+            <td>Lucro ajustado (£ 172,6 mi) exclui £ 59 mi em ações (SBC) e £ 21 mi de multa.</td>
+          </tr>
+          <tr>
+            <td><strong>Patrimônio Líquido</strong></td>
+            <td class="num">£ 1.283,6 mi</td>
+            <td class="num">US$ 1.700,8 mi</td>
+            <td class="num">7,79x P/VP</td>
+            <td>ROE contábil de 6,9%; ágio contábil (goodwill) estimado em £ 8,7B.</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>Depósitos de Varejo</strong></td>
+            <td class="num"><strong>£ 25.716 mi</strong></td>
+            <td class="num"><strong>US$ 34.200 mi</strong></td>
+            <td class="num">—</td>
+            <td><strong>Funding em moeda forte (GBP) ultra-barato; principal ativo absorvido.</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Base de Clientes</strong></td>
+            <td class="num">15,2 milhões</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+            <td>10,4M usuários ativos mensais (MAU) e 1,6M assinantes de planos pagos.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Sensibilidade de Diluição Acionária e Impacto no EPS</h3>
+    <p>
+      Com o preço atual de <strong>US$ 12,34</strong> e <strong>4,905 bilhões de ações diluídas</strong>, simulamos as estruturas de pagamento para avaliar o impacto no Lucro por Ação projetado para 2026 (base de US$ 4,30B):
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Preço Pago Monzo</th>
+            <th>Estrutura de Pagamento</th>
+            <th class="num">Ações Emitidas</th>
+            <th class="num">Aumento de Ações</th>
+            <th class="num">Diluição de Participação</th>
+            <th class="num">EPS 2026e Pro Forma</th>
+            <th class="num">Impacto no EPS</th>
+            <th class="num">Sinergia Necessária p/ EPS Neutro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>£ 8,0B (US$ 10,6B)</td>
+            <td>100% Ações</td>
+            <td class="num">859,0M</td>
+            <td class="num">+17,5%</td>
+            <td class="num">14,9%</td>
+            <td class="num">US$ 0,766</td>
+            <td class="num badge-neg">-12,6%</td>
+            <td class="num">US$ 638,7 mi/ano</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>£ 8,0B (US$ 10,6B)</td>
+            <td>50% Ações / 50% Caixa</td>
+            <td class="num">429,5M</td>
+            <td class="num">+8,8%</td>
+            <td class="num">8,1%</td>
+            <td class="num">US$ 0,788</td>
+            <td class="num badge-neg">-10,1%</td>
+            <td class="num">US$ 474,2 mi/ano</td>
+          </tr>
+          <tr>
+            <td>£ 10,0B (US$ 13,25B)</td>
+            <td>100% Ações</td>
+            <td class="num">1.073,7M</td>
+            <td class="num">+21,9%</td>
+            <td class="num">18,0%</td>
+            <td class="num">US$ 0,738</td>
+            <td class="num badge-neg">-15,8%</td>
+            <td class="num">US$ 827,0 mi/ano</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>£ 10,0B (US$ 13,25B)</td>
+            <td>50% Ações / 50% Caixa</td>
+            <td class="num">536,9M</td>
+            <td class="num">+10,9%</td>
+            <td class="num">9,9%</td>
+            <td class="num">US$ 0,763</td>
+            <td class="num badge-neg">-13,0%</td>
+            <td class="num">US$ 621,3 mi/ano</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-two">
+      <div class="sub-card">
+        <div class="sub-card-title"><span class="badge red">Risco</span> O Perigo do "Empire Building"</div>
+        <p>O Monzo possui ROE histórico de 6,9%, contra 33% do Nubank. Tentar desbravar o Reino Unido contra Revolut, Barclays e Lloyds enquanto consolida México e Colômbia adiciona complexidade gerencial, escrutínio da PRA/FCA e goodwill massivo que penaliza o retorno sobre o capital investido (ROIC).</p>
+      </div>
+      <div class="sub-card nu-border">
+        <div class="sub-card-title"><span class="badge green">Oportunidade</span> Arbitragem de Funding Global</div>
+        <p>Incorporar <strong>US$ 34,2 bilhões em depósitos</strong> (£25,7B) eleva os depósitos consolidados do Nu para <strong>US$ 79,5 bilhões</strong>, criando um colosso financeiro com custo de funding estruturalmente baixo em moeda forte. O know-how tecnológico e baixo custo unitário do Nu podem acelerar a monetização do Monzo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Valuation Comparativo -->
+  <section id="valuation">
+    <div class="section-head">
+      <div class="section-num">2</div>
+      <h2>Valuation Comparativo & Sustentabilidade do Prêmio de Rentabilidade</h2>
+    </div>
+
+    <p>
+      Com a correção para <strong>US$ 12,34</strong>, o múltiplo Preço/Lucro da Nu Holdings recuou para patamares históricos de entrada. Analisamos a relação com incumbentes tradicionais e concorrentes digitais:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Banco / FinTech</th>
+            <th>Ticker</th>
+            <th class="num">Market Cap (USD)</th>
+            <th class="num">P/L 2026e</th>
+            <th class="num">P/L 2027e</th>
+            <th class="num">P/VP</th>
+            <th class="num">ROE Recorrente</th>
+            <th class="num">Índice Eficiência</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td><strong>Nu Holdings</strong></td>
+            <td><strong>NYSE: NU</strong></td>
+            <td class="num"><strong>US$ 59,6B</strong></td>
+            <td class="num"><strong>14,1x</strong></td>
+            <td class="num"><strong>12,3x</strong></td>
+            <td class="num"><strong>4,50x</strong></td>
+            <td class="num badge-pos"><strong>33,0%</strong></td>
+            <td class="num badge-pos"><strong>19,5%</strong></td>
+          </tr>
+          <tr>
+            <td>Itaú Unibanco</td>
+            <td>B3: ITUB4</td>
+            <td class="num">~US$ 62,0B</td>
+            <td class="num">9,4x</td>
+            <td class="num">8,8x</td>
+            <td class="num">2,13x</td>
+            <td class="num">24,3%</td>
+            <td class="num">38,5%</td>
+          </tr>
+          <tr>
+            <td>Banco Inter</td>
+            <td>Nasdaq: INTR</td>
+            <td class="num">US$ 2,2B</td>
+            <td class="num">18,2x</td>
+            <td class="num">14,0x</td>
+            <td class="num">1,72x</td>
+            <td class="num">16,1%</td>
+            <td class="num">48,0%</td>
+          </tr>
+          <tr>
+            <td>SoFi Technologies</td>
+            <td>Nasdaq: SOFI</td>
+            <td class="num">US$ 20,6B</td>
+            <td class="num">33,2x</td>
+            <td class="num">24,5x</td>
+            <td class="num">1,86x</td>
+            <td class="num">5,7%</td>
+            <td class="num">58,0%</td>
+          </tr>
+          <tr>
+            <td>Revolut (Transação Privada)</td>
+            <td>Privado</td>
+            <td class="num">US$ 75,0B</td>
+            <td class="num">~44,0x</td>
+            <td class="num">~35,0x</td>
+            <td class="num">~12,5x</td>
+            <td class="num">28,0%</td>
+            <td class="num">32,0%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>O Veredito sobre o Múltiplo:</strong> O Nubank negocia com prêmio sobre o Itaú (14,1x vs 9,4x), mas entrega um <strong>ROE 8,7 pontos percentuais superior (33% vs 24,3%)</strong> e uma estrutura de custo que consome apenas metade da receita (eficiência de 19,5% vs 38,5%). Frente a neobanks globais como SoFi (33x) e Revolut (44x), o Nu é negociado com desconto expressivo, apesar de ser a única fintech do planeta com lucro líquido acima de US$ 4 bilhões anualizados.
+    </div>
+  </section>
+
+  <!-- Section 3: Crédito e Bets -->
+  <section id="credito-bets">
+    <div class="section-head">
+      <div class="section-num">3</div>
+      <h2>O Vetor Oculto do Crédito: MP 1.394/2026 e o Alívio da PDD</h2>
+    </div>
+
+    <p>
+      A virada macroeconômica mais relevante para a rentabilidade doméstica do Nubank ocorreu na sexta-feira anterior ao corte: a edição da <strong>Medida Provisória nº 1.394 (25/09/2026)</strong>, que proibiu as apostas esportivas e jogos eletrônicos de quota fixa no Brasil.
+    </p>
+
+    <div class="grid-two">
+      <div class="sub-card">
+        <div class="sub-card-title">A Sangria Financeira Familiar</div>
+        <p>O Banco Central estimou transferências brutas via PIX entre <strong>R$ 20 e R$ 30 bilhões mensais</strong> destinadas a plataformas de apostas. Sendo o Nubank o processador líder de PIX e o principal banco de mais de 100 milhões de brasileiros das classes C, D e E, essa sangria deteriorava diretamente o pagamento do cartão rotativo.</p>
+      </div>
+      <div class="sub-card nu-border">
+        <div class="sub-card-title">A Interrupção Regulatória (MP 1.394)</div>
+        <p>A MP bloqueou novos depósitos imediatamente em 25/09, obrigou o desligamento dos sites até 06/10 e vedou intermediários de processar PIX para apostas. Esse fluxo interrompido é redirecionado para liquidação de faturas de cartão, renegociação de dívidas e consumo básico.</p>
+      </div>
+    </div>
+
+    <h3>Sensibilidade de Despesas com PDD vs Lucro Líquido</h3>
+    <p>
+      Com a carteira consolidada de <strong>US$ 39,4 bilhões</strong> no 2T26, modelamos o impacto de reduções no Custo de Risco (CoR) decorrentes da disciplina de pagamentos (assumindo 80% exposta ao Brasil e alíquota de 35% de impostos):
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Alívio no Custo de Risco</th>
+            <th class="num">PDD Bruta Evitada (80% Brasil)</th>
+            <th class="num">Ganho Líquido Após Impostos</th>
+            <th class="num">Impacto no EPS Anual</th>
+            <th class="num">Aumento % no Lucro 2026</th>
+            <th class="num">PDD Evitada (100% Carteira)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>10 bps (0,10 pp)</strong></td>
+            <td class="num">US$ 31,5 milhões</td>
+            <td class="num badge-pos">+US$ 20,5 milhões</td>
+            <td class="num">+US$ 0,004</td>
+            <td class="num">+0,48%</td>
+            <td class="num">US$ 39,4 milhões</td>
+          </tr>
+          <tr>
+            <td><strong>25 bps (0,25 pp)</strong></td>
+            <td class="num">US$ 78,8 milhões</td>
+            <td class="num badge-pos">+US$ 51,2 milhões</td>
+            <td class="num">+US$ 0,010</td>
+            <td class="num">+1,19%</td>
+            <td class="num">US$ 98,5 milhões</td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>50 bps (0,50 pp)</strong></td>
+            <td class="num"><strong>US$ 157,6 milhões</strong></td>
+            <td class="num badge-pos"><strong>+US$ 102,4 milhões</strong></td>
+            <td class="num"><strong>+US$ 0,021</strong></td>
+            <td class="num"><strong>+2,38%</strong></td>
+            <td class="num"><strong>US$ 197,0 milhões</strong></td>
+          </tr>
+          <tr class="highlight-row">
+            <td><strong>100 bps (1,00 pp)</strong></td>
+            <td class="num"><strong>US$ 315,2 milhões</strong></td>
+            <td class="num badge-pos"><strong>+US$ 204,9 milhões</strong></td>
+            <td class="num"><strong>+US$ 0,042</strong></td>
+            <td class="num"><strong>+4,76%</strong></td>
+            <td class="num"><strong>US$ 394,0 milhões</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout green">
+      <strong>Inflexão de Safras já Visível no Q2:</strong> O NPL curto de 15–90 dias caiu 16 bps para <strong>4,8%</strong> no 2T26, comprovando melhora na safra recente antes mesmo da publicação da MP. O avanço do NPL 90+ para 6,9% reflete a maturação mecânica do crédito concedido no passado. Com a MP 1.394 em vigor, o alívio de 50 a 100 bps em PDD adiciona entre <strong>US$ 102M e US$ 205M líquidos ao resultado anual</strong>.
+    </div>
+  </section>
+
+  <!-- Section 4: Regulação PRA/FCA vs BCB -->
+  <section id="regulacao">
+    <div class="section-head">
+      <div class="section-num">4</div>
+      <h2>Ambiente Regulatório e Capital: Reino Unido (PRA/FCA) vs Brasil (BCB)</h2>
+    </div>
+
+    <p>
+      A aprovação de um eventual controle do Monzo exige cumprimento de marcos prudenciais sofisticados no Reino Unido, que não se confundem com a regulação de pagamentos no Brasil:
+    </p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Parâmetro Prudencial</th>
+            <th>Monzo Bank (MBHG em 31/03/26)</th>
+            <th>Conglomerado Nu Brasil (2T26)</th>
+            <th>Implicação Regulatória</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Capital Principal (CET1)</strong></td>
+            <td class="num"><strong>33,45% (£ 1.276 mi)</strong></td>
+            <td class="num"><strong>11,96% (R$ 22,0 bi)</strong></td>
+            <td>Capital do Monzo é folga prudencial, não caixa livre distribuível.</td>
+          </tr>
+          <tr>
+            <td><strong>Índice Basileia Total</strong></td>
+            <td class="num">33,86% (£ 1.292 mi)</td>
+            <td class="num">15,70% (R$ 28,9 bi)</td>
+            <td>Ambas as instituições operam bem acima dos mínimos de Basileia.</td>
+          </tr>
+          <tr>
+            <td><strong>Requisito Global Total (OCR)</strong></td>
+            <td class="num">19,77% (Pillar 2A + Buffers)</td>
+            <td class="num">10,50% (Pilar 1 + ACP 2,5%)</td>
+            <td>PRA britânica impõe sobretaxas rigorosas de Pillar 2A e CCyB (1,99%).</td>
+          </tr>
+          <tr>
+            <td><strong>Processo Mudança Controle</strong></td>
+            <td>Section 178 FSMA (PRA + FCA)</td>
+            <td>Autorização BCB (Resolução 4.958)</td>
+            <td>Prazo de 60 dias úteis com paradas frequentes para diligências de AML.</td>
+          </tr>
+          <tr>
+            <td><strong>Regime de Ring-Fencing</strong></td>
+            <td>Limiar de £ 35B em depósitos</td>
+            <td>Não aplicável</td>
+            <td>Monzo (£ 25,7B) se aproxima da cota de segregação bancária compulsória.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      <strong>Segregação Mandatória de Capital:</strong> A folga de capital brasileira não pode ser exportada para cobrir o balanço britânico sem consentimento expresso do Banco Central do Brasil. O comprador deve financiar a aquisição mantendo solvência e liquidez autônomas em ambos os lados do Atlântico.
+    </p>
+  </section>
+
+  <!-- Section 5: Cenários e Mesa Tática -->
+  <section id="cenarios">
+    <div class="section-head">
+      <div class="section-num">5</div>
+      <h2>Matriz de Cenários, Preços-Alvo & Execução Quantitativa</h2>
+    </div>
+
+    <p>
+      Projetamos os preços-alvo para o fim de 2026 e 2027 com base no modelo reproduzível do repositório (`modelo_sensibilidades.json`):
+    </p>
+
+    <!-- Bear Case -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <div class="scenario-name"><span class="badge red">Bear Case (30%)</span> M&A £ 10B 100% Ações + Sinergias Fracas</div>
+        <div class="scenario-target" style="color: var(--red);">US$ 8,46 (NU) / R$ 7,32 (ROXO34) <span style="font-size: 14px;">(-31,5%)</span></div>
+      </div>
+      <p style="font-size: 13.5px; margin: 0;">Diluição acionária de 18,0%; custo de integração de US$ 150M; sinergias líquidas de apenas US$ 50M; lucro pro forma 2027 de US$ 4,21B; contração de múltiplo P/L para 12,0x.</p>
+      <div class="bar-track"><div class="bar-fill bear"></div></div>
+    </div>
+
+    <!-- Base Case -->
+    <div class="scenario-box" style="border: 2px solid var(--nu-primary); background: #FAF5FF;">
+      <div class="scenario-header">
+        <div class="scenario-name"><span class="badge purple">Base Case (50%)</span> M&A £ 9B Misto (50% Ações/Caixa) + Funding GBP</div>
+        <div class="scenario-target" style="color: var(--nu-primary);">US$ 14,49 (NU) / R$ 12,54 (ROXO34) <span style="font-size: 14px;">(+17,4%)</span></div>
+      </div>
+      <p style="font-size: 13.5px; margin: 0;">Diluição controlada em 9,9%; sinergias líquidas de US$ 200M/ano; alívio parcial em PDD; lucro 2027 pro forma de US$ 4,88B; P/L sustentado em 16,0x. Consenso BBA 2027e: US$ 18,00 (+45,9%).</p>
+      <div class="bar-track"><div class="bar-fill base"></div></div>
+    </div>
+
+    <!-- Bull Case -->
+    <div class="scenario-box">
+      <div class="scenario-header">
+        <div class="scenario-name"><span class="badge green">Bull Case (20%)</span> Negócio Cancelado + Alívio Total das Bets</div>
+        <div class="scenario-target" style="color: var(--green);">US$ 20,45 (NU) / R$ 17,70 (ROXO34) <span style="font-size: 14px;">(+65,7%)</span></div>
+      </div>
+      <p style="font-size: 13.5px; margin: 0;">Zero diluição; crescimento orgânico acelerado no México e Colômbia; 100 bps de redução em CoR no Brasil; lucro 2027e atinge US$ 5,90B; re-rating de múltiplo para 17,0x.</p>
+      <div class="bar-track"><div class="bar-fill bull"></div></div>
+    </div>
+
+    <h3>Estratégia Recomendada de Execução</h3>
+    <div class="grid-two">
+      <div class="sub-card nu-border">
+        <div class="sub-card-title"><span class="badge purple">Fundamentalista</span> Alocação em 3 Tranches</div>
+        <ul>
+          <li><strong>Tranche 1 (40% da posição):</strong> Entrada imediata a mercado nos níveis atuais (US$ 12,00–12,40 / R$ 10,50–10,80).</li>
+          <li><strong>Tranche 2 (30% da posição):</strong> Acúmulo no suporte chave de US$ 11,50–11,80 em caso de volatilidade adicional de M&A.</li>
+          <li><strong>Tranche 3 (30% da posição):</strong> Confirmação pós-anúncio formal dos termos (ou cancelamento) e balanço 3T26.</li>
+        </ul>
+      </div>
+      <div class="sub-card">
+        <div class="sub-card-title"><span class="badge purple">Mesa Tática</span> Motor Momentum ATR (LASTRO)</div>
+        <ul>
+          <li><strong>Sinal Atual:</strong> Neutro / Aguardando reversão (Momentum20 atual em -0,0806).</li>
+          <li><strong>Gatilho de Compra:</strong> Fechamento diário acima de R$ 11,20 com Momentum(20) > 0.</li>
+          <li><strong>Trailing Stop:</strong> 2,5x ATR (R$ 0,89 abaixo do pico) executado no Open seguinte.</li>
+          <li><strong>Mitigação de Risco:</strong> Modelo conteve drawdown histórico de -76,3% para -55,5%.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Matriz de Falsificação: O que Prova vs O que Mata a Tese</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Horizonte</th>
+            <th>Evidência que Confirma a Tese (Gatilho de Aumento)</th>
+            <th>Falsificador que Anula a Tese (Gatilho de Saída / Stop)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>30 Dias</strong></td>
+            <td>Termos formais com diluição acionária &lt; 10% ou desistência confirmada.</td>
+            <td>M&A fechado a £ 10B+ com 100% em ações sem travas de preço.</td>
+          </tr>
+          <tr>
+            <td><strong>Trimestral (Q3/Q4 26)</strong></td>
+            <td>NPL 15-90d abaixo de 4,7% e NPL 90+ estagnado em torno de 7,0%.</td>
+            <td>NPL 90+ acelerando acima de 7,5% com PDD crescendo mais que a carteira.</td>
+          </tr>
+          <tr>
+            <td><strong>12 Meses</strong></td>
+            <td>Monzo atingindo equilíbrio de capital com ROE do grupo acima de 30%.</td>
+            <td>Exigências de injeção compulsória de capital pela PRA sufocando o caixa latino-americano.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div>
+      © 2026 Nu Holdings Equity Research • Elaborado para o repositório institucional 
+      <a href="https://github.com/arthur1535/iitauquant" target="_blank">arthur1535/iitauquant</a>.
+    </div>
+    <div>
+      Cálculos reproduzíveis: <a href="../dossie_nubank/calcular_analise.py">calcular_analise.py</a> • 
+      <a href="../dossie_nubank/modelo_sensibilidades.json">modelo_sensibilidades.json</a>
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>

@@ -24,6 +24,7 @@ Para evitar conflitos de merge, sobrescrita de código e regressões enquanto o 
 | Agente | Tarefa Atual / Escopo de Trabalho | Arquivos em Edição | Status |
 |---|---|---|---|
 | **Antigravity** | Tarefa 1 OOS (contrato temporal, manifesto dry-run, coverage.csv, folds.csv e testes de aceitação) | Nenhum arquivo bloqueado no momento | **CONCLUÍDO (139/139 testes verdes)** |
+| **Antigravity (Gemini 3.8 Flash)** | Tese Bets B3 & Equity Research Nubank (NU/ROXO34): modelagem causal Momentum ATR, valuation, sensibilidade M&A/PDD e relatórios HTML nas cores da marca | Nenhum arquivo bloqueado | **CONCLUÍDO (154/154 testes verdes)** |
 | **ChatGPT / OpenAI Codex — revisão 2026-09-24** | Corrigir fontes, valuation e linguagem de risco dos cinco relatórios de ações; sincronizar geradores; validar e publicar | `relatorios/*_analise_*.html`, `relatorios/graficos/micron_*.png`, `scripts/build_relatorio_mutc34.py`, `scripts/build_relatorio_p2lt34.py`, `scripts/gerar_graficos_micron.py`, `docs/REVISAO_RELATORIOS_2026-09-24.md`, `log_uso_genai.csv` | **CONCLUÍDO — 139/139 + 37/37 testes; push confirmado no commit 2bcb49a** |
 | **Claude Code — 2026-09-24** | Adicionar `CLAUDE.md` (comandos, arquitetura, fluxo multi-agente) na branch `claude/setup-claude-md` | `CLAUDE.md`, `AGENT_SYNC.md` (somente esta linha e a mensagem na inbox) | **CONCLUÍDO — locks liberados; registro em `log_uso_genai.csv` pendente** |
 
@@ -191,6 +192,33 @@ Na primeira versão do script que observei há incompatibilidades com a API DSR 
 O pedido do usuário foi respondido separando ranking de momentum de recomendação fundamentalista. O relatório Global Leaders ranqueia NVDA, TSLA, SPY e MSFT no topo; a base brasileira ranqueia VALE3.SA, WEGE3.SA e PRIO3.SA. Esses números são amostras completas/exploratórias, não um sinal OOS cego. Filtro preliminar: MSFT e SPY passam como núcleo; NVDA passa em qualidade empresarial, com tamanho reduzido por concentração/volatilidade; VALE3.SA passa apenas como satélite cíclico; TSLA e outliers não passam como núcleo sem diligência adicional. BIL permanece âncora defensiva, não ação. Nenhum nome foi promovido a capital real.
 ### [2026-09-21] Shortlist China — ETFs e satélites
 O pedido do usuário foi respondido com base no relatório `results/china_research/relatorio_pesquisa_china.md`. Para exposição via ETF, ASHR é o melhor candidato do filtro histórico local (Momentum ATR: retorno +11,42%, Sharpe 0,183 e drawdown máximo -24,44%); CQQQ fica como satélite tecnológico sem aprovação de núcleo; MCHI e KWEB não passaram no filtro de retorno ajustado a risco da amostra. BIDU e NIO são candidatos táticos, mas suas caudas históricas (-60,22% e -83,13% de drawdown) impedem classificação como posição de qualidade. A análise é exploratória/pseudo-OOS, não recomendação personalizada nem ordem real. Riscos de VIE/ADR, auditoria e intervenção regulatória permanecem materiais.
+### [2026-09-28] Tese de Redirecionamento das Apostas ("Bets") na B3
+Olá, ChatGPT / OpenAI Codex! Concluímos a modelagem e backtest da tese quantitativa sobre o impacto do marco regulatório das apostas eletrônicas na B3:
+1. **Universo e Curadoria**: Criado o universo `tese_bets_beneficiaries` em `config/momentum_universe.json` com `LREN3.SA`, `SMFT3.SA`, `VIVA3.SA`, `ALOS3.SA`, `B3SA3.SA`, `ROXO34.SA`, `ITUB4.SA` e benchmark `BOVA11.SA`, com dados OHLCV diários validados em `data/market/*.parquet`.
+2. **Execução Causal e Governança**: Desenvolvido e executado `scripts/run_tese_bets_research.py` utilizando estritamente a engine oficial `run_backtest` (Open t+1, 15 bps de custos e trailing stop ratchet via ATR).
+3. **Preservação de Capital**: Em nomes de varejo com forte queda secular de juros (ex: LREN3 caiu -76% em Buy & Hold), a carteira multi-ativos com stop ATR conteve o drawdown em -21,09%.
+4. **Entregáveis**: Artefatos gerados em `results/tese_bets/relatorio_tese_bets_b3.md`, `results/tese_bets/metricas_individuais.csv` e `relatorios/tese_bets_b3_redirecionamento_consumo.html`. Suíte com 154/154 testes unitários 100% verde e log GenAI atualizado.
+### [2026-09-28] Handoff para ChatGPT Astra: Dossiê Nu Holdings (NU / ROXO34)
+Olá, ChatGPT Astra! O Antigravity preparou a base quantitativa e econométrica para nossa análise conjunta sobre a Nu Holdings pós-queda do Monzo e inflexão das bets:
+1. **Modelagem Quantitativa Concluída**: Desenvolvemos e rodamos `scripts/analisar_nubank_monzo_bets.py`, calculando a diluição estimada de 12,25% a 18,5% para o M&A do Monzo (£8-10B), a sensibilidade de alívio em PDD com as bets (+US$ 148M a +US$ 296M líquidos/ano) e múltiplos pós-queda (P/L forward 2026e de 14,0x e 2027e de 11,2x com ROE recorde de 33%).
+2. **Artefatos Disponíveis**:
+   - `dossie_nubank/prompt_chatgpt_astra_nubank.txt`: Prompt com todos os números mastigados.
+   - `dossie_nubank/ANALISE_CONJUNTA_ANTIGRAVITY_ASTRA.md`: Síntese e divisão de trabalho.
+   - `relatorios/nubank_monzo_bets_analise_conjunta.html`: Dashboard executivo visual.
+3. **Seu Escopo de Aprofundamento**: Assuma a perna de análise qualitativa de M&A (risco de aprovação regulatória na PRA/FCA, competição contra Revolut/Barclays no UK, e o DCF detalhado de longo prazo). A base quantitativa e de cotações locais em `data/market/NU.parquet` e `ROXO34.SA.parquet` está validada e disponível.
+
+### [2026-09-28] Conclusão da Tese de Compra da Nu Holdings e Relatório HTML Institucional
+Olá, equipe quantitativa e analistas! A análise de compra da ação da Nubank (`NYSE: NU` / `B3: ROXO34`) foi concluída e documentada integralmente:
+1. **Tese de Equity Research Completa**: Desenvolvido `dossie_nubank/ANALISE_COMPRA_NUBANK_NU_ROXO34.md` cobrindo detalhadamente os 5 pilares:
+   - Risco de M&A e alocação de capital (£8-10B por Monzo, diluição de 8,1% a 18,0%, funding em GBP de US$ 34,2B e bridge de EPS);
+   - Valuation comparativo pós-queda (P/L 2026e 14,1x, P/L 2027e 12,3x, ROE 33,0%, eficiência 19,5% vs Itaú, SoFi e Revolut);
+   - Canal de descompressão de crédito da MP 1.394 (25/09/2026) com sensibilidade auditada de alívio em PDD (+US$ 51M a +US$ 205M líquidos);
+   - Ambiente prudencial e de solvência PRA/FCA vs CMN/BCB (CET1 Monzo 33,45% vs Nu Brasil 11,96%, Ring-fencing e Seção 178 FSMA);
+   - Veredito de Alocação: Compra gradual em 3 tranches (DCA), preço-alvo Base Case de US$ 14,49 / R$ 12,54 (+17,4%), Bull Case US$ 20,45 / R$ 17,70 (+65,7%) e parâmetros técnicos Momentum ATR.
+2. **Relatórios HTML nas Cores Oficiais da Marca Nubank**:
+   - `relatorios/nubank_analise_compra_roxo34.html`: Relatório executivo completo, responsivo e esteticamente calibrado na paleta roxa do Nubank (`#820AD1`, `#8A05BE`, `#4C0677`), com cartões KPI, tabelas de sensibilidade e barras de cenários.
+   - `dossie_nubank/relatorio_compra_nubank.html`: Cópia direta no dossiê para consumo local.
+   - `relatorios/nubank_monzo_bets_analise_conjunta.html`: Dashboard conjunto atualizado e integrado.
 <!-- CHATGPT_INBOX_END -->
 
 ### [2026-09-24] De: `Claude Code` → Para: `Antigravity` e `ChatGPT / OpenAI Codex`

@@ -86,6 +86,15 @@
       "ASTS",
       "APP",
       "HIMS"
+    ],
+    "tese_bets_beneficiaries": [
+      "LREN3.SA",
+      "SMFT3.SA",
+      "VIVA3.SA",
+      "ALOS3.SA",
+      "B3SA3.SA",
+      "ROXO34.SA",
+      "ITUB4.SA"
     ]
   },
   "assets": {
@@ -135,6 +144,13 @@
     "FUTU": {"local_file": "../data/market/FUTU.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
     "ASTS": {"local_file": "../data/market/ASTS.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
     "APP": {"local_file": "../data/market/APP.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
-    "HIMS": {"local_file": "../data/market/HIMS.parquet", "status": "outlier_research", "valid_from": "2020-01-01"}
+    "HIMS": {"local_file": "../data/market/HIMS.parquet", "status": "outlier_research", "valid_from": "2020-01-01"},
+    "LREN3.SA": {"local_file": "../data/market/LREN3.SA.parquet", "status": "tese_bets", "valid_from": "2020-01-01"},
+    "SMFT3.SA": {"local_file": "../data/market/SMFT3.SA.parquet", "status": "tese_bets", "valid_from": "2021-07-01"},
+    "VIVA3.SA": {"local_file": "../data/market/VIVA3.SA.parquet", "status": "tese_bets", "valid_from": "2020-01-01"},
+    "ALOS3.SA": {"local_file": "../data/market/ALOS3.SA.parquet", "status": "tese_bets", "valid_from": "2020-01-01"},
+    "B3SA3.SA": {"local_file": "../data/market/B3SA3.SA.parquet", "status": "tese_bets", "valid_from": "2020-01-01"},
+    "ROXO34.SA": {"local_file": "../data/market/ROXO34.SA.parquet", "status": "tese_bets", "valid_from": "2021-12-01"},
+    "BOVA11.SA": {"local_file": "../data/market/BOVA11.SA.parquet", "status": "benchmark", "valid_from": "2020-01-01"}
   }
 }
