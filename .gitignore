@@ -17,6 +17,7 @@ infra/cloudflare/.dev.vars
 /output/
 
 # Dados obtidos externamente e artefatos gerados.
+dossie_nubank/sources/*.pdf
 dados/cache/
 dados/raw/
 dados/processed/
