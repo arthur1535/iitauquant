@@ -1,0 +1,118 @@
+{
+  "estudo": "tese_ia_infraestrutura",
+  "snapshot": "snapshot_ohlcv_2026-09-29.parquet",
+  "snapshot_sha256": "976698b984b98e116ea6516995ec9dbcd78426b83fcead238bbf7bc448ece494",
+  "fonte": "Yahoo Finance via yfinance (auto_adjust=False: OHLC ajustado por desdobramentos, sem dividendos)",
+  "as_of": "2026-09-29",
+  "gerado_em": "2026-09-30",
+  "series": {
+    "NVDA": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "MU": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "SMCI": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "STM": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "VRT": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "PWR": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "GEV": {
+      "barras": 629,
+      "inicio": "2024-03-27",
+      "fim": "2026-09-29"
+    },
+    "VST": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "BE": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "DGXX": {
+      "barras": 1437,
+      "inicio": "2021-01-08",
+      "fim": "2026-09-29"
+    },
+    "VIVO": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "RDW": {
+      "barras": 1433,
+      "inicio": "2021-01-14",
+      "fim": "2026-09-29"
+    },
+    "SMH": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "QQQ": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    },
+    "SPY": {
+      "barras": 1694,
+      "inicio": "2020-01-02",
+      "fim": "2026-09-29"
+    }
+  },
+  "regras": {
+    "momentum_atr": {
+      "momentum_window": 20,
+      "atr_window": 14,
+      "stop_multiplier": 2.5
+    },
+    "custo_por_ponta": 0.0015,
+    "liquidez_minima_usd": 5000000.0,
+    "vol_target": 0.25,
+    "vol_janela": 63,
+    "vol_banda": 0.1,
+    "pesos_camadas": {
+      "NVDA": 0.2,
+      "MU": 0.1,
+      "SMCI": 0.05,
+      "STM": 0.05,
+      "VRT": 0.12,
+      "PWR": 0.1,
+      "GEV": 0.1,
+      "VST": 0.1,
+      "BE": 0.08,
+      "DGXX": 0.04,
+      "VIVO": 0.03,
+      "RDW": 0.03
+    }
+  },
+  "governanca": {
+    "modo": "paper",
+    "ordens_reais": false,
+    "parametros_otimizados": false,
+    "classificacao": "retrospective_pseudo_oos",
+    "aprovado": false
+  }
+}

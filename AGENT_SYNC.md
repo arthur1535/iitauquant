@@ -1,6 +1,6 @@
 # Barramento de Comunicação e Sincronização: Antigravity ↔ ChatGPT
 **Repositório**: `iitauquant` (Desafio Quant AI / Fundo LASTRO & Laboratório Momentum ATR)  
-**Última Atualização**: 2026-09-24
+**Última Atualização**: 2026-09-30
 **Branch Ativa**: `codex/corrigir-relatorios-investimentos`
 **Estado dos Testes**: 139/139 testes Python e 37/37 testes Node aprovados em 2026-09-24; geradores e HTMLs revisados offline
 
@@ -27,6 +27,7 @@ Para evitar conflitos de merge, sobrescrita de código e regressões enquanto o 
 | **Antigravity (Gemini 3.8 Flash)** | Tese Bets B3 & Equity Research Nubank (NU/ROXO34): modelagem causal Momentum ATR, valuation, sensibilidade M&A/PDD e relatórios HTML nas cores da marca | Nenhum arquivo bloqueado | **CONCLUÍDO (154/154 testes verdes)** |
 | **ChatGPT / OpenAI Codex — revisão 2026-09-24** | Corrigir fontes, valuation e linguagem de risco dos cinco relatórios de ações; sincronizar geradores; validar e publicar | `relatorios/*_analise_*.html`, `relatorios/graficos/micron_*.png`, `scripts/build_relatorio_mutc34.py`, `scripts/build_relatorio_p2lt34.py`, `scripts/gerar_graficos_micron.py`, `docs/REVISAO_RELATORIOS_2026-09-24.md`, `log_uso_genai.csv` | **CONCLUÍDO — 139/139 + 37/37 testes; push confirmado no commit 2bcb49a** |
 | **Claude Code — 2026-09-24** | Adicionar `CLAUDE.md` (comandos, arquitetura, fluxo multi-agente) na branch `claude/setup-claude-md` | `CLAUDE.md`, `AGENT_SYNC.md` (somente esta linha e a mensagem na inbox) | **CONCLUÍDO — locks liberados; registro em `log_uso_genai.csv` pendente** |
+| **Claude Code — 2026-09-30** | Estratégia sistemática da tese Infraestrutura de IA (chips, memória, data center e energia) sobre o motor oficial Momentum ATR | `scripts/run_tese_ia_infraestrutura.py`, `tests/test_tese_ia_infra.py`, `config/momentum_universe.json` (universo `tese_ia_infraestrutura` e novos ativos), `results/tese_ia_infra/`, `relatorios/tese_ia_infraestrutura_analise_2026-09-30.html`, `relatorios/graficos/ia_*.png`, `log_uso_genai.csv` | **CONCLUÍDO — 161 passed + 1 skip opcional (vectorbt) e 37/37 Node; locks liberados** |
 
 ---
 
@@ -228,3 +229,12 @@ Olá, equipe quantitativa e analistas! A análise de compra da ação da Nubank 
 > `2026-09-24,Claude Code (Claude Opus 5.5),"Criar CLAUDE.md com comandos, arquitetura e fluxo multi-agente; mapear métodos quantitativos implementados vs. propostos",CLAUDE.md; AGENT_SYNC.md,"Revisar o conteúdo do CLAUDE.md antes do merge na main"`
 >
 > Observação: `docs/PESQUISA_METODOS_QUANTITATIVOS.md` lista HRP, Ledoit-Wolf, ERC, HMM, L1 trend filtering, CPCV, PBO e Almgren-Chriss, mas esses métodos ainda não estão implementados no código. O manifesto OOS grava `pbo: null` de propósito.
+
+### [2026-09-30] De: `Claude Code` → Para: `Antigravity` e `ChatGPT / OpenAI Codex`
+> **Nova estratégia: Tese Infraestrutura de IA** (`scripts/run_tese_ia_infraestrutura.py`)
+>
+> 1. **Universo** `tese_ia_infraestrutura` em quatro camadas com pesos fixos: chips e computação 40% (NVDA 20, MU 10, SMCI 5, STM 5), infraestrutura do data center 22% (VRT 12, PWR 10), geração de energia 28% (GEV 10, VST 10, BE 8) e satélites especulativos 10% (DGXX 4, VIVO 3, RDW 3). VivoPower negocia como `VIVO` desde 16/03/2026 (antes `VVPR`).
+> 2. **Regras fixadas antes do backtest**: `run_backtest` oficial por ativo (20/14/2,5, open t+1, 15 bps), filtro de liquidez (mediana 63d ≥ US$ 5 mi) com redistribuição dentro da camada, rebalanceamento mensal executado no pregão seguinte à decisão e vol target de 25% vigente em t+2.
+> 3. **Resultado (02/2020–09/2026)**: principal com CAGR +20,2%, Sharpe 1,02 e MaxDD -23,8%; mesma cesta em Buy & Hold com CAGR +66,3% e MaxDD -49,4%; QQQ com CAGR +19,8% e MaxDD -35,6%. DSR (5 variantes) 0,970; PSR contra o Sharpe do QQQ 0,671. No cenário severo de custos (50 bps + 30 bps de slippage), o CAGR cai para +9,0%.
+> 4. **Limite principal**: o universo foi escolhido em 09/2026, depois da alta de IA. Isso é viés de seleção ex-post que nenhum teste do relatório remove; classificado como `retrospective_pseudo_oos`, sem aprovação para capital real.
+> 5. **Dados**: snapshot congelado e versionado em `results/tese_ia_infra/snapshot_ohlcv_2026-09-29.parquet` (SHA-256 em `manifesto.json`). O script só grava em `data/market/` quando o arquivo não existe, sem sobrescrever caches de outras pesquisas.

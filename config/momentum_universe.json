@@ -95,6 +95,20 @@
       "B3SA3.SA",
       "ROXO34.SA",
       "ITUB4.SA"
+    ],
+    "tese_ia_infraestrutura": [
+      "NVDA",
+      "MU",
+      "SMCI",
+      "STM",
+      "VRT",
+      "PWR",
+      "GEV",
+      "VST",
+      "BE",
+      "DGXX",
+      "VIVO",
+      "RDW"
     ]
   },
   "assets": {
@@ -151,6 +165,15 @@
     "ALOS3.SA": {"local_file": "../data/market/ALOS3.SA.parquet", "status": "tese_bets", "valid_from": "2020-01-01"},
     "B3SA3.SA": {"local_file": "../data/market/B3SA3.SA.parquet", "status": "tese_bets", "valid_from": "2020-01-01"},
     "ROXO34.SA": {"local_file": "../data/market/ROXO34.SA.parquet", "status": "tese_bets", "valid_from": "2021-12-01"},
-    "BOVA11.SA": {"local_file": "../data/market/BOVA11.SA.parquet", "status": "benchmark", "valid_from": "2020-01-01"}
+    "BOVA11.SA": {"local_file": "../data/market/BOVA11.SA.parquet", "status": "benchmark", "valid_from": "2020-01-01"},
+    "MU": {"local_file": "../data/market/MU.parquet", "status": "tese_ia_infra", "valid_from": "2020-01-01", "notes": "Snapshot congelado em results/tese_ia_infra/snapshot_ohlcv_2026-09-29.parquet."},
+    "STM": {"local_file": "../data/market/STM.parquet", "status": "tese_ia_infra", "valid_from": "2020-01-01", "notes": "ADR NYSE da STMicroelectronics."},
+    "PWR": {"local_file": "../data/market/PWR.parquet", "status": "tese_ia_infra", "valid_from": "2020-01-01", "notes": "Quanta Services."},
+    "GEV": {"local_file": "../data/market/GEV.parquet", "status": "tese_ia_infra", "valid_from": "2024-03-27", "notes": "Cisão da GE; negociação when-issued desde 27/03/2024."},
+    "VST": {"local_file": "../data/market/VST.parquet", "status": "tese_ia_infra", "valid_from": "2020-01-01"},
+    "BE": {"local_file": "../data/market/BE.parquet", "status": "tese_ia_infra", "valid_from": "2020-01-01"},
+    "DGXX": {"local_file": "../data/market/DGXX.parquet", "status": "tese_ia_infra", "valid_from": "2021-01-08", "notes": "Digi Power X, ex-Digihost (DGHI); histórico do Yahoo começa em 08/01/2021."},
+    "VIVO": {"local_file": "../data/market/VIVO.parquet", "status": "tese_ia_infra", "valid_from": "2020-01-01", "notes": "VivoPower; ticker VVPR até 16/03/2026. Liquidez mínima em boa parte da amostra."},
+    "RDW": {"local_file": "../data/market/RDW.parquet", "status": "tese_ia_infra", "valid_from": "2021-01-14", "notes": "Redwire; histórico inclui o período pré-fusão com a SPAC Genesis Park."}
   }
 }

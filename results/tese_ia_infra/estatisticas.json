@@ -1,0 +1,26 @@
+{
+  "sharpe_principal": 1.0230294752726177,
+  "sharpe_esperado_maximo_5_tentativas": 0.2842183039615057,
+  "dsr_5_tentativas": 0.9703484058781673,
+  "psr_vs_zero": 0.9954920888156065,
+  "psr_vs_qqq": 0.6708834644583459,
+  "sharpe_qqq": 0.8497385667176708,
+  "exposicao_media_mercado": 0.43427164907224514,
+  "multiplicador_vol_medio": 0.9828856425049901,
+  "fracao_dias_vol_target_reduz_5pct": 0.08368200836820083,
+  "giro_anual_rebalanceamento": 1.2043503690422057,
+  "inicio": "2020-02-03",
+  "fim": "2026-09-29",
+  "correlacao_media_pares": 0.3263081239825921,
+  "multiplicador_vol_atual": 1.0,
+  "exposicao_atual_mercado": 0.8926634502033677,
+  "episodio": {
+    "pico": "2020-02-19",
+    "vale": "2020-03-18",
+    "fim_recuperacao": "2020-06-17",
+    "cesta_queda": -0.49436800352585586,
+    "estrategia_queda": -0.06986345390780824,
+    "cesta_recuperacao": 0.8852871354791596,
+    "estrategia_recuperacao": 0.15560044980250454
+  }
+}
