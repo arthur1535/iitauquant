@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Tese Infraestrutura de IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: ficha técnica em coluna única. O topo mostra o caminho da energia, da usina ao chip; cada seção abaixo é uma faixa com tabela ou gráfico na largura da coluna. */
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --sunk: #e9edf1;
+  --ink: #0f141a;
+  --ink-2: #445162;
+  --muted: #748091;
+  --line: #d8dee5;
+  --accent: #1d5fb0;
+  --up: #106b2c;
+  --down: #b3261e;
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --s3: #1baf7a;
+  --s4: #eda100;
+  --grid: #e3e7ec;
+  --axis: #b9c2cc;
+  --font-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.75rem;
+  --step-3: clamp(2.6rem, 7vw, 4.6rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1216; --surface: #151a20; --sunk: #1c232b; --ink: #edf1f5; --ink-2: #b3bdc9; --muted: #8591a0;
+    --line: #29313b; --accent: #72a9ee; --up: #3fc46a; --down: #f07167;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --grid: #222a33; --axis: #3a4450;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1216; --surface: #151a20; --sunk: #1c232b; --ink: #edf1f5; --ink-2: #b3bdc9; --muted: #8591a0;
+  --line: #29313b; --accent: #72a9ee; --up: #3fc46a; --down: #f07167;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --grid: #222a33; --axis: #3a4450;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.55; }
+.page { max-width: 68rem; margin: 0 auto; padding-inline: max(16px, 4vw); padding-block: 2.5rem 4rem; display: grid; gap: 3.5rem; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h2 { font-size: var(--step-2); font-weight: 800; font-stretch: 85%; letter-spacing: -0.01em; line-height: 1.1; }
+h3 { font-size: var(--step-1); font-weight: 700; font-stretch: 90%; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); text-underline-offset: 2px; }
+.eyebrow { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); }
+.muted { color: var(--muted); font-weight: 400; }
+.tk { font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.02em; }
+section { display: grid; gap: 1.25rem; min-width: 0; }
+.lede { font-size: 1.0625rem; color: var(--ink-2); }
+.note { font-size: var(--step--1); color: var(--muted); max-width: 80ch; }
+
+/* hero */
+.hero { display: grid; gap: 1.5rem; }
+.hero h1 { font-size: var(--step-3); font-weight: 900; font-stretch: 72%; line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase; }
+.hero .lede { font-size: 1.15rem; max-width: 60ch; }
+.path { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); background: var(--surface); border-radius: 6px; overflow: hidden; }
+.path-title { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--line); background: var(--sunk); }
+.flow { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-2); }
+.stage { padding: 1.1rem 1.25rem 1.25rem; display: grid; gap: 0.6rem; align-content: start; position: relative; min-width: 0; }
+.stage + .stage { border-left: 1px solid var(--line); }
+.stage + .stage::before { content: ""; position: absolute; left: -7px; top: 1.45rem; width: 12px; height: 12px; background: var(--surface); border-top: 1px solid var(--line); border-right: 1px solid var(--line); transform: rotate(45deg); }
+.stage-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.stage-name { font-family: var(--font-display); font-weight: 800; font-stretch: 80%; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 0.01em; }
+.stage-w { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.stage-bar { height: 6px; background: var(--sunk); border-radius: 3px; overflow: hidden; }
+.stage-bar span { display: block; height: 100%; background: var(--c); border-radius: 3px; }
+.stage-desc { font-size: var(--step--1); color: var(--ink-2); }
+.tickers { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tickers li { display: inline-flex; gap: 0.45rem; align-items: baseline; padding: 0.2rem 0.55rem; border: 1px solid var(--line); border-radius: 4px; font-size: 0.875rem; background: var(--bg); }
+.tickers .w { font-family: var(--font-mono); color: var(--muted); font-size: 0.8rem; }
+.satellites { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; padding: 0.85rem 1.25rem; border-top: 1px dashed var(--line); }
+.satellites .label { font-size: var(--step--1); color: var(--ink-2); flex: 1 1 18rem; min-width: 0; }
+.dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--c); margin-right: 0.45rem; vertical-align: 0.05em; }
+
+.figures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--ink); }
+.figure { padding: 0.9rem 1rem 0 0; display: grid; gap: 0.2rem; align-content: start; min-width: 0; }
+.figure + .figure { padding-left: 1rem; border-left: 1px solid var(--line); }
+.figure b { font-family: var(--font-display); font-weight: 800; font-stretch: 80%; font-size: 2.1rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.figure span { font-size: var(--step--1); color: var(--ink-2); }
+.verdict { display: grid; gap: 0.6rem; padding: 1.25rem 1.4rem; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.verdict .stance { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); }
+
+/* tabelas */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+th, td { padding: 0.6rem 0.8rem; text-align: right; border-bottom: 1px solid var(--line); vertical-align: top; white-space: nowrap; }
+thead th { font-family: var(--font-mono); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); background: var(--sunk); }
+th:first-child, td:first-child { text-align: left; }
+tbody th { font-weight: 500; }
+tbody tr:last-child > * { border-bottom: 0; }
+td.txt { text-align: left; white-space: normal; min-width: 14rem; color: var(--ink-2); }
+td.num { text-align: right; }
+tr.group th { background: var(--bg); font-family: var(--font-display); font-weight: 700; font-stretch: 90%; font-size: 1rem; text-align: left; }
+tr.hl > * { background: color-mix(in srgb, var(--s1) 10%, var(--surface)); font-weight: 600; }
+tr.ref > * { color: var(--ink-2); }
+.co { display: block; font-size: 0.8rem; color: var(--muted); }
+td.up { color: var(--up); }
+td.down { color: var(--down); }
+.state { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; border: 1px solid; }
+.state.on { color: var(--up); border-color: color-mix(in srgb, var(--up) 45%, transparent); background: color-mix(in srgb, var(--up) 10%, transparent); }
+.state.off { color: var(--ink-2); border-color: var(--line); background: var(--sunk); }
+
+/* gráficos */
+.chart { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0.9rem 0.75rem 0.5rem; display: grid; gap: 0.5rem; min-width: 0; }
+.chart-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1.25rem; padding-inline: 0.35rem; }
+.chart-title { font-weight: 600; font-size: 0.95rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; font-size: var(--step--1); color: var(--ink-2); list-style: none; margin: 0; padding: 0; }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--c); margin-right: 0.4rem; vertical-align: 0.2em; }
+.legend.sq i { width: 10px; height: 10px; border-radius: 2px; vertical-align: -0.05em; }
+.plot { position: relative; }
+.plot svg { display: block; width: 100%; overflow: visible; }
+.plot svg text { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.plot svg .endlabel { fill: var(--ink-2); font-family: var(--font-body); font-size: 12px; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.baseline { stroke: var(--axis); stroke-width: 1; }
+.cross { stroke: var(--ink-2); stroke-width: 1; }
+.tip { position: absolute; top: 0; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 0.5rem 0.65rem; font-size: 0.8rem; box-shadow: 0 6px 18px color-mix(in srgb, var(--ink) 14%, transparent); min-width: 11rem; z-index: 2; }
+.tip .t { font-family: var(--font-mono); color: var(--ink-2); margin-bottom: 0.25rem; }
+.tip .r { display: flex; justify-content: space-between; gap: 1rem; font-variant-numeric: tabular-nums; }
+.tip .r span:first-child::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: var(--c); margin-right: 0.4rem; }
+.tip .r.total { border-top: 1px solid var(--line); margin-top: 0.2rem; padding-top: 0.2rem; }
+.tip .r.total span:first-child::before { display: none; }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1rem; }
+.two > * { min-width: 0; }
+.stack { display: grid; gap: 1.75rem; }
+.stack > * { min-width: 0; }
+.choice { padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); display: grid; gap: 0.5rem; align-content: start; }
+.choice .k { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.06em; }
+.rules { display: grid; gap: 0; margin: 0; border-top: 1px solid var(--line); }
+.rules > div { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
+.rules dt { font-family: var(--font-display); font-weight: 700; font-stretch: 90%; font-size: 1.05rem; }
+.rules dd { margin: 0; color: var(--ink-2); max-width: 68ch; }
+.loo { list-style: none; margin: 0; padding: 0.75rem 1rem; display: grid; gap: 0.35rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.loo li { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr) 2.8rem 3.6rem; align-items: center; gap: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.lbar { position: relative; height: 10px; background: var(--sunk); border-radius: 3px; }
+.lbar span { position: absolute; inset: 0 auto 0 0; background: var(--s1); border-radius: 3px; }
+.lbar i { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.lval { text-align: right; font-family: var(--font-mono); }
+.lcagr { text-align: right; color: var(--muted); font-family: var(--font-mono); font-size: 0.8rem; }
+.risks { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.6rem; color: var(--ink-2); }
+.risks b { color: var(--ink); }
+.warning { padding: 1rem 1.25rem; border-left: 4px solid var(--s4); background: var(--surface); border-radius: 0 6px 6px 0; }
+footer { border-top: 1px solid var(--line); padding-top: 1.25rem; display: grid; gap: 0.5rem; font-size: var(--step--1); color: var(--muted); }
+footer code { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-2); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 760px) {
+  .path { grid-template-columns: minmax(0, 1fr); }
+  .stage + .stage { border-left: 0; border-top: 1px solid var(--line); }
+  .stage + .stage::before { left: 1.6rem; top: -7px; transform: rotate(135deg); }
+  .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; }
+  .figure:nth-child(3) { padding-left: 0; border-left: 0; }
+  .rules > div { grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+}
+</style>
+
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <p class="eyebrow">Tese de investimento · 12 ações americanas · preços até 29/09/2026</p>
+    <h1>Infraestrutura de IA</h1>
+    <p class="lede">A demanda por IA não termina na GPU. Cada cluster novo precisa de memória, servidores, energia ininterrupta, refrigeração,
+    conexão à rede elétrica e geração dedicada. A tese compra essa cadeia física inteira, com peso maior onde a ligação com a IA é direta
+    e a empresa é grande e líquida.</p>
+
+    <div class="path" role="group" aria-label="Pesos da carteira por etapa, da geração de energia aos chips">
+      <div class="path-title"><span class="eyebrow">Da usina ao chip</span><span class="flow">energia → rede → data center → rack → GPU</span></div>
+      
+      <div class="stage" style="--c:var(--s3)">
+        <div class="stage-head"><span class="stage-name">Geração</span><span class="stage-w">28%</span></div>
+        <div class="stage-bar"><span style="width:70.0%"></span></div>
+        <p class="stage-desc">Turbinas, usinas nucleares e a gás, células a combustível</p>
+        <ul class="tickers"><li><span class='tk'>GEV</span><span class='w'>10%</span></li><li><span class='tk'>VST</span><span class='w'>10%</span></li><li><span class='tk'>BE</span><span class='w'>8%</span></li></ul>
+      </div>
+      <div class="stage" style="--c:var(--s2)">
+        <div class="stage-head"><span class="stage-name">Rede e data center</span><span class="stage-w">22%</span></div>
+        <div class="stage-bar"><span style="width:55.0%"></span></div>
+        <p class="stage-desc">Linhas, subestações, energia crítica e refrigeração</p>
+        <ul class="tickers"><li><span class='tk'>VRT</span><span class='w'>12%</span></li><li><span class='tk'>PWR</span><span class='w'>10%</span></li></ul>
+      </div>
+      <div class="stage" style="--c:var(--s1)">
+        <div class="stage-head"><span class="stage-name">Servidores e chips</span><span class="stage-w">40%</span></div>
+        <div class="stage-bar"><span style="width:100.0%"></span></div>
+        <p class="stage-desc">Racks, GPUs, memória HBM e semicondutores de potência</p>
+        <ul class="tickers"><li><span class='tk'>NVDA</span><span class='w'>20%</span></li><li><span class='tk'>MU</span><span class='w'>10%</span></li><li><span class='tk'>SMCI</span><span class='w'>5%</span></li><li><span class='tk'>STM</span><span class='w'>5%</span></li></ul>
+      </div>
+      <div class="satellites">
+        <span class="stage-name" style="font-size:1rem"><span class="dot" style="--c:var(--s4)"></span>Satélites 10%</span>
+        <ul class="tickers"><li><span class='tk'>DGXX</span><span class='w'>4%</span></li><li><span class='tk'>VIVO</span><span class='w'>3%</span></li><li><span class='tk'>RDW</span><span class='w'>3%</span></li></ul>
+        <span class="label">Apostas pequenas em pivôs para data centers de IA (DGXX, VIVO) e em infraestrutura espacial (RDW), onde a ligação com a IA ainda é indireta.</span>
+      </div>
+    </div>
+
+    <div class="figures">
+      <div class="figure"><b>+20,2%</b><span>ao ano, fev/2020 a set/2026</span></div>
+      <div class="figure"><b>1,02</b><span>Sharpe; QQQ teve 0,85</span></div>
+      <div class="figure"><b>−23,8%</b><span>maior queda; a cesta sem stops caiu −49,4%</span></div>
+      <div class="figure"><b>89%</b><span>investido hoje; 10 de 12 sinais comprados</span></div>
+    </div>
+
+    <div class="verdict">
+      <span class="stance">Postura: satélite com controle de risco · não aprovada para capital real</span>
+      <p>A estratégia teria rendido 20,2% ao ano com queda máxima de −23,8%. Comprar a mesma cesta e segurar rendeu
+      66,3% ao ano, mas com quedas de até −49,4%. Os stops cortaram a pior queda pela metade e, em troca, deixaram
+      46,1 pontos percentuais de retorno anual na mesa, num período em que quase todas essas ações dispararam.
+      Ajustado ao risco, o resultado ficou perto do QQQ. Como a lista foi escolhida depois da alta da IA, o histórico superestima o que se ganharia
+      escolhendo essas ações em 2020.</p>
+    </div>
+  </header>
+
+  <section aria-labelledby="empresas">
+    <h2 id="empresas">As 12 empresas e o papel de cada uma</h2>
+    <p class="lede">NVDA, MU, SMCI e VRT vendem direto para data centers de IA. PWR, GEV, VST e BE dependem da carga elétrica que esses data centers criam.
+    STM e RDW têm exposição indireta. DGXX e VIVO ainda estão executando a mudança de negócio. Os pesos seguem essa ordem de proximidade.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Empresa</th><th scope="col">Peso</th><th scope="col" style="text-align:left">Papel na tese</th><th scope="col" style="text-align:left">Principal risco</th></tr></thead>
+      <tbody><tr class='group'><th colspan='4' scope='colgroup'><span class='dot' style='--c:var(--s1)'></span>Chips e computação <span class='muted'>· 40% da carteira</span></th></tr><tr><td><span class='tk'>NVDA</span><span class='co'>NVIDIA</span></td><td class='num'>20%</td><td class='txt'>GPUs e aceleradores, ecossistema CUDA e rede (NVLink, InfiniBand, Ethernet) para clusters de IA</td><td class='txt'>Concentração em poucos hiperescaladores, ASICs próprios dos clientes, controles de exportação e múltiplo elevado</td></tr><tr><td><span class='tk'>MU</span><span class='co'>Micron Technology</span></td><td class='num'>10%</td><td class='txt'>Memória HBM e DRAM para aceleradores e SSDs de data center</td><td class='txt'>Ciclo de preços de memória, capex pesado e competição com SK Hynix e Samsung</td></tr><tr><td><span class='tk'>SMCI</span><span class='co'>Super Micro Computer</span></td><td class='num'>5%</td><td class='txt'>Servidores e racks de IA com refrigeração líquida direta</td><td class='txt'>Histórico de atraso de demonstrações e troca de auditor, margens estreitas e dependência de alocação de GPUs</td></tr><tr><td><span class='tk'>STM</span><span class='co'>STMicroelectronics</span></td><td class='num'>5%</td><td class='txt'>Semicondutores de potência (SiC/GaN) e microcontroladores; entra na tese pela conversão de energia dos racks</td><td class='txt'>Receita dominada por automotivo e industrial: a ligação com IA é indireta e ainda pequena</td></tr><tr class='group'><th colspan='4' scope='colgroup'><span class='dot' style='--c:var(--s2)'></span>Infraestrutura do data center <span class='muted'>· 22% da carteira</span></th></tr><tr><td><span class='tk'>VRT</span><span class='co'>Vertiv</span></td><td class='num'>12%</td><td class='txt'>Energia crítica (UPS, distribuição) e refrigeração líquida para data centers</td><td class='txt'>Carteira de pedidos sensível ao capex dos hiperescaladores e execução de capacidade fabril</td></tr><tr><td><span class='tk'>PWR</span><span class='co'>Quanta Services</span></td><td class='num'>10%</td><td class='txt'>Engenharia e construção de linhas de transmissão, subestações e conexões elétricas de data centers</td><td class='txt'>Execução de projetos, mão de obra especializada e ciclo de investimento das utilities</td></tr><tr class='group'><th colspan='4' scope='colgroup'><span class='dot' style='--c:var(--s3)'></span>Geração de energia <span class='muted'>· 28% da carteira</span></th></tr><tr><td><span class='tk'>GEV</span><span class='co'>GE Vernova</span></td><td class='num'>10%</td><td class='txt'>Turbinas a gás, equipamentos de rede e eletrificação para a nova carga elétrica</td><td class='txt'>Histórico curto em bolsa (desde 2024), segmento eólico deficitário e expectativa alta já no preço</td></tr><tr><td><span class='tk'>VST</span><span class='co'>Vistra</span></td><td class='num'>10%</td><td class='txt'>Geração nuclear e a gás nos EUA, com contratos de energia para data centers</td><td class='txt'>Preço de energia no atacado, regulação de colocalização nuclear e alavancagem</td></tr><tr><td><span class='tk'>BE</span><span class='co'>Bloom Energy</span></td><td class='num'>8%</td><td class='txt'>Células a combustível de óxido sólido para energia local (behind-the-meter) em data centers</td><td class='txt'>Histórico de prejuízos, custo do gás natural e competição com a rede e turbinas</td></tr><tr class='group'><th colspan='4' scope='colgroup'><span class='dot' style='--c:var(--s4)'></span>Satélites especulativos <span class='muted'>· 10% da carteira</span></th></tr><tr><td><span class='tk'>DGXX</span><span class='co'>Digi Power X</span></td><td class='num'>4%</td><td class='txt'>Ex-minerador de bitcoin migrando para hospedagem de IA/HPC com geração própria</td><td class='txt'>Microcap, execução do pivô, diluição e dependência do preço do bitcoin</td></tr><tr><td><span class='tk'>VIVO</span><span class='co'>VivoPower</span></td><td class='num'>3%</td><td class='txt'>Microcap em pivô para terrenos energizados e data centers de IA (ticker VVPR até março de 2026)</td><td class='txt'>Pivôs sucessivos de negócio, liquidez historicamente mínima, diluição e risco de continuidade</td></tr><tr><td><span class='tk'>RDW</span><span class='co'>Redwire</span></td><td class='num'>3%</td><td class='txt'>Infraestrutura espacial e defesa; ligação com IA indireta (energia e sensoriamento orbital)</td><td class='txt'>Tese de IA fraca, dependência de contratos governamentais e histórico de prejuízos</td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="regras">
+    <h2 id="regras">Regras da carteira</h2>
+    <p class="lede">Definidas antes do backtest e sem otimização de parâmetros. Todo sinal é calculado no fechamento e executado no pregão seguinte, com custo de 0,15% por lado.</p>
+    <dl class="rules">
+      <div><dt>Entrada e saída</dt><dd>Compra quando o retorno de 20 pregões vira positivo. Sai quando ele fica negativo ou quando o preço toca o stop de 2,5 vezes o ATR de 14 dias, que só sobe. Se a ação abrir abaixo do stop, a venda sai na abertura.</dd></div>
+      <div><dt>Pesos por camada</dt><dd>Chips e computação 40%, infraestrutura do data center 22%, geração de energia 28% e satélites 10%. Cada ação tem sua parcela; quando o sinal está fora, a parcela fica em caixa.</dd></div>
+      <div><dt>Filtro de liquidez</dt><dd>Só entra quem negocia pelo menos US$ 5 milhões por dia (mediana de 63 pregões). O peso de quem não passa vai para as outras ações da mesma camada. Por isso GE Vernova só entra em 2024 e VivoPower fica de fora na maior parte do tempo.</dd></div>
+      <div><dt>Rebalanceamento</dt><dd>Mensal. A decisão usa o último pregão do mês e a execução acontece no pregão seguinte.</dd></div>
+      <div><dt>Trava de volatilidade</dt><dd>Se a volatilidade de 63 pregões passar de 25% ao ano, a exposição total cai na mesma proporção, sem alavancagem. Na prática quase não atua (multiplicador médio de 0,98), porque os stops já mantêm a volatilidade perto de 20%.</dd></div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="resultado">
+    <h2 id="resultado">Resultado de fev/2020 a set/2026</h2>
+    <div class="chart" id="nav-chart">
+      <div class="chart-head"><span class="chart-title">Patrimônio, base 100 (escala log)</span>
+        <ul class="legend">
+          <li style="--c:var(--s1)"><i></i>Estratégia</li><li style="--c:var(--s2)"><i></i>Cesta sem stops</li>
+          <li style="--c:var(--s3)"><i></i>SMH</li><li style="--c:var(--s4)"><i></i>QQQ</li></ul></div>
+      <div class="plot" data-kind="nav"></div>
+    </div>
+    <div class="chart" id="dd-chart">
+      <div class="chart-head"><span class="chart-title">Queda desde o pico (%)</span></div>
+      <div class="plot" data-kind="dd"></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Carteira</th><th scope="col">Ao ano</th><th scope="col">Vol.</th><th scope="col">Sharpe</th><th scope="col">Maior queda</th><th scope="col">Calmar</th><th scope="col">Acumulado</th></tr></thead>
+      <tbody><tr><th scope='row'>Comprar e segurar, pesos iguais</th><td class='up'>+63,5%</td><td>43%</td><td>1,36</td><td>−49,7%</td><td>1,28</td><td class='up'>+2.511%</td></tr><tr><th scope='row'>Comprar e segurar, pesos por camada</th><td class='up'>+66,3%</td><td>42%</td><td>1,42</td><td>−49,4%</td><td>1,34</td><td class='up'>+2.824%</td></tr><tr><th scope='row'>Momentum ATR, pesos iguais</th><td class='up'>+16,9%</td><td>20%</td><td>0,88</td><td>−24,7%</td><td>0,68</td><td class='up'>+182%</td></tr><tr><th scope='row'>Momentum ATR, pesos por camada</th><td class='up'>+20,0%</td><td>20%</td><td>1,01</td><td>−25,9%</td><td>0,77</td><td class='up'>+236%</td></tr><tr class='hl'><th scope='row'>Estratégia (ATR + camadas + trava de vol.)</th><td class='up'>+20,2%</td><td>20%</td><td>1,02</td><td>−23,8%</td><td>0,85</td><td class='up'>+238%</td></tr><tr class='ref'><th scope='row'>SMH, ETF de semicondutores</th><td class='up'>+38,5%</td><td>38%</td><td>1,06</td><td>−45,3%</td><td>0,85</td><td class='up'>+770%</td></tr><tr class='ref'><th scope='row'>QQQ, Nasdaq-100</th><td class='up'>+19,8%</td><td>25%</td><td>0,85</td><td>−35,6%</td><td>0,56</td><td class='up'>+232%</td></tr><tr class='ref'><th scope='row'>SPY, S&P 500</th><td class='up'>+13,8%</td><td>20%</td><td>0,74</td><td>−34,1%</td><td>0,40</td><td class='up'>+136%</td></tr></tbody>
+    </table></div>
+    <p class="note">Cinco variantes foram testadas. Considerando essas tentativas, a chance de o Sharpe de 1,02 ter vindo só de sorte é baixa
+    (Deflated Sharpe de 0,970), mas a probabilidade de ele superar de fato o Sharpe do QQQ é de 0,67. Sharpe com taxa livre de risco zero; comprar e segurar sem dividendos.</p>
+    <div class="two">
+      <div class="choice"><span class="k">Com stops (a estratégia)</span><h3>Quedas parecidas com as do índice</h3>
+        <p>Ficou em média 43% investida, com volatilidade de 20% ao ano. O custo é perder parte das altas.</p></div>
+      <div class="choice"><span class="k">Sem stops (comprar e segurar)</span><h3>Toda a alta, e toda a queda</h3>
+        <p>Volatilidade de 42% ao ano e quedas de até −49,4%. Só cabe como posição pequena, que você aguente ver cair pela metade.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="atras">
+    <h2 id="atras">Quando a estratégia fica para trás</h2>
+    <p class="lede">Os anos de maior distância para a cesta sem stops foram 2024 (+39,7% contra +118,3%) e 2026 (+19,6% contra +86,7%). Na maior queda da cesta (19/02/2020 a 18/03/2020), a estratégia variou −7,0% enquanto a cesta caiu −49,4%. Nos 63 pregões seguintes, a estratégia subiu +15,6% e a cesta +88,5%. Os stops protegem na queda, e a recompra só acontece
+    depois que o retorno de 20 pregões volta a ficar positivo, o que deixa parte da recuperação para trás.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Ano</th><th scope="col">Estratégia</th><th scope="col">Cesta sem stops</th><th scope="col">SMH</th><th scope="col">QQQ</th><th scope="col">Investido (média)</th></tr></thead>
+      <tbody><tr><th scope='row'>2020 <span class='muted'>desde fev</span></th><td class='up'>+21,3%</td><td class='up'>+80,9%</td><td class='up'>+56,6%</td><td class='up'>+41,1%</td><td>43%</td></tr><tr><th scope='row'>2021</th><td class='up'>+15,2%</td><td class='up'>+41,0%</td><td class='up'>+41,4%</td><td class='up'>+26,8%</td><td>46%</td></tr><tr><th scope='row'>2022</th><td class='down'>−2,2%</td><td class='down'>−18,0%</td><td class='down'>−34,3%</td><td class='down'>−33,1%</td><td>36%</td></tr><tr><th scope='row'>2023</th><td class='up'>+49,9%</td><td class='up'>+116,2%</td><td class='up'>+72,3%</td><td class='up'>+53,8%</td><td>56%</td></tr><tr><th scope='row'>2024</th><td class='up'>+39,7%</td><td class='up'>+118,3%</td><td class='up'>+38,5%</td><td class='up'>+24,8%</td><td>44%</td></tr><tr><th scope='row'>2025</th><td class='down'>−1,1%</td><td class='up'>+58,8%</td><td class='up'>+48,7%</td><td class='up'>+20,2%</td><td>35%</td></tr><tr><th scope='row'>2026 <span class='muted'>até 29/09</span></th><td class='up'>+19,6%</td><td class='up'>+86,7%</td><td class='up'>+68,5%</td><td class='up'>+20,1%</td><td>43%</td></tr></tbody>
+    </table></div>
+    <div class="chart" id="exp-chart">
+      <div class="chart-head"><span class="chart-title">Quanto do patrimônio esteve investido, por camada (média do mês)</span>
+        <ul class="legend sq">
+          <li style="--c:var(--s1)"><i></i>Chips e computação</li><li style="--c:var(--s2)"><i></i>Infraestrutura do data center</li>
+          <li style="--c:var(--s3)"><i></i>Geração de energia</li><li style="--c:var(--s4)"><i></i>Satélites</li></ul></div>
+      <div class="plot" data-kind="exp"></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="hoje">
+    <h2 id="hoje">Sinal no fechamento de 29/09/2026</h2>
+    <p class="lede">10 das 12 ações estão com sinal de compra e 89% do patrimônio está investido. O próximo rebalanceamento usa o fechamento de 30/09.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">Ação</th><th scope="col" style="text-align:left">Sinal</th><th scope="col">Desde</th><th scope="col">Fechamento</th><th scope="col">Retorno 20d</th><th scope="col">Stop</th><th scope="col">Folga</th><th scope="col">Liquidez/dia</th><th scope="col">Peso</th></tr></thead>
+      <tbody><tr><th scope='row'><span class='dot' style='--c:var(--s1)'></span><span class='tk'>NVDA</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>29/09/2026</td><td>US$ 227,21</td><td class='up'>+2,9%</td><td>US$ 218,04</td><td>4,2%</td><td>US$ 25,2 bi</td><td>20,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s1)'></span><span class='tk'>MU</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>18/09/2026</td><td>US$ 1.065,08</td><td class='up'>+11,1%</td><td>US$ 981,64</td><td>8,5%</td><td>US$ 30,3 bi</td><td>10,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s1)'></span><span class='tk'>SMCI</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>18/09/2026</td><td>US$ 41,02</td><td class='up'>+10,0%</td><td>US$ 37,45</td><td>9,5%</td><td>US$ 1,3 bi</td><td>5,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s1)'></span><span class='tk'>STM</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>21/09/2026</td><td>US$ 53,24</td><td class='up'>+6,2%</td><td>US$ 49,39</td><td>7,8%</td><td>US$ 464,5 mi</td><td>5,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s2)'></span><span class='tk'>VRT</span></th><td class='txt'><span class='state off'>Em caixa</span></td><td>—</td><td>US$ 248,34</td><td class='down'>−4,0%</td><td>—</td><td>—</td><td>US$ 1,2 bi</td><td>12,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s2)'></span><span class='tk'>PWR</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>22/09/2026</td><td>US$ 651,79</td><td class='up'>+7,4%</td><td>US$ 598,90</td><td>8,8%</td><td>US$ 595,6 mi</td><td>10,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s3)'></span><span class='tk'>GEV</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>23/09/2026</td><td>US$ 962,49</td><td class='up'>+7,1%</td><td>US$ 876,33</td><td>9,8%</td><td>US$ 2,2 bi</td><td>10,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s3)'></span><span class='tk'>VST</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>29/09/2026</td><td>US$ 140,83</td><td class='up'>+2,5%</td><td>US$ 130,45</td><td>8,0%</td><td>US$ 616,8 mi</td><td>10,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s3)'></span><span class='tk'>BE</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>04/09/2026</td><td>US$ 291,25</td><td class='up'>+41,2%</td><td>US$ 241,26</td><td>20,7%</td><td>US$ 3,2 bi</td><td>8,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s4)'></span><span class='tk'>DGXX</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>17/09/2026</td><td>US$ 4,25</td><td class='up'>+18,1%</td><td>US$ 3,91</td><td>8,8%</td><td>US$ 12,3 mi</td><td>5,7%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s4)'></span><span class='tk'>VIVO</span></th><td class='txt'><span class='state off'>Em caixa</span></td><td>—</td><td>US$ 3,68</td><td class='down'>−9,6%</td><td>—</td><td>—</td><td>US$ 1,7 mi</td><td>0,0%</td></tr><tr><th scope='row'><span class='dot' style='--c:var(--s4)'></span><span class='tk'>RDW</span></th><td class='txt'><span class='state on'>Comprado</span></td><td>25/09/2026</td><td>US$ 10,73</td><td class='up'>+0,3%</td><td>US$ 9,93</td><td>8,0%</td><td>US$ 147,9 mi</td><td>4,3%</td></tr></tbody>
+    </table></div>
+    <p class="note">Stops são níveis da simulação. Uma abertura em gap pode executar abaixo deles. Isto é o estado de um modelo em simulação, não uma ordem nem recomendação individual.</p>
+  </section>
+
+  <section aria-labelledby="robustez">
+    <h2 id="robustez">Quanto o resultado aguenta</h2>
+    <div class="stack">
+      <div style="display:grid;gap:0.75rem">
+        <h3>Antes e depois do ChatGPT</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col" rowspan="2">Carteira</th><th scope="colgroup" colspan="3" style="text-align:center">2020–2022</th><th scope="colgroup" colspan="3" style="text-align:center">2023–2026</th></tr>
+          <tr><th scope="col">Ao ano</th><th scope="col">Sharpe</th><th scope="col">Queda</th><th scope="col">Ao ano</th><th scope="col">Sharpe</th><th scope="col">Queda</th></tr></thead>
+          <tbody><tr><th scope='row'>Estratégia</th><td class='up'>+11,3%</td><td>0,66</td><td>−19,0%</td><td class='up'>+27,6%</td><td>1,29</td><td>−23,8%</td></tr><tr><th scope='row'>Cesta sem stops</th><td class='up'>+28,8%</td><td>0,81</td><td>−49,4%</td><td class='up'>+103,2%</td><td>1,91</td><td>−41,9%</td></tr><tr><th scope='row'>SMH</th><td class='up'>+13,7%</td><td>0,52</td><td>−45,3%</td><td class='up'>+61,7%</td><td>1,53</td><td>−36,0%</td></tr><tr><th scope='row'>QQQ</th><td class='up'>+6,4%</td><td>0,36</td><td>−35,6%</td><td class='up'>+31,5%</td><td>1,46</td><td>−22,9%</td></tr></tbody>
+        </table></div>
+        <p class="note">O primeiro período inclui o crash de 2020 e o bear market de semicondutores de 2022.</p>
+      </div>
+      <div style="display:grid;gap:0.75rem">
+        <h3>Custo de execução mais alto</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Cenário</th><th scope="col">Custo/lado</th><th scope="col">Deslize no stop</th><th scope="col">Ao ano</th><th scope="col">Sharpe</th><th scope="col">Queda</th></tr></thead>
+          <tbody><tr><th scope='row'>Base</th><td>0,15%</td><td>0,00%</td><td class='up'>+20,2%</td><td>1,02</td><td>−23,8%</td></tr><tr><th scope='row'>Liquidez reduzida</th><td>0,35%</td><td>0,15%</td><td class='up'>+13,7%</td><td>0,75</td><td>−25,8%</td></tr><tr><th scope='row'>Severo</th><td>0,50%</td><td>0,30%</td><td class='up'>+9,0%</td><td>0,53</td><td>−27,2%</td></tr></tbody>
+        </table></div>
+        <p class="note">A estratégia opera bastante. Com 0,50% por lado, o retorno cai para +9,0% ao ano.</p>
+      </div>
+    </div>
+    <div style="display:grid;gap:0.75rem">
+      <h3>Tirando uma ação por vez</h3>
+      <p class="lede">O Sharpe varia de 0,75 (sem NVDA) a 1,08 (sem MU). A NVIDIA é a única peça cuja ausência muda o resultado de forma relevante. A linha escura marca o Sharpe da carteira completa (1,02); o número cinza é o retorno ao ano.</p>
+      <ul class="loo"><li><span class='tk'>sem NVDA</span><span class='lbar'><span style='width:63.6%'></span><i style='left:87.3%'></i></span><span class='lval'>0,75</span><span class='lcagr'>+12,9%</span></li><li><span class='tk'>sem VST</span><span class='lbar'><span style='width:79.9%'></span><i style='left:87.3%'></i></span><span class='lval'>0,94</span><span class='lcagr'>+20,4%</span></li><li><span class='tk'>sem PWR</span><span class='lbar'><span style='width:83.4%'></span><i style='left:87.3%'></i></span><span class='lval'>0,98</span><span class='lcagr'>+19,9%</span></li><li><span class='tk'>sem RDW</span><span class='lbar'><span style='width:85.3%'></span><i style='left:87.3%'></i></span><span class='lval'>1,00</span><span class='lcagr'>+19,6%</span></li><li><span class='tk'>sem GEV</span><span class='lbar'><span style='width:85.8%'></span><i style='left:87.3%'></i></span><span class='lval'>1,00</span><span class='lcagr'>+20,0%</span></li><li><span class='tk'>sem DGXX</span><span class='lbar'><span style='width:86.5%'></span><i style='left:87.3%'></i></span><span class='lval'>1,01</span><span class='lcagr'>+19,9%</span></li><li><span class='tk'>sem BE</span><span class='lbar'><span style='width:86.6%'></span><i style='left:87.3%'></i></span><span class='lval'>1,01</span><span class='lcagr'>+18,9%</span></li><li><span class='tk'>sem STM</span><span class='lbar'><span style='width:87.4%'></span><i style='left:87.3%'></i></span><span class='lval'>1,02</span><span class='lcagr'>+20,6%</span></li><li><span class='tk'>sem VRT</span><span class='lbar'><span style='width:87.5%'></span><i style='left:87.3%'></i></span><span class='lval'>1,02</span><span class='lcagr'>+18,8%</span></li><li><span class='tk'>sem VIVO</span><span class='lbar'><span style='width:88.6%'></span><i style='left:87.3%'></i></span><span class='lval'>1,04</span><span class='lcagr'>+20,4%</span></li><li><span class='tk'>sem SMCI</span><span class='lbar'><span style='width:89.1%'></span><i style='left:87.3%'></i></span><span class='lval'>1,04</span><span class='lcagr'>+20,7%</span></li><li><span class='tk'>sem MU</span><span class='lbar'><span style='width:92.6%'></span><i style='left:87.3%'></i></span><span class='lval'>1,08</span><span class='lcagr'>+22,4%</span></li></ul>
+    </div>
+    <div class="warning"><strong>Viés de seleção.</strong> A lista foi escolhida em setembro de 2026, quando já se sabia quais empresas ganharam com a IA.
+    Vistra, Vertiv, GE Vernova, Bloom e NVIDIA estão entre as maiores altas do mercado americano no período. Nenhum teste desta página remove esse efeito.
+    O backtest mostra como as regras de risco teriam se comportado nesta cesta, não quanto se ganharia escolhendo ações de IA em 2020.</div>
+  </section>
+
+  <section aria-labelledby="riscos">
+    <h2 id="riscos">O que derruba a tese</h2>
+    <ul class="risks">
+      <li><b>Um fator só.</b> Todas as camadas dependem do investimento em IA dos hiperescaladores. Um corte nesse investimento derruba chips, data center e energia ao mesmo tempo. A correlação média entre as ações foi 0,33.</li>
+      <li><b>Preço.</b> Vários nomes já negociam a múltiplos que pressupõem anos de crescimento. Uma decepção de guidance pode abrir um gap maior que qualquer stop.</li>
+      <li><b>Política e regulação.</b> Controles de exportação de chips, tarifas, licenças de geração, conexão à rede e regras para data centers ao lado de usinas nucleares.</li>
+      <li><b>Eficiência.</b> Modelos e chips mais eficientes podem reduzir a energia e o hardware necessários por unidade de computação.</li>
+      <li><b>Microcaps.</b> DGXX e VIVO tiveram liquidez mínima em boa parte da amostra, e a VivoPower já mudou de negócio várias vezes. O filtro de liquidez as mantém fora nesses períodos, mas a execução real nelas tende a custar mais que 0,15%.</li>
+      <li><b>Investidor no Brasil.</b> Câmbio, tributação e, se for via BDR, paridade e liquidez do BDR. Confirme cada programa na B3 antes de operar.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Gerado por <code>scripts/run_tese_ia_infraestrutura.py</code> no repositório iitauquant, com preços diários do Yahoo Finance congelados em 29/09/2026 (ajustados por desdobramentos, sem dividendos).
+    A VivoPower negociava como VVPR até 16/03/2026, quando passou a VIVO. Dados de negócio são descrições qualitativas; confirme nos arquivamentos de cada empresa na SEC.</p>
+    <p>Simulação histórica sem ordens reais. Pesquisa educacional, não é recomendação individual de investimento.</p>
+  </footer>
+</main>
+
+<script type="application/json" id="chart-data">{"curves":{"dates":["2020-02-07","2020-02-14","2020-02-21","2020-02-28","2020-03-06","2020-03-13","2020-03-20","2020-03-27","2020-04-03","2020-04-10","2020-04-17","2020-04-24","2020-05-01","2020-05-08","2020-05-15","2020-05-22","2020-05-29","2020-06-05","2020-06-12","2020-06-19","2020-06-26","2020-07-03","2020-07-10","2020-07-17","2020-07-24","2020-07-31","2020-08-07","2020-08-14","2020-08-21","2020-08-28","2020-09-04","2020-09-11","2020-09-18","2020-09-25","2020-10-02","2020-10-09","2020-10-16","2020-10-23","2020-10-30","2020-11-06","2020-11-13","2020-11-20","2020-11-27","2020-12-04","2020-12-11","2020-12-18","2020-12-25","2021-01-01","2021-01-08","2021-01-15","2021-01-22","2021-01-29","2021-02-05","2021-02-12","2021-02-19","2021-02-26","2021-03-05","2021-03-12","2021-03-19","2021-03-26","2021-04-02","2021-04-09","2021-04-16","2021-04-23","2021-04-30","2021-05-07","2021-05-14","2021-05-21","2021-05-28","2021-06-04","2021-06-11","2021-06-18","2021-06-25","2021-07-02","2021-07-09","2021-07-16","2021-07-23","2021-07-30","2021-08-06","2021-08-13","2021-08-20","2021-08-27","2021-09-03","2021-09-10","2021-09-17","2021-09-24","2021-10-01","2021-10-08","2021-10-15","2021-10-22","2021-10-29","2021-11-05","2021-11-12","2021-11-19","2021-11-26","2021-12-03","2021-12-10","2021-12-17","2021-12-24","2021-12-31","2022-01-07","2022-01-14","2022-01-21","2022-01-28","2022-02-04","2022-02-11","2022-02-18","2022-02-25","2022-03-04","2022-03-11","2022-03-18","2022-03-25","2022-04-01","2022-04-08","2022-04-15","2022-04-22","2022-04-29","2022-05-06","2022-05-13","2022-05-20","2022-05-27","2022-06-03","2022-06-10","2022-06-17","2022-06-24","2022-07-01","2022-07-08","2022-07-15","2022-07-22","2022-07-29","2022-08-05","2022-08-12","2022-08-19","2022-08-26","2022-09-02","2022-09-09","2022-09-16","2022-09-23","2022-09-30","2022-10-07","2022-10-14","2022-10-21","2022-10-28","2022-11-04","2022-11-11","2022-11-18","2022-11-25","2022-12-02","2022-12-09","2022-12-16","2022-12-23","2022-12-30","2023-01-06","2023-01-13","2023-01-20","2023-01-27","2023-02-03","2023-02-10","2023-02-17","2023-02-24","2023-03-03","2023-03-10","2023-03-17","2023-03-24","2023-03-31","2023-04-07","2023-04-14","2023-04-21","2023-04-28","2023-05-05","2023-05-12","2023-05-19","2023-05-26","2023-06-02","2023-06-09","2023-06-16","2023-06-23","2023-06-30","2023-07-07","2023-07-14","2023-07-21","2023-07-28","2023-08-04","2023-08-11","2023-08-18","2023-08-25","2023-09-01","2023-09-08","2023-09-15","2023-09-22","2023-09-29","2023-10-06","2023-10-13","2023-10-20","2023-10-27","2023-11-03","2023-11-10","2023-11-17","2023-11-24","2023-12-01","2023-12-08","2023-12-15","2023-12-22","2023-12-29","2024-01-05","2024-01-12","2024-01-19","2024-01-26","2024-02-02","2024-02-09","2024-02-16","2024-02-23","2024-03-01","2024-03-08","2024-03-15","2024-03-22","2024-03-29","2024-04-05","2024-04-12","2024-04-19","2024-04-26","2024-05-03","2024-05-10","2024-05-17","2024-05-24","2024-05-31","2024-06-07","2024-06-14","2024-06-21","2024-06-28","2024-07-05","2024-07-12","2024-07-19","2024-07-26","2024-08-02","2024-08-09","2024-08-16","2024-08-23","2024-08-30","2024-09-06","2024-09-13","2024-09-20","2024-09-27","2024-10-04","2024-10-11","2024-10-18","2024-10-25","2024-11-01","2024-11-08","2024-11-15","2024-11-22","2024-11-29","2024-12-06","2024-12-13","2024-12-20","2024-12-27","2025-01-03","2025-01-10","2025-01-17","2025-01-24","2025-01-31","2025-02-07","2025-02-14","2025-02-21","2025-02-28","2025-03-07","2025-03-14","2025-03-21","2025-03-28","2025-04-04","2025-04-11","2025-04-18","2025-04-25","2025-05-02","2025-05-09","2025-05-16","2025-05-23","2025-05-30","2025-06-06","2025-06-13","2025-06-20","2025-06-27","2025-07-04","2025-07-11","2025-07-18","2025-07-25","2025-08-01","2025-08-08","2025-08-15","2025-08-22","2025-08-29","2025-09-05","2025-09-12","2025-09-19","2025-09-26","2025-10-03","2025-10-10","2025-10-17","2025-10-24","2025-10-31","2025-11-07","2025-11-14","2025-11-21","2025-11-28","2025-12-05","2025-12-12","2025-12-19","2025-12-26","2026-01-02","2026-01-09","2026-01-16","2026-01-23","2026-01-30","2026-02-06","2026-02-13","2026-02-20","2026-02-27","2026-03-06","2026-03-13","2026-03-20","2026-03-27","2026-04-03","2026-04-10","2026-04-17","2026-04-24","2026-05-01","2026-05-08","2026-05-15","2026-05-22","2026-05-29","2026-06-05","2026-06-12","2026-06-19","2026-06-26","2026-07-03","2026-07-10","2026-07-17","2026-07-24","2026-07-31","2026-08-07","2026-08-14","2026-08-21","2026-08-28","2026-09-04","2026-09-11","2026-09-18","2026-09-25","2026-10-02"],"nav":{"principal":[101.63,105.04,106.16,104.67,103.8,103.8,103.8,104.02,104.22,100.69,105.68,108.76,107.6,112.51,112.73,116.55,116.49,122.2,120.05,119.59,118.87,120.16,125.17,130.12,128.51,124.03,127.32,126.81,125.77,124.6,121.73,121.51,122.29,118.4,116.05,125.15,122.5,121.76,118.45,119.45,120.33,119.12,126.34,124.49,121.22,120.51,120.85,121.29,121.08,121.87,126.15,121.03,122.17,124.99,125.49,119.76,119.15,119.47,119.82,119.2,118.98,119.98,122.56,119.27,118.63,119.29,117.78,118.03,119.55,123.18,126.3,124.55,128.83,130.72,129.37,127.56,128.69,129.31,128.3,125.7,124.72,128.27,129.6,126.64,125.84,124.65,122.8,122.35,121.76,120.92,135.52,144.17,143.9,145.84,141.65,140.29,139.67,136.75,139.23,139.78,138.85,139.15,136.88,136.88,136.83,136.83,131.49,132.63,133.35,136.47,138.02,140.69,140.94,135.77,133.13,133.2,132.05,133.61,132.48,131.99,134.86,133.88,125.33,120.68,121.61,121.21,121.21,119.08,122.93,127.45,133.49,138.57,132.01,130.99,129.47,129.61,129.03,126.78,126.78,126.66,125.4,127.27,133.05,133.27,145.75,139.03,142.61,144.9,141.93,139.6,136.8,136.65,137.42,139.66,138.73,145.94,145.56,144.99,144.95,148.0,149.57,145.36,148.02,150.66,152.3,149.07,148.54,148.49,149.88,149.3,148.25,154.95,174.9,175.55,178.74,187.34,184.1,188.14,188.47,192.93,194.2,197.79,204.94,203.76,203.88,201.19,207.56,206.76,199.77,195.06,194.6,194.45,194.54,190.28,188.06,189.47,191.9,196.03,195.18,202.01,202.38,204.27,204.31,204.88,200.81,206.65,211.29,213.69,223.92,231.63,228.23,229.63,236.72,241.96,240.58,249.29,255.38,260.58,252.75,245.8,253.14,254.81,258.39,262.08,286.67,279.87,277.97,281.11,278.43,273.55,273.86,274.62,265.78,256.58,251.53,248.56,249.93,254.22,253.8,237.1,244.21,255.14,258.75,267.55,269.13,270.36,273.28,263.79,284.19,292.8,310.37,307.33,312.77,303.31,288.51,286.85,289.84,280.49,282.37,293.51,257.24,258.75,260.98,261.46,256.12,250.4,250.56,250.46,243.94,239.68,239.44,240.39,242.08,254.78,254.5,286.04,279.26,286.47,308.05,307.76,306.99,317.92,316.18,315.71,317.95,314.46,315.23,315.88,312.86,308.49,308.16,307.47,306.98,303.59,298.88,310.14,301.76,292.26,291.75,296.16,293.04,291.57,282.58,287.23,287.1,283.37,280.4,284.4,287.57,289.11,296.81,295.2,296.43,294.21,295.78,297.46,298.94,286.27,286.96,275.51,274.04,274.71,288.88,307.5,327.13,336.27,347.67,362.55,361.63,382.84,360.55,361.88,369.78,359.33,356.58,358.15,347.18,345.59,339.73,351.78,359.78,342.22,336.47,341.0,336.78,333.19,341.86,338.46],"bh":[103.61,110.58,112.0,98.6,97.03,79.74,64.97,77.86,75.35,85.84,90.94,94.27,93.32,99.08,98.2,102.78,105.77,112.44,109.93,113.18,105.07,114.12,121.08,127.8,125.99,120.84,127.57,129.88,135.25,138.26,132.84,132.18,139.15,135.94,139.17,152.7,151.03,148.51,135.4,151.67,155.97,162.25,177.1,181.66,169.74,170.84,180.8,180.88,191.92,196.65,209.51,195.72,209.4,215.85,210.73,192.73,181.35,195.04,189.51,185.58,197.12,198.05,200.7,197.86,194.49,190.21,183.71,188.17,195.62,202.69,206.77,202.04,212.61,215.33,211.29,199.83,207.87,211.01,213.26,209.31,207.58,219.54,225.22,215.51,213.43,212.51,206.11,205.52,214.15,216.08,244.41,264.56,265.87,270.89,261.09,255.72,256.83,243.4,255.05,255.01,241.34,239.71,214.93,207.1,214.22,220.8,222.47,219.73,211.84,215.93,234.66,238.41,239.15,225.55,217.89,209.68,206.76,206.43,197.92,196.39,212.29,211.55,197.54,181.43,193.73,176.75,187.19,184.42,198.1,214.74,225.59,241.35,226.34,220.27,205.75,219.49,207.34,187.0,179.46,183.7,174.02,191.41,204.8,208.38,229.21,220.08,227.29,229.22,223.48,220.84,209.66,209.01,213.17,229.45,231.33,247.18,251.48,250.3,254.31,256.0,259.05,251.68,252.84,260.06,270.24,255.94,261.84,257.7,264.97,270.1,262.25,280.1,316.19,319.16,326.27,343.54,336.18,349.0,349.07,366.64,369.79,379.35,389.69,370.27,372.26,385.78,408.38,402.47,392.42,376.16,381.94,377.69,376.19,357.94,347.9,379.66,389.42,411.3,410.05,425.84,427.44,445.16,451.52,451.93,437.49,453.7,476.13,487.69,520.45,540.92,534.98,557.71,599.49,639.77,631.17,681.84,695.88,711.78,686.98,616.76,697.28,721.0,744.6,761.84,842.35,825.83,809.01,846.27,832.84,798.46,819.31,847.79,778.04,747.8,684.3,692.95,758.54,770.68,755.24,666.73,748.87,795.28,834.51,867.45,892.4,904.98,903.33,854.92,964.44,978.58,1093.23,1078.42,1114.55,1061.0,1020.55,1010.07,1068.91,1054.48,1087.95,1192.46,1049.08,1078.6,1117.84,1061.57,973.7,892.67,932.94,938.19,834.43,704.32,809.08,805.32,905.1,945.17,949.77,1077.74,1062.67,1088.2,1199.7,1207.73,1216.58,1281.53,1295.95,1320.61,1366.79,1403.98,1400.34,1359.18,1366.8,1356.96,1361.28,1346.2,1467.0,1517.4,1489.27,1650.11,1600.99,1661.06,1674.65,1741.47,1666.78,1589.95,1480.02,1587.68,1630.96,1564.08,1567.36,1589.83,1668.24,1711.48,1812.43,1822.11,1837.62,1840.79,1905.57,1975.76,2003.4,1887.76,1958.92,1888.98,1823.67,1901.77,2077.05,2271.96,2415.57,2520.28,2724.4,2841.88,2941.74,3241.62,2947.45,2949.95,3207.75,2955.38,2876.23,2942.2,2696.76,2732.81,2601.89,2798.66,2963.22,2756.29,2701.35,2885.43,2855.08,2837.21,2949.88,2923.95],"smh":[102.93,108.06,104.3,94.64,94.57,85.44,72.47,82.46,80.34,88.83,94.74,94.59,91.38,97.99,94.08,98.95,101.13,109.5,104.64,108.13,105.89,109.97,114.71,114.89,114.35,119.2,121.56,122.4,122.56,125.95,122.92,119.08,120.67,121.36,124.17,133.85,133.72,131.95,125.46,141.27,140.7,143.41,148.02,157.33,152.39,155.73,154.08,156.63,165.18,168.35,172.77,162.5,168.67,182.55,182.04,172.79,164.07,165.57,167.57,173.28,181.38,183.64,181.0,178.7,174.26,174.69,167.33,170.79,178.69,180.34,180.34,177.07,181.82,186.3,184.3,177.02,184.52,188.7,192.59,188.2,183.85,195.08,195.98,195.25,194.33,195.33,183.93,182.68,188.3,191.58,196.23,212.69,215.92,223.88,214.7,215.96,220.54,211.75,221.05,221.43,212.9,220.09,194.87,187.66,195.43,190.21,190.21,193.96,183.11,176.26,193.04,197.44,190.33,177.02,170.83,168.33,164.83,166.85,166.55,163.62,176.12,173.34,160.5,147.47,155.01,140.55,149.62,154.03,162.62,170.07,174.7,175.96,168.51,159.68,149.03,155.51,146.22,137.95,132.75,135.25,124.17,133.63,138.24,137.25,158.34,157.42,158.66,160.55,157.79,153.16,145.92,145.53,151.79,161.91,163.03,171.59,178.51,174.98,174.09,170.82,175.66,170.47,179.51,182.59,188.73,181.0,180.77,178.09,177.3,178.39,176.26,191.18,211.34,209.59,210.6,219.98,211.59,218.36,213.77,225.03,220.57,230.19,221.23,209.7,209.58,213.83,224.04,215.68,210.56,203.6,207.93,212.76,212.81,203.8,198.37,214.43,225.57,233.16,232.0,231.09,233.03,249.67,248.52,250.8,238.19,248.05,268.45,270.02,274.25,292.36,289.35,299.2,316.3,322.68,312.43,326.48,322.68,319.31,316.5,285.71,312.14,312.27,320.26,330.23,350.32,344.9,361.72,384.21,379.91,373.9,386.83,393.62,355.88,344.65,313.27,322.48,353.83,356.24,349.17,308.35,339.78,341.2,355.31,355.42,368.15,360.72,362.8,351.02,371.95,344.14,350.84,347.26,356.56,357.82,348.1,356.26,361.25,354.51,370.38,375.09,349.4,351.38,362.25,358.54,333.84,322.83,324.95,322.37,304.3,259.3,288.72,276.13,304.01,314.13,320.4,353.42,340.54,343.85,362.47,368.58,373.28,399.31,406.77,412.32,416.36,412.32,407.24,420.98,424.02,421.14,416.34,420.62,436.46,452.79,461.56,482.87,466.6,491.69,503.61,520.65,499.28,494.77,467.74,505.24,522.65,507.88,510.91,524.72,535.39,558.22,574.24,573.81,578.64,576.05,584.75,595.24,582.82,545.8,555.51,551.8,536.75,562.67,626.58,665.7,726.34,731.19,812.53,797.91,826.56,858.99,817.05,889.15,946.4,877.17,849.47,876.34,798.18,804.86,775.23,835.71,843.05,803.76,793.27,813.21,815.39,821.8,869.93,870.42],"qqq":[103.07,105.51,103.55,92.54,93.54,86.49,76.76,83.33,82.46,90.32,96.81,96.16,95.67,101.12,100.4,103.27,104.94,107.78,106.07,109.83,108.02,113.4,118.7,116.66,114.92,119.52,122.07,122.39,126.75,131.55,127.52,121.62,120.01,122.12,123.35,128.48,129.74,128.04,121.13,132.48,130.83,130.58,134.46,137.39,135.74,139.43,139.2,141.08,143.46,140.24,146.34,141.45,149.01,151.3,148.85,141.26,138.81,141.86,140.81,142.1,145.95,151.59,153.8,152.63,151.99,150.28,146.77,147.05,150.16,150.91,153.45,154.07,157.15,161.27,162.34,160.81,165.57,163.94,165.5,165.85,165.36,169.1,171.58,169.35,168.1,167.88,161.97,162.41,165.91,168.23,173.63,179.24,177.49,181.67,175.92,172.29,178.98,173.09,178.49,178.91,170.82,170.88,158.15,158.2,160.99,156.07,153.57,155.49,151.68,145.88,158.06,161.59,162.72,157.01,152.19,146.33,140.86,139.06,135.78,129.81,139.0,137.69,129.89,123.52,132.48,126.87,132.81,131.25,135.8,141.86,144.68,148.57,145.18,138.25,132.73,138.09,130.1,123.89,120.18,121.01,117.25,123.85,126.46,119.02,129.49,128.08,129.02,131.55,126.83,123.32,120.23,119.74,120.87,126.35,127.12,133.22,137.68,134.77,135.43,131.24,134.76,129.76,137.31,139.8,144.32,143.02,143.25,142.37,145.05,145.2,146.16,151.32,156.67,159.48,159.41,165.45,163.03,166.12,164.69,170.46,168.91,172.44,167.3,164.69,161.04,163.69,169.79,167.54,166.75,160.95,161.11,164.0,164.26,159.46,155.28,165.35,170.15,173.59,175.16,175.35,176.35,182.27,183.64,184.15,178.41,184.17,189.4,190.58,192.92,196.53,193.62,196.41,200.38,197.42,195.13,200.73,199.66,198.07,197.08,186.46,193.81,195.83,198.79,203.15,205.93,202.68,208.18,215.48,215.93,215.45,223.11,222.51,213.71,208.19,201.79,202.54,213.61,215.85,214.17,201.77,213.75,216.94,218.88,219.14,221.85,222.35,222.74,219.19,231.2,223.3,227.44,229.22,236.75,238.57,233.23,234.99,233.2,228.07,234.62,238.16,234.86,235.15,242.0,236.57,228.51,221.15,215.69,216.22,210.87,190.07,204.33,199.7,212.5,219.82,219.43,234.51,229.0,233.43,238.29,236.96,236.91,246.47,250.12,249.21,252.39,254.69,249.07,258.36,259.62,257.2,256.5,259.04,263.81,269.52,268.0,271.24,265.09,271.58,277.5,282.88,274.19,273.79,265.34,278.46,281.27,275.93,277.48,280.55,275.71,281.79,279.37,280.03,279.64,274.15,270.67,273.77,273.09,269.7,266.98,261.74,252.98,263.05,274.79,291.78,298.53,303.15,319.83,318.79,322.66,332.0,317.05,324.37,333.04,317.71,320.44,326.25,312.68,307.69,309.38,325.13,328.75,320.82,322.16,323.3,321.47,324.42,334.79,331.83]},"dd":{"principal":[-0.11,-1.04,-4.87,-6.2,-6.99,-6.99,-6.99,-6.99,-6.61,-9.77,-9.47,-10.18,-5.49,-6.03,-4.38,-1.04,-0.74,-0.19,-4.55,-4.47,-5.04,-4.91,-2.86,-2.6,-2.82,-6.31,-5.49,-4.1,-4.89,-5.86,-7.95,-8.37,-7.8,-10.46,-12.24,-9.82,-7.36,-8.67,-10.71,-10.33,-10.2,-10.38,-6.94,-7.1,-8.33,-9.14,-9.15,-9.4,-9.33,-8.15,-4.99,-8.48,-8.41,-6.56,-5.92,-9.43,-9.9,-9.93,-9.57,-10.08,-10.22,-10.13,-8.41,-10.31,-10.29,-10.27,-10.94,-11.0,-10.65,-9.56,-5.95,-5.81,-4.99,-1.53,-3.02,-3.54,-4.4,-3.14,-2.98,-4.95,-6.82,-4.35,-3.67,-4.26,-5.04,-6.27,-7.45,-7.53,-7.92,-8.56,-3.11,-0.1,-3.82,-4.25,-3.34,-4.26,-5.11,-6.68,-6.89,-5.03,-5.49,-5.41,-6.59,-6.59,-6.62,-6.62,-10.27,-12.21,-9.0,-9.36,-8.31,-6.75,-4.15,-7.68,-9.19,-9.1,-9.89,-9.86,-9.85,-9.92,-9.99,-8.91,-14.47,-17.65,-17.65,-17.28,-17.28,-18.74,-18.98,-17.25,-12.65,-11.9,-9.91,-10.85,-11.64,-12.0,-11.95,-13.49,-13.49,-13.56,-14.43,-14.59,-12.5,-10.55,-9.99,-5.12,-5.49,-5.22,-4.9,-4.73,-6.64,-6.84,-6.75,-5.77,-8.58,-1.96,-2.55,-1.69,-2.19,-5.05,-0.83,-3.59,-4.3,-1.63,-1.95,-2.33,-2.78,-2.71,-3.68,-3.78,-2.87,-1.99,-0.72,-3.14,-1.09,-0.62,-2.33,-2.68,-0.42,-0.7,-1.17,-0.88,-0.08,-0.74,-1.25,-2.57,-1.68,-0.75,-3.75,-6.21,-6.24,-6.55,-6.27,-8.32,-9.39,-9.44,-8.77,-7.22,-5.97,-5.73,-4.26,-2.95,-1.95,-1.29,-4.11,-1.6,0.0,-0.25,-0.43,-0.51,-4.69,-6.26,-3.99,-0.81,-1.98,-1.04,0.0,-0.85,-3.0,-5.67,-5.67,-3.04,-1.94,-2.93,-1.51,-4.52,-5.16,-5.26,-5.01,-6.67,-6.63,-6.47,-9.32,-12.46,-14.19,-15.31,-15.28,-14.68,-14.81,-19.11,-18.81,-16.38,-12.08,-11.85,-8.39,-9.26,-7.73,-10.43,-10.09,-5.43,0.0,-1.93,-0.86,-3.33,-7.76,-8.29,-8.56,-10.32,-12.13,-7.22,-18.91,-17.72,-17.68,-16.41,-18.21,-20.16,-20.53,-19.92,-22.01,-23.37,-23.83,-23.36,-23.16,-23.15,-19.14,-15.44,-11.08,-8.41,-7.1,-2.47,-2.72,-3.23,-2.41,-1.51,-1.65,-2.72,-1.17,-1.34,-1.92,-3.29,-3.39,-3.61,-3.76,-5.66,-6.38,-6.14,-5.4,-8.38,-9.14,-8.01,-8.13,-8.89,-11.55,-11.36,-10.41,-11.16,-12.58,-11.8,-11.27,-10.56,-9.73,-7.92,-8.38,-9.56,-7.27,-7.54,-6.28,-10.26,-10.04,-13.63,-14.09,-14.09,-13.83,-8.14,-3.02,-2.85,-2.78,-2.03,-5.7,-1.36,-7.1,-6.95,-6.4,-7.42,-8.13,-9.29,-10.55,-10.96,-12.6,-11.75,-10.23,-11.83,-13.31,-13.94,-13.96,-14.96,-13.02,-13.39],"bh":[0.0,-1.04,-5.35,-17.06,-18.0,-36.52,-49.44,-46.06,-37.18,-32.36,-27.69,-27.02,-21.14,-21.38,-20.06,-14.0,-12.27,-9.23,-8.99,-5.53,-11.2,-8.8,-2.39,-3.35,-3.92,-7.85,-4.29,-2.1,-1.36,-0.57,-7.25,-9.98,-4.45,-6.45,-2.84,0.0,-1.65,-3.79,-11.83,-10.59,-2.83,-1.55,0.0,-3.04,-6.68,-7.74,-5.6,-3.82,-2.68,-2.6,-0.63,-8.93,-6.8,-0.57,-4.55,-11.11,-16.84,-17.31,-14.48,-17.22,-15.98,-9.38,-8.61,-11.09,-10.3,-13.91,-18.69,-16.39,-12.56,-9.12,-6.07,-6.82,-5.62,-1.04,-4.32,-8.01,-8.54,-5.44,-3.44,-3.64,-6.57,-2.19,-0.31,-4.31,-5.24,-7.74,-8.76,-11.37,-9.13,-4.71,-0.68,-0.05,-3.61,-3.25,-3.62,-5.6,-6.06,-10.15,-11.71,-6.06,-10.91,-12.08,-20.66,-24.93,-21.19,-20.44,-18.18,-24.84,-21.8,-24.54,-23.14,-14.94,-11.84,-16.74,-19.57,-22.6,-24.1,-23.8,-31.69,-27.82,-29.08,-24.03,-27.08,-34.03,-32.08,-34.75,-34.27,-32.8,-31.4,-27.88,-20.35,-19.6,-16.45,-19.29,-24.05,-24.87,-23.46,-30.97,-33.75,-32.19,-35.76,-33.14,-28.7,-26.34,-23.5,-18.76,-19.31,-19.05,-18.95,-18.48,-22.6,-25.36,-23.97,-19.29,-18.03,-10.74,-11.75,-8.3,-6.44,-9.43,-6.34,-7.09,-8.17,-5.63,-4.98,-5.52,-3.88,-4.87,-7.73,-3.48,-3.23,-1.52,-2.01,-3.36,-0.73,-0.79,-2.92,-3.12,-1.61,-1.09,-2.08,-1.39,-0.05,-5.57,-5.8,-3.29,-0.23,-1.45,-3.91,-8.23,-8.57,-10.04,-8.14,-12.35,-14.81,-13.64,-8.14,-4.53,-2.02,-1.73,-2.65,-0.28,-2.83,-1.02,-5.0,-0.65,-1.74,-0.41,-0.65,-0.62,-4.27,-8.02,-0.71,-2.78,-4.85,-3.08,-0.37,-3.09,-4.13,-13.93,-12.65,-4.52,-1.56,-3.59,-2.16,-4.11,-6.14,-4.47,-4.8,-8.73,-9.45,-5.08,-11.07,-16.27,-21.78,-25.81,-19.91,-13.91,-15.28,-23.79,-22.26,-14.76,-7.63,-6.01,-0.34,-2.98,-3.04,-6.89,-6.57,-4.3,0.0,-1.92,-0.74,-6.68,-11.04,-9.37,-11.48,-5.39,-8.26,-1.59,-18.89,-15.98,-10.46,-12.39,-21.21,-27.49,-30.35,-24.12,-31.14,-41.87,-40.09,-33.54,-37.05,-26.74,-22.79,-17.99,-13.62,-10.19,-8.9,-1.79,-3.33,-2.88,-3.86,-1.36,-0.49,-3.78,-2.76,-5.94,-5.34,-7.82,-5.86,-7.89,-6.74,-0.88,-4.97,-3.2,-4.68,-2.6,-6.65,-2.22,-7.04,-12.23,-16.54,-13.79,-11.96,-11.63,-18.56,-10.18,-11.5,-6.7,-2.33,-1.98,-4.23,-10.27,-2.67,-1.48,-3.46,-9.03,-5.6,-8.97,-12.12,-16.61,-8.36,-0.45,-0.9,-2.95,-3.45,-3.57,-7.68,-0.45,-10.03,-15.69,-7.98,-10.71,-13.1,-13.97,-18.52,-18.22,-28.57,-18.54,-16.88,-16.73,-18.99,-18.95,-15.81,-18.55,-12.56,-12.87],"smh":[-2.29,-0.75,-4.47,-15.0,-13.38,-28.66,-33.62,-31.16,-26.88,-19.34,-17.58,-18.87,-16.3,-15.38,-14.22,-10.45,-9.19,-7.51,-6.14,-3.58,-3.67,-2.69,-1.24,-1.82,-2.64,-2.6,-1.32,-2.65,-2.02,-1.4,-6.61,-10.75,-8.32,-9.64,-5.67,-3.31,-1.83,-3.13,-8.58,-7.18,-4.15,-1.64,-0.0,-0.04,-3.81,-2.83,-3.77,-3.18,-0.94,-1.95,-1.88,-7.93,-4.61,-1.3,-2.98,-7.82,-13.45,-15.58,-9.79,-10.49,-7.56,-1.59,-2.71,-5.62,-5.5,-7.76,-13.04,-10.76,-5.35,-4.34,-3.8,-3.97,-3.72,-1.48,-3.64,-5.87,-5.89,-3.72,-0.65,-3.54,-6.39,-2.43,-0.91,-1.52,-1.76,-4.15,-7.1,-9.44,-9.13,-4.06,-2.94,0.0,-3.16,-0.59,-4.1,-3.54,-3.91,-6.12,-7.32,-2.45,-6.21,-6.09,-14.16,-18.91,-14.37,-16.21,-16.27,-18.53,-19.34,-23.35,-24.6,-16.71,-16.15,-22.02,-24.75,-25.85,-28.13,-26.5,-30.61,-27.98,-29.26,-24.01,-29.3,-35.56,-34.48,-38.09,-37.76,-35.7,-32.65,-29.88,-25.09,-27.54,-25.77,-29.66,-34.35,-35.08,-35.87,-39.23,-41.52,-40.42,-45.3,-44.01,-41.34,-42.22,-38.73,-31.3,-31.87,-31.94,-31.67,-32.53,-35.72,-37.67,-36.38,-31.68,-30.44,-25.33,-26.22,-22.92,-23.31,-26.0,-24.41,-24.91,-24.96,-20.39,-21.06,-20.27,-20.92,-21.55,-24.44,-23.04,-22.35,-20.34,-18.28,-8.81,-8.83,-4.49,-6.79,-7.22,-5.92,-4.5,-4.55,-3.96,-4.0,-8.97,-9.41,-7.35,-6.03,-6.38,-8.6,-12.36,-12.4,-10.98,-7.88,-11.53,-14.42,-14.11,-6.64,-2.68,-1.9,-2.68,-4.49,0.0,-2.87,-0.56,-6.18,-2.22,-0.69,-2.13,-3.38,-1.13,-2.23,-3.6,-1.4,-3.92,-6.97,-6.99,-3.96,-6.1,-5.76,-14.93,-13.3,-11.24,-6.06,-4.66,-0.14,-3.74,-2.89,-0.15,-4.29,-7.58,-5.69,-3.64,-11.78,-15.9,-22.34,-24.82,-19.31,-13.81,-15.42,-23.56,-21.83,-17.85,-15.05,-15.07,-11.75,-12.13,-11.47,-14.08,-13.15,-14.69,-14.13,-15.29,-11.87,-14.72,-15.07,-11.69,-13.9,-12.12,-13.02,-7.02,-16.16,-15.11,-11.65,-11.12,-18.66,-21.86,-23.84,-20.09,-24.57,-35.72,-36.02,-31.55,-33.22,-25.24,-23.35,-15.59,-15.58,-14.76,-13.5,-8.64,-7.47,-6.88,-1.93,-1.36,-0.77,-2.17,-4.16,-3.25,-2.08,-4.79,-3.85,-5.13,-1.79,-0.64,-0.34,-0.46,-5.99,-3.63,-2.48,-1.52,-5.56,-6.45,-11.8,-8.0,-4.25,-5.34,-9.32,-3.85,-3.73,-2.23,-0.81,-2.5,-3.37,-8.73,-3.06,-2.4,-4.64,-10.7,-9.11,-9.72,-12.18,-14.93,-7.08,0.0,-0.04,-3.01,-1.76,-3.8,-5.94,-1.1,-10.69,-10.5,-4.81,-8.57,-11.45,-13.07,-16.8,-16.46,-24.62,-18.46,-14.87,-16.22,-18.26,-18.49,-16.24,-19.05,-10.9,-10.3],"qqq":[-0.43,-0.13,-2.83,-13.22,-12.22,-25.18,-28.56,-28.07,-23.07,-17.12,-14.33,-13.54,-10.75,-9.18,-7.44,-4.27,-3.35,-1.23,-4.95,-3.03,-3.46,-2.41,-0.69,-2.06,-4.21,-3.74,-1.15,-3.44,-0.67,-0.31,-6.34,-10.84,-11.85,-12.75,-9.4,-9.12,-4.71,-6.26,-11.03,-10.83,-6.39,-4.18,-4.09,-1.04,-2.26,-1.38,-0.9,0.0,-1.98,-2.25,-0.82,-4.27,-1.88,-0.25,-1.61,-7.02,-9.62,-10.85,-7.26,-7.47,-6.58,-1.67,-1.2,-1.99,-1.18,-3.8,-7.34,-5.79,-2.78,-3.51,-1.58,-1.02,-0.28,-0.16,-0.6,-1.51,-2.31,-1.1,-1.06,-0.94,-2.02,-0.63,-0.08,-1.44,-2.17,-4.29,-6.32,-7.72,-6.53,-2.48,-1.09,0.0,-2.28,-1.0,-3.17,-5.16,-4.4,-4.72,-5.77,-1.52,-5.97,-6.52,-12.95,-15.57,-12.49,-14.09,-15.47,-18.46,-16.51,-19.96,-21.24,-13.34,-10.43,-13.57,-16.23,-19.45,-22.46,-23.45,-27.93,-28.54,-28.9,-24.26,-28.5,-32.82,-30.53,-30.62,-28.97,-29.29,-28.36,-27.13,-22.19,-21.51,-20.08,-23.9,-26.94,-27.46,-28.38,-31.8,-33.84,-33.39,-35.46,-33.39,-32.46,-35.52,-34.82,-29.5,-30.22,-30.55,-30.56,-32.11,-33.97,-35.62,-35.25,-33.03,-31.89,-28.78,-28.15,-25.81,-25.45,-27.76,-27.92,-28.57,-28.05,-24.26,-23.98,-21.8,-22.51,-21.71,-23.27,-21.74,-20.38,-19.11,-17.91,-13.86,-13.66,-10.77,-10.42,-11.46,-9.34,-9.31,-7.02,-6.87,-7.91,-9.34,-11.35,-10.59,-9.22,-7.9,-8.21,-11.42,-12.32,-12.15,-9.58,-12.23,-14.93,-13.56,-8.61,-6.63,-3.84,-3.75,-4.69,-2.1,-1.49,-0.48,-3.7,-1.59,-1.04,-0.6,-2.61,-0.33,-1.94,-2.62,-0.64,-2.15,-2.62,-1.82,-0.69,-2.47,-1.82,-7.11,-6.17,-5.57,-1.42,-0.74,-0.47,-1.95,-1.42,0.0,-1.04,-2.32,-0.68,-2.19,-5.51,-8.89,-10.78,-13.56,-10.26,-5.59,-6.42,-10.79,-9.64,-6.27,-3.96,-4.31,-4.15,-2.41,-2.9,-3.8,-3.37,-3.42,-2.75,-1.72,-0.28,-1.12,-4.46,-2.9,-5.19,-5.76,-6.15,-2.48,-4.45,-3.73,-1.89,-2.49,-7.27,-9.51,-13.19,-12.04,-13.08,-21.66,-22.88,-17.69,-19.72,-12.44,-10.77,-5.87,-5.61,-3.82,-3.02,-2.33,-2.35,-1.46,-0.84,-0.75,-0.1,-0.52,-2.51,-1.39,-0.52,-2.94,-1.73,-2.54,-0.25,-0.28,-1.44,-0.58,-3.59,-2.2,-0.99,-1.53,-4.09,-4.31,-7.88,-4.81,-2.93,-3.48,-5.56,-2.6,-3.56,-2.8,-2.55,-4.36,-2.19,-6.09,-5.53,-5.42,-5.4,-5.67,-6.61,-8.45,-11.51,-12.19,-7.44,-2.89,-0.7,-1.01,-0.19,-1.51,-2.54,-0.11,-5.51,-7.03,-3.17,-5.31,-4.5,-4.92,-6.81,-8.3,-11.32,-6.18,-3.71,-4.72,-5.34,-5.16,-5.02,-5.58,-0.85,-1.46]},"final":{"principal":338.5,"bh":2924.0,"smh":870.4,"qqq":331.8},"maxdd":{"principal":-23.8,"bh":-49.4,"smh":-45.3,"qqq":-35.6}},"exposure":{"months":["2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"layers":{"computacao":[23.1,1.5,30.4,28.0,7.3,9.0,4.7,12.4,23.1,12.8,13.9,18.1,19.0,5.6,28.6,4.4,31.2,23.0,22.0,25.0,11.6,42.9,16.2,8.9,8.0,14.5,6.4,8.1,11.7,19.7,18.1,0.5,14.3,39.7,16.4,24.9,31.1,35.0,24.9,37.5,32.0,25.6,7.7,20.9,13.4,32.8,18.1,27.0,24.3,8.8,1.8,27.7,21.5,6.3,12.9,7.9,31.3,18.8,14.2,14.0,8.5,6.2,2.2,36.4,34.7,30.7,17.6,9.4,20.1,13.5,18.0,27.2,21.2,10.0,26.5,12.8,6.0,8.8,26.1,21.2],"infraestrutura":[1.1,0.5,17.2,19.8,11.6,12.9,19.7,17.5,22.9,12.3,18.9,12.2,16.7,2.5,22.2,15.2,13.3,11.1,19.3,15.3,6.5,18.5,1.5,1.0,4.2,15.1,6.8,1.6,8.2,14.1,13.7,1.8,10.1,20.4,8.3,12.8,16.0,13.5,11.1,17.3,25.9,24.4,20.9,9.0,5.0,17.3,25.9,1.2,10.3,11.0,7.3,22.0,6.0,4.6,11.8,8.0,10.6,19.0,7.3,7.6,0.8,1.1,6.4,19.0,12.0,3.3,0.5,10.0,6.7,3.3,8.9,13.5,12.3,8.9,20.1,12.2,3.6,4.8,8.9,4.1],"energia":[15.6,0.0,19.8,28.2,9.8,15.4,12.7,8.4,17.2,17.3,7.2,13.9,5.8,1.4,10.0,0.0,28.8,11.1,5.1,8.2,18.7,23.2,15.6,9.3,7.8,29.9,19.4,8.8,8.4,11.1,23.0,3.1,1.6,18.5,14.6,8.7,17.4,3.1,7.4,10.3,22.3,17.5,18.0,15.2,1.6,24.5,21.7,18.6,18.3,24.4,18.2,20.3,11.2,8.3,12.6,21.9,17.8,25.4,14.5,19.4,9.7,2.5,6.2,23.2,12.5,0.0,0.0,7.6,5.9,2.8,5.9,13.1,18.5,8.8,19.7,7.3,12.6,8.1,5.2,16.0],"especulativo":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.7,3.2,8.8,0.0,0.4,4.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,3.0,0.0,0.0,1.5,10.3,7.9,0.9,0.0,1.6,5.3,0.0,1.3,2.5,0.0,5.5,5.3,10.3,0.6,0.1,5.7,4.1]}}}</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('chart-data').textContent);
+  const NS = 'http://www.w3.org/2000/svg';
+  const br = (v, d = 1) => v.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const MONTHS = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const dBR = s => `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)}`;
+  const mBR = s => `${MONTHS[+s.slice(5, 7) - 1]}/${s.slice(0, 4)}`;
+  const LINES = [
+    { key: 'principal', label: 'Estratégia', c: 's1', w: 2.4 },
+    { key: 'bh', label: 'Cesta sem stops', c: 's2', w: 1.6 },
+    { key: 'smh', label: 'SMH', c: 's3', w: 1.6 },
+    { key: 'qqq', label: 'QQQ', c: 's4', w: 1.6 },
+  ];
+  const LAYERS = [
+    { key: 'computacao', label: 'Chips e computação', c: 's1' },
+    { key: 'infraestrutura', label: 'Infra do data center', c: 's2' },
+    { key: 'energia', label: 'Geração de energia', c: 's3' },
+    { key: 'especulativo', label: 'Satélites', c: 's4' },
+  ];
+  const el = (tag, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+  const years = (labels, parse) => {
+    const out = [];
+    labels.forEach((s, i) => { if (i === 0 || parse(s) !== parse(labels[i - 1])) out.push([i, parse(s)]); });
+    return out;
+  };
+
+  function placeTip(plot, tip, x, width) {
+    tip.hidden = false;
+    const tw = tip.offsetWidth;
+    let left = x + 14;
+    if (left + tw > width) left = x - tw - 14;
+    tip.style.left = Math.max(0, left) + 'px';
+  }
+
+  function lineChart(plot, kind) {
+    const C = D.curves;
+    const n = C.dates.length;
+    const values = kind === 'nav' ? C.nav : C.dd;
+    const tip = document.createElement('div');
+    tip.className = 'tip'; tip.hidden = true; plot.appendChild(tip);
+    let svg;
+    function render() {
+      const W = plot.clientWidth;
+      const H = kind === 'nav' ? Math.max(240, Math.min(380, W * 0.5)) : Math.max(150, Math.min(210, W * 0.28));
+      const wide = W > 560, endLabels = kind === 'nav' && wide;
+      const m = { l: 46, r: wide ? 132 : 10, t: 8, b: 24 };
+      const pw = W - m.l - m.r, ph = H - m.t - m.b;
+      if (svg) svg.remove();
+      svg = el('svg', { viewBox: `0 0 ${W} ${H}`, height: H, role: 'img',
+        'aria-label': kind === 'nav' ? 'Patrimônio da estratégia, da cesta sem stops, do SMH e do QQQ, base 100' : 'Queda desde o pico das quatro carteiras' });
+      plot.insertBefore(svg, tip);
+      const all = LINES.flatMap(s => values[s.key]);
+      let y, ticks;
+      if (kind === 'nav') {
+        const lo = Math.log10(Math.min(...all) * 0.92), hi = Math.log10(Math.max(...all) * 1.08);
+        y = v => m.t + ph - (Math.log10(v) - lo) / (hi - lo) * ph;
+        ticks = [50, 100, 200, 500, 1000, 2000, 5000].filter(t => Math.log10(t) >= lo && Math.log10(t) <= hi);
+      } else {
+        const lo = Math.floor(Math.min(...all) / 10) * 10;
+        y = v => m.t + (0 - v) / (0 - lo) * ph;
+        ticks = []; for (let t = 0; t >= lo; t -= 10) ticks.push(t);
+      }
+      const x = i => m.l + i / (n - 1) * pw;
+      ticks.forEach(t => {
+        el('line', { x1: m.l, x2: m.l + pw, y1: y(t), y2: y(t), class: t === 0 && kind === 'dd' ? 'baseline' : 'gridline' }, svg);
+        const tx = el('text', { x: m.l - 8, y: y(t) + 4, 'text-anchor': 'end' }, svg);
+        tx.textContent = kind === 'nav' ? t.toLocaleString('pt-BR') : (t === 0 ? '0' : '−' + Math.abs(t));
+      });
+      el('line', { x1: m.l, x2: m.l + pw, y1: m.t + ph, y2: m.t + ph, class: 'baseline' }, svg);
+      years(C.dates, s => s.slice(0, 4)).forEach(([i, yr], k) => {
+        if (k === 0 && i === 0 && C.dates[0].slice(5, 7) !== '01') return;
+        const tx = el('text', { x: x(i), y: H - 6, 'text-anchor': 'middle' }, svg); tx.textContent = yr;
+        el('line', { x1: x(i), x2: x(i), y1: m.t + ph, y2: m.t + ph + 4, class: 'baseline' }, svg);
+      });
+      [...LINES].reverse().forEach(s => {
+        const d = values[s.key].map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join('');
+        el('path', { d, fill: 'none', style: `stroke:var(--${s.c})`, 'stroke-width': s.w, 'stroke-linejoin': 'round' }, svg);
+      });
+      if (endLabels) {
+        const ends = LINES.map(s => ({ s, v: values[s.key][n - 1], y: y(values[s.key][n - 1]) })).sort((a, b) => a.y - b.y);
+        for (let k = 1; k < ends.length; k++) ends[k].y = Math.max(ends[k].y, ends[k - 1].y + 15);
+        ends.forEach(e => {
+          const tx = el('text', { x: m.l + pw + 8, y: e.y + 4, class: 'endlabel' }, svg);
+          tx.textContent = `${e.s.label} ${Math.round(e.v).toLocaleString('pt-BR')}`;
+        });
+      }
+      const cross = el('line', { y1: m.t, y2: m.t + ph, class: 'cross', visibility: 'hidden' }, svg);
+      const dots = LINES.map(s => el('circle', { r: 4, style: `fill:var(--${s.c});stroke:var(--surface)`, 'stroke-width': 2, visibility: 'hidden' }, svg));
+      const hit = el('rect', { x: m.l, y: m.t, width: pw, height: ph, fill: 'transparent' }, svg);
+      const show = evt => {
+        const r = svg.getBoundingClientRect();
+        const i = Math.max(0, Math.min(n - 1, Math.round((evt.clientX - r.left - m.l) / pw * (n - 1))));
+        cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
+        LINES.forEach((s, k) => { dots[k].setAttribute('cx', x(i)); dots[k].setAttribute('cy', y(values[s.key][i])); dots[k].setAttribute('visibility', 'visible'); });
+        tip.innerHTML = `<div class="t">semana de ${dBR(C.dates[i])}</div>` + LINES.map(s =>
+          `<div class="r" style="--c:var(--${s.c})"><span>${s.label}</span><span>${kind === 'nav' ? br(values[s.key][i], 0) : br(values[s.key][i], 1) + '%'}</span></div>`).join('');
+        placeTip(plot, tip, x(i), W);
+      };
+      const hide = () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); dots.forEach(d => d.setAttribute('visibility', 'hidden')); };
+      hit.addEventListener('pointermove', show); hit.addEventListener('pointerdown', show); hit.addEventListener('pointerleave', hide);
+    }
+    new ResizeObserver(render).observe(plot);
+  }
+
+  function exposureChart(plot) {
+    const E = D.exposure;
+    const n = E.months.length;
+    const tip = document.createElement('div');
+    tip.className = 'tip'; tip.hidden = true; plot.appendChild(tip);
+    let svg;
+    function render() {
+      const W = plot.clientWidth;
+      const H = Math.max(200, Math.min(300, W * 0.36));
+      const m = { l: 40, r: 8, t: 8, b: 24 };
+      const pw = W - m.l - m.r, ph = H - m.t - m.b;
+      if (svg) svg.remove();
+      svg = el('svg', { viewBox: `0 0 ${W} ${H}`, height: H, role: 'img', 'aria-label': 'Percentual do patrimônio investido por camada, média de cada mês' });
+      plot.insertBefore(svg, tip);
+      const y = v => m.t + ph - v / 100 * ph;
+      [0, 25, 50, 75, 100].forEach(t => {
+        el('line', { x1: m.l, x2: m.l + pw, y1: y(t), y2: y(t), class: t === 0 ? 'baseline' : 'gridline' }, svg);
+        const tx = el('text', { x: m.l - 8, y: y(t) + 4, 'text-anchor': 'end' }, svg); tx.textContent = t + '%';
+      });
+      const slot = pw / n, gap = slot > 6 ? 1.5 : 0.8, bw = Math.max(1, slot - gap);
+      years(E.months, s => s.slice(0, 4)).forEach(([i, yr]) => {
+        if (i === 0 && E.months[0].slice(5, 7) !== '01') return;
+        const tx = el('text', { x: m.l + i * slot, y: H - 6, 'text-anchor': 'middle' }, svg); tx.textContent = yr;
+      });
+      const groups = [];
+      E.months.forEach((mo, i) => {
+        const g = el('g', {}, svg);
+        let acc = 0;
+        LAYERS.forEach(L => {
+          const v = E.layers[L.key][i];
+          if (v > 0.05) {
+            const top = y(acc + v), h = y(acc) - top;
+            el('rect', { x: m.l + i * slot + gap / 2, y: top + (acc > 0 ? 0.75 : 0), width: bw, height: Math.max(0, h - (acc > 0 ? 0.75 : 0)), style: `fill:var(--${L.c})`, rx: h > 3 ? 1 : 0 }, g);
+          }
+          acc += v;
+        });
+        groups.push(g);
+      });
+      const hit = el('rect', { x: m.l, y: m.t, width: pw, height: ph, fill: 'transparent' }, svg);
+      const show = evt => {
+        const r = svg.getBoundingClientRect();
+        const i = Math.max(0, Math.min(n - 1, Math.floor((evt.clientX - r.left - m.l) / slot)));
+        groups.forEach((g, k) => g.style.opacity = k === i ? 1 : 0.45);
+        const total = LAYERS.reduce((s, L) => s + E.layers[L.key][i], 0);
+        tip.innerHTML = `<div class="t">${mBR(E.months[i])}</div>` + [...LAYERS].reverse().map(L =>
+          `<div class="r" style="--c:var(--${L.c})"><span>${L.label}</span><span>${br(E.layers[L.key][i], 0)}%</span></div>`).join('') +
+          `<div class="r total"><span>Investido</span><span>${br(total, 0)}%</span></div><div class="r total"><span>Caixa</span><span>${br(100 - total, 0)}%</span></div>`;
+        placeTip(plot, tip, m.l + (i + 0.5) * slot, W);
+      };
+      const hide = () => { tip.hidden = true; groups.forEach(g => g.style.opacity = 1); };
+      hit.addEventListener('pointermove', show); hit.addEventListener('pointerdown', show); hit.addEventListener('pointerleave', hide);
+    }
+    new ResizeObserver(render).observe(plot);
+  }
+
+  document.querySelectorAll('.plot').forEach(p => {
+    if (p.dataset.kind === 'exp') exposureChart(p); else lineChart(p, p.dataset.kind);
+  });
+})();
+</script>
+
+</body>
+</html>
