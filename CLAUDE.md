@@ -19,11 +19,11 @@ python -m venv .venv
 pip install -r requirements.txt          # full deps
 pip install -r requirements-tradingview.txt  # OMS/backtest-only deps (fastapi, vectorbt, optuna, duckdb...)
 ```
-Python 3.11+ required (3.12 recommended). Package layout uses `src/` (see `[tool.setuptools] package-dir = {"" = "src"}` in `pyproject.toml`); `quant_fund/` is a separate top-level package.
+Python 3.11+ required (3.12 recommended). Package layout uses `src/` (see `[tool.setuptools] package-dir = {"" = "src"}` in `pyproject.toml`); `quant_fund/` is a separate top-level package. Docs and `AGENT_SYNC.md` show Windows paths (`.venv\Scripts\python.exe`); on Linux/macOS use `.venv/bin/python`.
 
 ### Tests
 ```bash
-# Full Python suite (139 tests)
+# Full Python suite (161 passed + 1 optional skip when vectorbt/Plotly are missing, as of 2026-09-30)
 python -m pytest tests/ -q
 
 # Single test file / single test
@@ -35,6 +35,7 @@ node --test infra/cloudflare/test/worker.test.mjs
 # or, from infra/cloudflare/
 npm test
 ```
+`data/market/*.parquet` is gitignored, so a fresh clone has no market cache. Two tests in `tests/test_oos_validation.py` read `data/market/SPY.parquet` and come back `blocked` instead of `planned` until that file exists (any research script that fetches SPY creates it).
 
 ### Running the fund pipeline (LASTRO / AAKR report)
 ```bash
@@ -104,6 +105,21 @@ Trust boundaries worth preserving when touching this path (see `docs/ARCHITECTUR
 - `tradingview/` — Pine v5/v6 scripts (indicators, strategy, dashboard) that must stay behaviorally in parity with the Python backtest engine; see `docs/TRADINGVIEW_CREATOR.md`.
 - `infra/cloudflare/` — the webhook-terminating Worker (HMAC + IP allowlist), its own Node test suite, and tunnel config.
 - `data/` vs `dados/`: `data/` is the daily market Parquet cache + the paper OMS SQLite DB (Momentum lab); `dados/` is the monthly/macro data layer for the LASTRO fund (SEC XBRL, FRED series). Don't conflate the two when adding data.
+
+## Research studies (per-asset and thesis reports)
+
+Most recent work is standalone research on top of the Momentum ATR engine, not changes to the engine itself. Each study follows the same shape:
+
+- **Compute script** in `scripts/` (`analisar_<ativo>.py`, `run_tese_<tema>.py`) that imports the engine instead of reimplementing it: `run_backtest` / `ExecutionConfig` / `calculate_performance_metrics` (`src/backtest/engine.py`), `run_stress_matrix` (`src/backtest/stress.py`), `expected_maximum_sharpe` / `deflated_sharpe_probability` (`src/backtest/statistics.py`), `validate_ohlc` (`src/strategies/momentum_atr.py`).
+- **Artifacts** in `results/<estudo>/` (CSV metrics, equity/trades, charts, a `manifest*.json` with data SHA-256, git SHA and governance flags `shadow_mode`/`aprovado=false`). `.gitignore` only excludes top-level `results/*.csv|json|parquet|log` plus `results/checkpoints/` and `results/automation/`; study subfolders are versioned.
+- **Report** in `relatorios/<nome>_analise_<data>.html`, usually produced by a separate `build_relatorio_<ativo>.py`. Reports embed charts as base64 or reference `relatorios/graficos/`.
+- Existing studies: individual stocks (ASML34, TSMC34, CATP34, MUTC34, P2LT34), global/China/outlier baskets, Bets B3 thesis (`run_tese_bets_research.py`, `build_bets_features.py`, `backtest_bets.py`), Nubank (`analisar_nubank_monzo_bets.py`, `dossie_nubank/`), AI infrastructure (`run_tese_ia_infraestrutura.py`, which versions a frozen OHLCV snapshot in `results/tese_ia_infra/` for reproducibility) and the uranium chain (`analisar_uranio.py` + `build_relatorio_uranio.py`).
+
+Data pitfalls already hit in these studies (check for them, don't silently correct):
+- Yahoo sometimes stitches a predecessor's history without adjusting the exchange ratio (e.g. `U-UN.TO` before 2021-07-26 is Uranium Participation Corp: fake +118% jump). Scan for extreme single-day moves and cut the series with a documented reason.
+- OTC lines (e.g. `PALAF`) often open at the previous close with no trade, which makes `open[t+1]` fills unreliable; prefer the home listing.
+- `yfinance` `.info` ratios mix quote and reporting currencies when they differ (Cameco, Paladin). Compute ratios from the statements in one currency and label provider data as unverified against filings.
+- Everything from 2023 on has already been seen by earlier research: label it `retrospective_pseudo_oos`, not true OOS. Reports classify, they don't recommend; no asset gets promoted to real capital.
 
 ## Multi-agent collaboration in this repo
 

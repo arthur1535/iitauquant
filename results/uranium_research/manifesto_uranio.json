@@ -1,0 +1,226 @@
+{
+  "estudo": "cadeia_uranio",
+  "gerado_em_utc": "2026-09-25T02:55:47+00:00",
+  "script": "scripts/analisar_uranio.py",
+  "sha256_script": "c83c5e45507db2e97dc7cc17ac84af99a39c791c58a3812881d607b0cdc20721",
+  "git": {
+    "commit_sha": "f11d8a860b96dc634e3dfd22219226cb717fcd1f",
+    "branch": "claude/analise-uranio",
+    "dirty": true
+  },
+  "ambiente": {
+    "python": "3.13.5",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3",
+    "yfinance": "1.7.0"
+  },
+  "estrategia": {
+    "momentum_window": 20,
+    "atr_window": 14,
+    "stop_multiplier": 2.5,
+    "origem_parametros": "padrão do repositório, sem otimização nestes ativos"
+  },
+  "execucao": {
+    "custo_por_ponta": 0.0015,
+    "capital_inicial": 100000.0,
+    "sinal": "close[t]",
+    "execucao": "open[t+1]"
+  },
+  "cortes": {
+    "is_ate": "2022-12-31",
+    "oos_desde": "2023-01-01",
+    "classificacao": "retrospective_pseudo_oos"
+  },
+  "dsr": {
+    "numero_de_testes": 4,
+    "desvio_dos_sharpes": 0.1813,
+    "ativos": [
+      "U-UN.TO",
+      "LEU",
+      "PDN.AX",
+      "CCJ"
+    ]
+  },
+  "dados": [
+    {
+      "ticker": "U-UN.TO",
+      "origem": "cache_local",
+      "barras": 1296,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "barras_excluidas_antes_de_inicio_valido": 393,
+      "pct_barras_ohlc_planas": 0.0,
+      "pct_open_igual_fechamento_anterior": 4.71,
+      "maior_variacao_diaria_abs_pct": 15.53,
+      "primeira_barra": "2021-07-26",
+      "ultima_barra": "2026-09-24",
+      "sha256_parquet": "f60adb95f4a868e36b248b5bc0ec3ab84616c7ac732710a4e6af2d86e041ae4f"
+    },
+    {
+      "ticker": "SRUUF",
+      "origem": "cache_local",
+      "barras": 1299,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "pct_barras_ohlc_planas": 0.0,
+      "pct_open_igual_fechamento_anterior": 6.77,
+      "maior_variacao_diaria_abs_pct": 15.79,
+      "primeira_barra": "2021-07-22",
+      "ultima_barra": "2026-09-24",
+      "sha256_parquet": "2024ebb2e8e51245db8d0ccee688445b91dbf78f87c42ee922f2877b228bfcee"
+    },
+    {
+      "ticker": "LEU",
+      "origem": "cache_local",
+      "barras": 1690,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "pct_barras_ohlc_planas": 0.0,
+      "pct_open_igual_fechamento_anterior": 3.08,
+      "maior_variacao_diaria_abs_pct": 33.13,
+      "primeira_barra": "2020-01-02",
+      "ultima_barra": "2026-09-24",
+      "sha256_parquet": "2614e0866b7c15927ccf52ac816ea8385bc9bdb59ae095b99e50ca08e75839b5"
+    },
+    {
+      "ticker": "PDN.AX",
+      "origem": "cache_local",
+      "barras": 1706,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "pct_barras_ohlc_planas": 0.82,
+      "pct_open_igual_fechamento_anterior": 15.47,
+      "maior_variacao_diaria_abs_pct": 30.77,
+      "primeira_barra": "2020-01-02",
+      "ultima_barra": "2026-09-25",
+      "sha256_parquet": "c1e555d59a5b49759edc8a542b67fde5a210b0870542c45250a917278d82069c"
+    },
+    {
+      "ticker": "PALAF",
+      "origem": "cache_local",
+      "barras": 1690,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "pct_barras_ohlc_planas": 3.02,
+      "pct_open_igual_fechamento_anterior": 23.37,
+      "maior_variacao_diaria_abs_pct": 40.0,
+      "primeira_barra": "2020-01-02",
+      "ultima_barra": "2026-09-24",
+      "sha256_parquet": "ee8e64891b0ddbe0b9e044a718be7f504be4fa0ce39ee04ed0427272828d5e37"
+    },
+    {
+      "ticker": "CCJ",
+      "origem": "cache_local",
+      "barras": 1690,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "pct_barras_ohlc_planas": 0.0,
+      "pct_open_igual_fechamento_anterior": 3.25,
+      "maior_variacao_diaria_abs_pct": 23.42,
+      "primeira_barra": "2020-01-02",
+      "ultima_barra": "2026-09-24",
+      "sha256_parquet": "c6f398a045a0b60e891e437f54ea03e567cd515f1c28b4e261cf70005f92f577"
+    },
+    {
+      "ticker": "URA",
+      "origem": "cache_local",
+      "barras": 1690,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "pct_barras_ohlc_planas": 0.0,
+      "pct_open_igual_fechamento_anterior": 3.2,
+      "maior_variacao_diaria_abs_pct": 11.66,
+      "primeira_barra": "2020-01-02",
+      "ultima_barra": "2026-09-24",
+      "sha256_parquet": "1f20a5d0976d0b1fb6ee49186e3de3d23372daa7f7ddcfcf44d7e2cbec854a36"
+    },
+    {
+      "ticker": "SPY",
+      "origem": "cache_local",
+      "barras": 1691,
+      "linhas_descartadas": 0,
+      "barras_high_low_reparadas": 0,
+      "pct_barras_ohlc_planas": 0.0,
+      "pct_open_igual_fechamento_anterior": 0.24,
+      "maior_variacao_diaria_abs_pct": 10.94,
+      "primeira_barra": "2020-01-02",
+      "ultima_barra": "2026-09-24",
+      "sha256_parquet": "0e15163b2156adefeb0ca559cb8dff8c7a8c116a68cb7ad56b1a10cd62c9c748"
+    }
+  ],
+  "governanca": {
+    "paper_only": true,
+    "shadow_mode": true,
+    "aprovado": false,
+    "promotion_allowed": false,
+    "pbo": null,
+    "pbo_motivo": "not_implemented_in_repository"
+  },
+  "ativos": {
+    "U-UN.TO": {
+      "nome": "Sprott Physical Uranium Trust",
+      "listagem": "TSX: U.UN",
+      "moeda": "CAD",
+      "papel": "Detentor de U3O8 físico (proxy do preço spot)",
+      "principal": true,
+      "inicio_valido": "2021-07-26",
+      "nota": "O Yahoo emenda o histórico da Uranium Participation Corp (antecessora) sem ajustar a troca de 1 ação UPC por 0,5 unidade SPUT: salto artificial de +118% em 26/07/2021 e 5 pregões congelados sem volume antes dele. A série é cortada em 26/07/2021 (primeiro pregão real da SPUT)."
+    },
+    "SRUUF": {
+      "nome": "Sprott Physical Uranium Trust",
+      "listagem": "OTCQX: SRUUF",
+      "moeda": "USD",
+      "papel": "Detentor de U3O8 físico (linha em USD)",
+      "principal": false,
+      "nota": "Negociação no OTCQX desde 22/07/2021."
+    },
+    "LEU": {
+      "nome": "Centrus Energy",
+      "listagem": "NYSE American: LEU",
+      "moeda": "USD",
+      "papel": "Enriquecimento e combustível nuclear (LEU/HALEU)",
+      "principal": true,
+      "nota": ""
+    },
+    "PDN.AX": {
+      "nome": "Paladin Energy",
+      "listagem": "ASX: PDN",
+      "moeda": "AUD",
+      "papel": "Mineradora produtora (Langer Heinrich, Namíbia)",
+      "principal": true,
+      "nota": "Consolidação de ações 10:1 em 2024; a série do Yahoo vem ajustada por desdobramentos."
+    },
+    "PALAF": {
+      "nome": "Paladin Energy",
+      "listagem": "OTCQX: PALAF",
+      "moeda": "USD",
+      "papel": "Mineradora produtora (linha em USD)",
+      "principal": false,
+      "nota": "Linha OTC de baixa liquidez: cerca de 23% dos pregões abrem exatamente no fechamento anterior (abertura sem negócio). A execução em open[t+1] do backtest não é confiável nesta linha; use PDN.AX."
+    },
+    "CCJ": {
+      "nome": "Cameco",
+      "listagem": "NYSE: CCJ",
+      "moeda": "USD",
+      "papel": "Mineradora produtora integrada (mineração, conversão, Westinghouse)",
+      "principal": true,
+      "nota": ""
+    },
+    "URA": {
+      "nome": "Global X Uranium ETF",
+      "listagem": "NYSE Arca: URA",
+      "moeda": "USD",
+      "papel": "Referência setorial",
+      "principal": false,
+      "nota": ""
+    },
+    "SPY": {
+      "nome": "SPDR S&P 500 ETF",
+      "listagem": "NYSE Arca: SPY",
+      "moeda": "USD",
+      "papel": "Referência de mercado amplo",
+      "principal": false,
+      "nota": ""
+    }
+  }
+}
