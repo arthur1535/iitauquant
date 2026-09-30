@@ -1,0 +1,220 @@
+{
+  "fonte": "Yahoo Finance via yfinance (dados de provedor, sem conferência com demonstrações oficiais)",
+  "coletado_em_utc": "2026-09-25T02:55:47+00:00",
+  "ativos": {
+    "U-UN.TO": {
+      "snapshot": {
+        "currency": "CAD",
+        "financialCurrency": null,
+        "marketCap": 9120140288,
+        "enterpriseValue": null,
+        "totalRevenue": null,
+        "revenueGrowth": null,
+        "grossMargins": 0.0,
+        "operatingMargins": 0.0,
+        "profitMargins": 0.0,
+        "ebitda": null,
+        "totalCash": null,
+        "totalDebt": null,
+        "freeCashflow": null,
+        "trailingPE": 15.868264,
+        "forwardPE": -662.5,
+        "priceToBook": null,
+        "enterpriseToRevenue": null,
+        "enterpriseToEbitda": null,
+        "sharesOutstanding": 344156215,
+        "beta": null,
+        "fiftyTwoWeekHigh": 33.19,
+        "fiftyTwoWeekLow": 23.2
+      },
+      "dre_anual": {
+        "Total Revenue": {
+          "2025-12-31": 0.0,
+          "2024-12-31": 0.0,
+          "2023-12-31": 0.0,
+          "2022-12-31": 0.0
+        },
+        "Operating Income": {
+          "2025-12-31": -41274000.0,
+          "2024-12-31": -38809000.0,
+          "2023-12-31": -28857000.0,
+          "2022-12-31": -29263000.0
+        },
+        "Net Income": {
+          "2025-12-31": 538400000.0,
+          "2024-12-31": -1220326000.0,
+          "2023-12-31": 2630693000.0,
+          "2022-12-31": 185732000.0
+        }
+      }
+    },
+    "LEU": {
+      "snapshot": {
+        "currency": "USD",
+        "financialCurrency": "USD",
+        "marketCap": 3013152000,
+        "enterpriseValue": 2248455168,
+        "totalRevenue": 473900000,
+        "revenueGrowth": 0.14,
+        "grossMargins": 0.23655,
+        "operatingMargins": 0.053379998,
+        "profitMargins": 0.102340005,
+        "ebitda": 10100000,
+        "totalCash": 1868499968,
+        "totalDebt": 1177500032,
+        "freeCashflow": -127300000,
+        "trailingPE": 80.06522,
+        "forwardPE": 38.539516,
+        "priceToBook": 3.4769888,
+        "enterpriseToRevenue": 4.745,
+        "enterpriseToEbitda": 222.619,
+        "sharesOutstanding": 19733908,
+        "beta": 1.334,
+        "fiftyTwoWeekHigh": 464.25,
+        "fiftyTwoWeekLow": 135.85
+      },
+      "dre_anual": {
+        "Total Revenue": {
+          "2025-12-31": 448700000.0,
+          "2024-12-31": 442000000.0,
+          "2023-12-31": 320200000.0,
+          "2022-12-31": 293800000.0,
+          "2021-12-31": null
+        },
+        "Gross Profit": {
+          "2025-12-31": 117500000.0,
+          "2024-12-31": 111500000.0,
+          "2023-12-31": 112100000.0,
+          "2022-12-31": 117900000.0,
+          "2021-12-31": null
+        },
+        "Operating Income": {
+          "2025-12-31": 50200000.0,
+          "2024-12-31": 48000000.0,
+          "2023-12-31": 52400000.0,
+          "2022-12-31": 60200000.0,
+          "2021-12-31": null
+        },
+        "Net Income": {
+          "2025-12-31": 77800000.0,
+          "2024-12-31": 73200000.0,
+          "2023-12-31": 84400000.0,
+          "2022-12-31": 52200000.0,
+          "2021-12-31": null
+        }
+      }
+    },
+    "PDN.AX": {
+      "snapshot": {
+        "currency": "AUD",
+        "financialCurrency": "USD",
+        "marketCap": 4354283008,
+        "enterpriseValue": 4251744512,
+        "totalRevenue": 304320000,
+        "revenueGrowth": 1.415,
+        "grossMargins": 0.23947,
+        "operatingMargins": 0.05455,
+        "profitMargins": 0.01753,
+        "ebitda": 77181000,
+        "totalCash": 264980000,
+        "totalDebt": 179352992,
+        "freeCashflow": 4091875,
+        "trailingPE": 484.5,
+        "forwardPE": 25.298668,
+        "priceToBook": 2.7150424,
+        "enterpriseToRevenue": 13.971,
+        "enterpriseToEbitda": 55.088,
+        "sharesOutstanding": 449358421,
+        "beta": 1.372,
+        "fiftyTwoWeekHigh": 15.1,
+        "fiftyTwoWeekLow": 7.45
+      },
+      "dre_anual": {
+        "Total Revenue": {
+          "2026-06-30": 304320000.0,
+          "2025-06-30": 177676000.0,
+          "2024-06-30": null,
+          "2023-06-30": null,
+          "2022-06-30": 4700000.0
+        },
+        "Gross Profit": {
+          "2026-06-30": 98461000.0,
+          "2025-06-30": 4104000.0,
+          "2024-06-30": 92195000.0,
+          "2023-06-30": null,
+          "2022-06-30": 7000.0
+        },
+        "Operating Income": {
+          "2026-06-30": 14120000.0,
+          "2025-06-30": -39439000.0,
+          "2024-06-30": -27020000.0,
+          "2023-06-30": -17494000.0,
+          "2022-06-30": null
+        },
+        "Net Income": {
+          "2026-06-30": 5336000.0,
+          "2025-06-30": -44639000.0,
+          "2024-06-30": 53628000.0,
+          "2023-06-30": -10572000.0,
+          "2022-06-30": null
+        }
+      }
+    },
+    "CCJ": {
+      "snapshot": {
+        "currency": "USD",
+        "financialCurrency": "CAD",
+        "marketCap": 38379167744,
+        "enterpriseValue": 38488612864,
+        "totalRevenue": 3474621952,
+        "revenueGrowth": -0.072,
+        "grossMargins": 0.35112998,
+        "operatingMargins": 0.09111,
+        "profitMargins": 0.102139995,
+        "ebitda": 798452992,
+        "totalCash": 1112717952,
+        "totalDebt": 1222128000,
+        "freeCashflow": 49994624,
+        "trailingPE": 157.35715,
+        "forwardPE": 48.10756,
+        "priceToBook": 7.5296144,
+        "enterpriseToRevenue": 11.077,
+        "enterpriseToEbitda": 48.204,
+        "sharesOutstanding": 435532978,
+        "beta": 1.012,
+        "fiftyTwoWeekHigh": 135.24,
+        "fiftyTwoWeekLow": 77.7
+      },
+      "dre_anual": {
+        "Total Revenue": {
+          "2025-12-31": 3481933000.0,
+          "2024-12-31": 3135772000.0,
+          "2023-12-31": 2587758000.0,
+          "2022-12-31": 1868003000.0,
+          "2021-12-31": null
+        },
+        "Gross Profit": {
+          "2025-12-31": 970273000.0,
+          "2024-12-31": 782582000.0,
+          "2023-12-31": 561666000.0,
+          "2022-12-31": 233291000.0,
+          "2021-12-31": null
+        },
+        "Operating Income": {
+          "2025-12-31": 621259000.0,
+          "2024-12-31": 511156000.0,
+          "2023-12-31": 285049000.0,
+          "2022-12-31": 15565000.0,
+          "2021-12-31": null
+        },
+        "Net Income": {
+          "2025-12-31": 589577000.0,
+          "2024-12-31": 171853000.0,
+          "2023-12-31": 360847000.0,
+          "2022-12-31": 89382000.0,
+          "2021-12-31": null
+        }
+      }
+    }
+  }
+}
