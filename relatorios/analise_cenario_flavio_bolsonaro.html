@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Estratégica B3: Cenário Eleitoral Flávio Bolsonaro | Reprecificação de Ativos</title>
+    <!-- Chart.js para visualizações dinâmicas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-surface: #111827;
+            --bg-card: #182234;
+            --bg-card-hover: #1f2c44;
+            --border-subtle: #243048;
+            --border-strong: #334466;
+            
+            --accent-primary: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.25);
+            --accent-success: #10b981;
+            --accent-success-glow: rgba(16, 185, 129, 0.2);
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-purple: #8b5cf6;
+            
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-dim: #64748b;
+            
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* HEADER E BANNER EXECUTIVO */
+        header {
+            background: linear-gradient(135deg, #131d33 0%, #0d1526 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 450px;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 70%);
+            pointer-events: none;
+        }
+
+        .top-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .badge-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .badge-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+        }
+
+        .badge-green {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .badge-gold {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+
+        .timestamp {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            line-height: 1.25;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 980px;
+        }
+
+        /* GRID DE KPIS / VETORES MACRO */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-strong);
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .kpi-subtext {
+            font-size: 12px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .kpi-pos { color: var(--accent-success); font-weight: 700; }
+        .kpi-neg { color: var(--accent-danger); font-weight: 700; }
+        .kpi-neu { color: var(--accent-warning); font-weight: 700; }
+
+        /* SEÇÃO DE CONTROLES E SIMULADOR INTERATIVO */
+        .interactive-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 28px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-title {
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-filter:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-main);
+        }
+
+        .btn-filter.active {
+            background: var(--accent-primary);
+            color: #ffffff;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        /* SIMULADOR SLIDER */
+        .simulator-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .slider-control {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+            cursor: pointer;
+        }
+
+        .simulator-feedback {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid var(--accent-primary);
+            padding: 10px 14px;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            color: #cbd5e1;
+            flex: 1.5;
+            min-width: 300px;
+        }
+
+        /* LAYOUT DUAS COLUNAS: GRÁFICO E VETORES MACRO */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 1024px) {
+            .two-col-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 380px;
+            width: 100%;
+        }
+
+        /* PILARES TEÓRICOS */
+        .pillar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .pillar-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px 16px;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .pillar-item.green { border-left-color: var(--accent-success); }
+        .pillar-item.purple { border-left-color: var(--accent-purple); }
+        .pillar-item.gold { border-left-color: var(--accent-warning); }
+
+        .pillar-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pillar-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        /* TABELA DE ATIVOS COMPLETA */
+        .table-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+
+        .table-header-wrap {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13.5px;
+        }
+
+        th {
+            background: #0f1626;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        td {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: rgba(31, 44, 68, 0.4);
+        }
+
+        .ticker-pill {
+            display: inline-block;
+            background: #1e293b;
+            color: #38bdf8;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 13px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+
+        .asset-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 3px;
+            font-size: 13px;
+        }
+
+        .sector-tag {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .impact-high {
+            color: #10b981;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+
+        .impact-mod {
+            color: #38bdf8;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .risk-low { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .risk-med { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .risk-high { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+        /* MATRIZ DE RISCOS & ADVERSIDADES */
+        .risk-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .risk-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 22px;
+            position: relative;
+        }
+
+        .risk-card-head {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .risk-card-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* RODAPÉ E DISCLAIMER */
+        footer {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 24px;
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        footer strong {
+            color: var(--text-secondary);
+        }
+
+        .footer-bottom {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body { background: #ffffff; color: #000000; padding: 0; }
+            .container { max-width: 100%; }
+            .kpi-card, .card-box, .interactive-panel, .table-container, header, footer {
+                background: #ffffff !important;
+                border: 1px solid #cccccc !important;
+                color: #000000 !important;
+                box-shadow: none !important;
+            }
+            .btn-filter, input[type=range] { display: none; }
+            .ticker-pill { background: #f0f0f0; color: #000; border-color: #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- CABEÇALHO EXECUTIVO -->
+    <header>
+        <div class="top-meta">
+            <div class="badge-group">
+                <span class="badge badge-blue">Research Macroeconômico</span>
+                <span class="badge badge-gold">Cenário Político-Eleitoral</span>
+                <span class="badge badge-green">Reprecificação de Risco B3</span>
+            </div>
+            <div class="timestamp">PROJEÇÃO: CENÁRIO ELEITORAL FLÁVIO BOLSONARO</div>
+        </div>
+        <h1>Análise de Reprecificação de Ativos: Eleição de Flávio Bolsonaro</h1>
+        <p class="subtitle">
+            Mapeamento prospectivo dos setores e ativos financeiros beneficiados pela potencial vitória da chapa liberal-conservadora. 
+            Avaliação de múltiplos de estatais, agronegócio, indústria armamentista, fechamento da curva de juros (duration) e fluxo estrangeiro.
+        </p>
+    </header>
+
+    <!-- CARDS DE IMPACTO MACROECONÔMICO (KPIS) -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <span>Risco-País (CDS 5 Anos)</span>
+                <span class="kpi-pos">▼ Compressão</span>
+            </div>
+            <div class="kpi-value">130 - 150 bps</div>
+            <div class="kpi-subtext">Queda de ~40-60 bps pelo alívio no prêmio fiscal institucional</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <span>Câmbio (USD / BRL)</span>
+                <span class="kpi-pos">▼ Apreciação Real</span>
+            </div>
+            <div class="kpi-value">R$ 5,00 - R$ 5,25</div>
+            <div class="kpi-subtext">Entrada líquida de capital via arbitragem de múltiplos e carry trade</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <span>Curva DI Futuro (Vértice Longo)</span>
+                <span class="kpi-pos">▼ Fechamento</span>
+            </div>
+            <div class="kpi-value">-120 a -180 bps</div>
+            <div class="kpi-subtext">Destravamento de valor para ativos de duration longo e Real Estate</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <span>Ibovespa Target P/L</span>
+                <span class="kpi-pos">▲ Re-rating</span>
+            </div>
+            <div class="kpi-value">10.5x - 11.5x</div>
+            <div class="kpi-subtext">Convergência do desconto histórico atual (~7.8x) à média estrutural</div>
+        </div>
+    </div>
+
+    <!-- PAINEL INTERATIVO E SIMULADOR -->
+    <div class="interactive-panel">
+        <div class="panel-header">
+            <div class="panel-title">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                Filtro por Setores de Alta
+            </div>
+            <div class="filter-buttons">
+                <button class="btn-filter active" onclick="filterSector('ALL', this)">Todos os Ativos</button>
+                <button class="btn-filter" onclick="filterSector('ESTATAIS', this)">Estatais & Desestatização</button>
+                <button class="btn-filter" onclick="filterSector('ARMAS', this)">Bélico & Defesa</button>
+                <button class="btn-filter" onclick="filterSector('AGRO', this)">Agro & Cadeia Rural</button>
+                <button class="btn-filter" onclick="filterSector('DURATION', this)">Construção & Juros</button>
+                <button class="btn-filter" onclick="filterSector('FINANCAS', this)">Mercado & Infra</button>
+            </div>
+        </div>
+
+        <!-- SIMULADOR DINÂMICO -->
+        <div class="simulator-box">
+            <div class="slider-control">
+                <div class="slider-label">
+                    <span>Intensidade de Apoio Parlamentar & Ortodoxia Fiscal</span>
+                    <span id="sliderValueText" style="color: #60a5fa; font-family: var(--font-mono);">80% (Base Sólida)</span>
+                </div>
+                <input type="range" id="reformSlider" min="20" max="100" value="80" step="5" oninput="updateSimulation(this.value)">
+            </div>
+            <div class="simulator-feedback" id="simulationSummary">
+                <strong>Cenário Base:</strong> Amplo suporte no Congresso, aprovação célere de reformas administrativas e manutenção de equipe econômica fiscalista ortodoxa. Maximização de múltiplos para Estatais e fechamento acelerado da taxa de juros futura.
+            </div>
+        </div>
+    </div>
+
+    <!-- SEÇÃO DUAS COLUNAS: GRÁFICO DE SENSIBILIDADE + PILARES ESTRATÉGICOS -->
+    <div class="two-col-grid">
+        <div class="card-box">
+            <div class="card-title">
+                <span>Potencial Teórico de Reprecificação (% Upside no Evento)</span>
+                <span style="font-size: 12px; color: var(--text-dim); font-weight: normal;">Beta Político x Retorno Estimado</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="upsideChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card-box">
+            <div class="card-title">Vetores Estruturais da Tese de Alta</div>
+            <div class="pillar-list">
+                <div class="pillar-item">
+                    <div class="pillar-title">
+                        <span>1. Governança & Fim de Ingerência em Estatais</span>
+                        <span class="ticker-pill">PETR4 / BBAS3</span>
+                    </div>
+                    <div class="pillar-desc">
+                        Adoção estrita de preços de paridade de importação (PPI), proteção contra Capex politicamente motivado em refinarias ou energias alternativas não rentáveis, e blindagem de dividendos robustos.
+                    </div>
+                </div>
+
+                <div class="pillar-item purple">
+                    <div class="pillar-title">
+                        <span>2. Desregulamentação do Setor Bélico</span>
+                        <span class="ticker-pill">TASA4</span>
+                    </div>
+                    <div class="pillar-desc">
+                        Revogação imediata de restrições aos CACs (Colecionadores, Atiradores e Caçadores), reabertura de calibres civis (9mm/.40) e simplificação da posse/porte, reativando a demanda doméstica reprimida de armamentos.
+                    </div>
+                </div>
+
+                <div class="pillar-item green">
+                    <div class="pillar-title">
+                        <span>3. Segurança Jurídica no Campo & Desregulamentação Agro</span>
+                        <span class="ticker-pill">SLCE3 / AGRO3</span>
+                    </div>
+                    <div class="pillar-desc">
+                        Combate enérgico a invasões de terras (MST), aceleração de licenciamentos ambientais e fomento ao crédito privado (CRAs e Fiagros), valorizando ativos fundiários rurais.
+                    </div>
+                </div>
+
+                <div class="pillar-item gold">
+                    <div class="pillar-title">
+                        <span>4. Descompressão Fiscal & Queda do WACC</span>
+                        <span class="ticker-pill">CYRE3 / BPAC11</span>
+                    </div>
+                    <div class="pillar-desc">
+                        Percepção de disciplina fiscal derruba prêmio de risco longo, reduzindo o custo de capital das construtoras e reaquecendo emissões de mercado e M&As pelo BTG e B3.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABELA COMPLETA DE ATIVOS IDENTIFICADOS -->
+    <div class="table-container">
+        <div class="table-header-wrap">
+            <div>
+                <h3 style="font-size: 17px; font-weight: 700; color: #fff;">Matriz Completa de Ativos Beneficiados na B3</h3>
+                <p style="font-size: 13px; color: var(--text-secondary);">Detalhamento de teses, catalisadores pontuais e avaliação de risco por papel.</p>
+            </div>
+            <button class="btn-filter" onclick="window.print()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="vertical-align: middle; margin-right: 4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                Imprimir / Exportar PDF
+            </button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table id="assetsTable">
+                <thead>
+                    <tr>
+                        <th>Ativo / Ticker</th>
+                        <th>Setor Econômico</th>
+                        <th>Catalisador & Tese Primária</th>
+                        <th>Beta Político</th>
+                        <th>Upside Estimado</th>
+                        <th>Classificação de Risco</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ESTATAIS -->
+                    <tr data-sector="ESTATAIS">
+                        <td>
+                            <span class="ticker-pill">PETR4</span>
+                            <div class="asset-name">Petrobras PN</div>
+                        </td>
+                        <td><span class="sector-tag">Óleo & Gás / Economia Mista</span></td>
+                        <td>Alinhamento inequívoco ao PPI internacional, corte de Capex não essencial (fertilizantes/eólicas) e restauração do payout de dividendos máximos. Re-rating de múltiplo EV/EBITDA de 3.2x para 4.8x.</td>
+                        <td><span style="color:#ef4444; font-weight:700;">Máximo (2.4x)</span></td>
+                        <td class="impact-high">+25% a +40%</td>
+                        <td><span class="risk-badge risk-med">Médio</span></td>
+                    </tr>
+
+                    <tr data-sector="ESTATAIS">
+                        <td>
+                            <span class="ticker-pill">BBAS3</span>
+                            <div class="asset-name">Banco do Brasil</div>
+                        </td>
+                        <td><span class="sector-tag">Financeiro / Estatal</span></td>
+                        <td>Blindagem total da carteira contra subsídios forçados. Preservação de ROE sustentável acima de 21% e dividend yield projetado de dois dígitos. Desconto em relação aos pares privados é eliminado.</td>
+                        <td><span style="color:#f59e0b; font-weight:700;">Alto (1.9x)</span></td>
+                        <td class="impact-high">+20% a +35%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <tr data-sector="ESTATAIS">
+                        <td>
+                            <span class="ticker-pill">ELET3 / ELET6</span>
+                            <div class="asset-name">Eletrobras</div>
+                        </td>
+                        <td><span class="sector-tag">Utilities / Energia</span></td>
+                        <td>Encerramento categórico de contestações jurídicas promovidas pela União sobre o limite de 10% nos direitos de voto. Pacificação regulatória e retomada plena do plano de eficiência.</td>
+                        <td><span style="color:#f59e0b; font-weight:700;">Alto (1.7x)</span></td>
+                        <td class="impact-high">+18% a +30%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <!-- BÉLICO -->
+                    <tr data-sector="ARMAS">
+                        <td>
+                            <span class="ticker-pill">TASA4</span>
+                            <div class="asset-name">Taurus Armas</div>
+                        </td>
+                        <td><span class="sector-tag">Defesa & Segurança</span></td>
+                        <td>Ativo de maior correlação direta com a pauta conservadora. Revogação de decretos restritivos aos CACs, retorno da liberação de calibres 9mm/.40 e expansão abrupta do mercado consumidor nacional.</td>
+                        <td><span style="color:#ef4444; font-weight:700;">Extremo (3.2x)</span></td>
+                        <td class="impact-high">+45% a +80%</td>
+                        <td><span class="risk-badge risk-high">Alto</span></td>
+                    </tr>
+
+                    <!-- AGRO -->
+                    <tr data-sector="AGRO">
+                        <td>
+                            <span class="ticker-pill">SLCE3</span>
+                            <div class="asset-name">SLC Agrícola</div>
+                        </td>
+                        <td><span class="sector-tag">Agronegócio / Grãos</span></td>
+                        <td>Garantia de segurança fundiária estrita, alinhamento pró-exportações, agilidade no licenciamento de novas áreas e incentivo fiscal continuado às cadeias do agronegócio.</td>
+                        <td><span style="color:#10b981; font-weight:700;">Moderado (1.3x)</span></td>
+                        <td class="impact-mod">+15% a +25%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <tr data-sector="AGRO">
+                        <td>
+                            <span class="ticker-pill">AGRO3</span>
+                            <div class="asset-name">BrasilAgro</div>
+                        </td>
+                        <td><span class="sector-tag">Imobiliário Rural & Agro</span></td>
+                        <td>Aceleração da valorização do portfólio de terras agrícolas (NAV) impulsionada pela estabilidade de direitos de propriedade e demanda compradora de investidores rurais.</td>
+                        <td><span style="color:#10b981; font-weight:700;">Moderado (1.4x)</span></td>
+                        <td class="impact-mod">+18% a +28%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <tr data-sector="AGRO">
+                        <td>
+                            <span class="ticker-pill">SMTO3</span>
+                            <div class="asset-name">São Martinho</div>
+                        </td>
+                        <td><span class="sector-tag">Açúcar & Etanol</span></td>
+                        <td>Com a Petrobras operando estritamente em paridade de mercado (sem segurar artificialmente a gasolina), o etanol ganha competitividade imediata na bomba, aumentando as margens da companhia.</td>
+                        <td><span style="color:#10b981; font-weight:700;">Moderado (1.2x)</span></td>
+                        <td class="impact-mod">+14% a +22%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <tr data-sector="AGRO">
+                        <td>
+                            <span class="ticker-pill">KEPL3</span>
+                            <div class="asset-name">Kepler Weber</div>
+                        </td>
+                        <td><span class="sector-tag">Bens de Capital Agro</span></td>
+                        <td>Investimentos maciços de produtores em infraestrutura de armazenagem e silos, alavancados por maior confiança institucional e linhas de financiamento rurais fortalecidas.</td>
+                        <td><span style="color:#10b981; font-weight:700;">Moderado (1.3x)</span></td>
+                        <td class="impact-mod">+16% a +26%</td>
+                        <td><span class="risk-badge risk-med">Médio</span></td>
+                    </tr>
+
+                    <!-- DURATION & JUROS -->
+                    <tr data-sector="DURATION">
+                        <td>
+                            <span class="ticker-pill">CYRE3</span>
+                            <div class="asset-name">Cyrela</div>
+                        </td>
+                        <td><span class="sector-tag">Construção / Média-Alta Renda</span></td>
+                        <td>Fechamento de taxas na ponta longa da curva de juros (DIs longos) alivia o custo do crédito imobiliário SBPE, expande a capacidade de financiamento dos compradores e comprime o WACC.</td>
+                        <td><span style="color:#f59e0b; font-weight:700;">Alto (1.8x)</span></td>
+                        <td class="impact-high">+22% a +35%</td>
+                        <td><span class="risk-badge risk-med">Médio</span></td>
+                    </tr>
+
+                    <tr data-sector="DURATION">
+                        <td>
+                            <span class="ticker-pill">MULT3</span>
+                            <div class="asset-name">Multiplan</div>
+                        </td>
+                        <td><span class="sector-tag">Shoppings & Real Estate</span></td>
+                        <td>Sensibilidade direta ao cap rate dos ativos imobiliários. Com o prêmio de juro real caindo nas NTN-Bs, o valor patrimonial dos empreendimentos sofre expansão imediata.</td>
+                        <td><span style="color:#10b981; font-weight:700;">Moderado (1.2x)</span></td>
+                        <td class="impact-mod">+15% a +24%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <tr data-sector="DURATION">
+                        <td>
+                            <span class="ticker-pill">NTN-B 2045/55</span>
+                            <div class="asset-name">Tesouro IPCA+ Longo</div>
+                        </td>
+                        <td><span class="sector-tag">Renda Fixa Soberana</span></td>
+                        <td>Marcação a mercado extremamente favorável. Se a taxa real cair de ~6,50% para ~5,20%, o ganho de capital por duration pode superar 25% a 30% no curto prazo.</td>
+                        <td><span style="color:#f59e0b; font-weight:700;">Alto (Duration 14+)</span></td>
+                        <td class="impact-high">+20% a +32%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <!-- MERCADO & FINANÇAS -->
+                    <tr data-sector="FINANCAS">
+                        <td>
+                            <span class="ticker-pill">BPAC11</span>
+                            <div class="asset-name">BTG Pactual</div>
+                        </td>
+                        <td><span class="sector-tag">Investment Banking</span></td>
+                        <td>Principal beneficiário da reabertura da janela de ofertas públicas primárias (IPOs e follow-ons), privatizações estaduais e federais, e mandatos de M&A corporativo de grande porte.</td>
+                        <td><span style="color:#f59e0b; font-weight:700;">Alto (1.6x)</span></td>
+                        <td class="impact-high">+20% a +32%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <tr data-sector="FINANCAS">
+                        <td>
+                            <span class="ticker-pill">B3SA3</span>
+                            <div class="asset-name">B3 S.A.</div>
+                        </td>
+                        <td><span class="sector-tag">Infraestrutura Financeira</span></td>
+                        <td>Aumento expressivo do volume financeiro médio diário (ADTV) impulsionado pelo fluxo estrangeiro e rotação de alocação de pessoas físicas e institucionais da renda fixa para bolsa.</td>
+                        <td><span style="color:#f59e0b; font-weight:700;">Alto (1.5x)</span></td>
+                        <td class="impact-mod">+16% a +28%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+
+                    <tr data-sector="FINANCAS">
+                        <td>
+                            <span class="ticker-pill">RAIL3</span>
+                            <div class="asset-name">Rumo Logística</div>
+                        </td>
+                        <td><span class="sector-tag">Infraestrutura & Ferrovias</span></td>
+                        <td>Maior volume de escoamento de grãos no Centro-Oeste e renovação antecipada/segurança jurídica em malhas ferroviárias concedidas sem intervenção estatal.</td>
+                        <td><span style="color:#10b981; font-weight:700;">Moderado (1.2x)</span></td>
+                        <td class="impact-mod">+14% a +22%</td>
+                        <td><span class="risk-badge risk-low">Baixo</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MATRIZ DE RISCOS, CONTRAPONTOS & LIMITAÇÕES CRÍTICAS -->
+    <h3 style="font-size: 19px; font-weight: 700; color: #fff; margin-bottom: 14px;">Matriz de Riscos, Contrapesos & Fatores de Cautela</h3>
+    <div class="risk-matrix-grid">
+        <div class="risk-card">
+            <div class="risk-card-head" style="color: #ef4444;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                Restrições ESG & Boicote de Fundos Europeus
+            </div>
+            <div class="risk-card-text">
+                Fundos soberanos e gestores institucionais globais com mandatos estritos de sustentabilidade (especialmente na Europa) podem restringir ou vetar a compra de papéis do agronegócio ou títulos do governo federal se houver percepção de afrouxamento na fiscalização ambiental amazônica.
+            </div>
+        </div>
+
+        <div class="risk-card">
+            <div class="risk-card-head" style="color: #f59e0b;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Tensão Institucional entre Poderes (Executivo x STF)
+            </div>
+            <div class="risk-card-text">
+                O histórico de atrito entre a ala bolsonarista e o Poder Judiciário (Supremo Tribunal Federal) pode gerar picos recorrentes de volatilidade, ameaçando a estabilidade regulatória e mantendo prêmios de risco idiossincráticos elevados na curva de juros.
+            </div>
+        </div>
+
+        <div class="risk-card">
+            <div class="risk-card-head" style="color: #3b82f6;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 18h12l3-18H3z"/></svg>
+                Geopolítica Comercial (China x Alinhamento com EUA)
+            </div>
+            <div class="risk-card-text">
+                Um eventual alinhamento ideológico e diplomático estreito e incondicional com Washington (sob gestão republicana) pode gerar tensões pontuais com a China, maior parceira comercial e compradora primária de soja, milho e minério de ferro brasileiros.
+            </div>
+        </div>
+    </div>
+
+    <!-- RODAPÉ E DISCLAIMER REGULATÓRIO -->
+    <footer>
+        <p>
+            <strong>AVISO LEGAL E DISCLAIMER DE CONFORMIDADE (CVM / ANBIMA):</strong>
+            Este documento possui caráter exclusivamente informativo, acadêmico e analítico de cenários macroeconômicos e de teoria financeira de precificação de ativos sob choques eleitorais. Ele não constitui, nem deve ser interpretado sob qualquer hipótese como oferta pública, recomendação de investimento, relatório de análise nos termos da Resolução CVM nº 20/2021, ou solicitação de compra e venda de quaisquer títulos ou valores mobiliários listados na B3 ou nos mercados internacionais. Rentabilidade passada não representa garantia de retorno futuro.
+        </p>
+        <div class="footer-bottom">
+            <span>IITauQuant Research — Divisão de Estratégia Macroeconômica & Finanças Quantitativas</span>
+            <span style="font-family: var(--font-mono);">Gerado para ambiente de pesquisa e simulação eleitoral</span>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    // Dados para o Gráfico de Dispersão/Barras
+    const assetData = [
+        { ticker: 'TASA4', label: 'Taurus Armas', upsideBase: 62, beta: 3.2, sector: 'ARMAS' },
+        { ticker: 'PETR4', label: 'Petrobras PN', upsideBase: 32, beta: 2.4, sector: 'ESTATAIS' },
+        { ticker: 'BBAS3', label: 'Banco do Brasil', upsideBase: 28, beta: 1.9, sector: 'ESTATAIS' },
+        { ticker: 'ELET3', label: 'Eletrobras ON', upsideBase: 24, beta: 1.7, sector: 'ESTATAIS' },
+        { ticker: 'CYRE3', label: 'Cyrela', upsideBase: 28, beta: 1.8, sector: 'DURATION' },
+        { ticker: 'NTN-B Longa', label: 'Tesouro IPCA+', upsideBase: 26, beta: 1.6, sector: 'DURATION' },
+        { ticker: 'BPAC11', label: 'BTG Pactual', upsideBase: 26, beta: 1.6, sector: 'FINANCAS' },
+        { ticker: 'AGRO3', label: 'BrasilAgro', upsideBase: 23, beta: 1.4, sector: 'AGRO' },
+        { ticker: 'B3SA3', label: 'B3 S.A.', upsideBase: 22, beta: 1.5, sector: 'FINANCAS' },
+        { ticker: 'SLCE3', label: 'SLC Agrícola', upsideBase: 20, beta: 1.3, sector: 'AGRO' },
+        { ticker: 'KEPL3', label: 'Kepler Weber', upsideBase: 21, beta: 1.3, sector: 'AGRO' },
+        { ticker: 'MULT3', label: 'Multiplan', upsideBase: 19, beta: 1.2, sector: 'DURATION' },
+        { ticker: 'SMTO3', label: 'São Martinho', upsideBase: 18, beta: 1.2, sector: 'AGRO' }
+    ];
+
+    let chartInstance = null;
+
+    function initChart() {
+        const ctx = document.getElementById('upsideChart').getContext('2d');
+        
+        const labels = assetData.map(a => a.ticker);
+        const dataValues = assetData.map(a => a.upsideBase);
+        const bgColors = assetData.map(a => {
+            if (a.sector === 'ARMAS') return '#8b5cf6';
+            if (a.sector === 'ESTATAIS') return '#3b82f6';
+            if (a.sector === 'AGRO') return '#10b981';
+            if (a.sector === 'DURATION') return '#f59e0b';
+            return '#06b6d4';
+        });
+
+        chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '% Upside Estimado no Cenário Base',
+                    data: dataValues,
+                    backgroundColor: bgColors,
+                    borderRadius: 6,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleColor: '#f8fafc',
+                        bodyColor: '#cbd5e1',
+                        borderColor: '#334155',
+                        borderWidth: 1,
+                        callbacks: {
+                            label: function(context) {
+                                const asset = assetData[context.dataIndex];
+                                return [
+                                    ` Empresa: ${asset.label}`,
+                                    ` Upside Estimado: +${context.raw}%`,
+                                    ` Beta Político: ${asset.beta}x`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                        ticks: { color: '#94a3b8', font: { family: 'ui-monospace, monospace', size: 11, weight: 'bold' } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: function(val) { return '+' + val + '%'; }
+                        },
+                        suggestedMax: 70
+                    }
+                }
+            }
+        });
+    }
+
+    // Filtragem dinâmica de linhas da tabela
+    function filterSector(sector, btnElement) {
+        // Atualiza estilo dos botões
+        const buttons = document.querySelectorAll('.btn-filter');
+        buttons.forEach(b => b.classList.remove('active'));
+        if (btnElement) btnElement.classList.add('active');
+
+        // Filtra a tabela
+        const rows = document.querySelectorAll('#assetsTable tbody tr');
+        rows.forEach(row => {
+            const rowSector = row.getAttribute('data-sector');
+            if (sector === 'ALL' || rowSector === sector) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Simulação dinâmica com o Slider
+    function updateSimulation(val) {
+        const factor = val / 80; // 80 é o valor padrão
+        const textElement = document.getElementById('sliderValueText');
+        const summaryElement = document.getElementById('simulationSummary');
+
+        textElement.innerText = `${val}% (${val >= 80 ? 'Base Forte' : val >= 50 ? 'Apoio Médio' : 'Base Frágil / Ruído'})`;
+
+        if (val >= 85) {
+            summaryElement.innerHTML = `<strong>Cenário Super-Otimista (${val}%):</strong> Congresso alinhado garante avanço rápido de privatizações e reformas. Fortíssimo fluxo internacional de arbitragem na B3, com estatais liderando valorização histórica.`;
+        } else if (val >= 65) {
+            summaryElement.innerHTML = `<strong>Cenário Base (${val}%):</strong> Equipe econômica ortodoxa, respeito à paridade internacional em estatais e expansão do agronegócio. Curva de juros fecha entre 120 e 180 bps.`;
+        } else {
+            summaryElement.innerHTML = `<strong>Cenário com Fricção Política (${val}%):</strong> Dificuldades de articulação com o Congresso e judicialização frequente no STF atenuam o fechamento da curva de juros e limitam a expansão de múltiplos.`;
+        }
+
+        // Recalcular gráfico
+        if (chartInstance) {
+            chartInstance.data.datasets[0].data = assetData.map(a => Math.round(a.upsideBase * factor));
+            chartInstance.update();
+        }
+    }
+
+    // Inicialização ao carregar página
+    window.addEventListener('DOMContentLoaded', () => {
+        initChart();
+    });
+</script>
+
+</body>
+</html>
