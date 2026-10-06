@@ -55,13 +55,8 @@ table{font-size:.8rem}th,td{padding:8px 6px}}
 </div>
 
 <section><h2>1. A tese em quatro camadas</h2>
-<p>Treinar e rodar modelos de IA exige mais do que GPUs. Cada cluster precisa de memória de alta banda, servidores e racks, energia
-ininterrupta, refrigeração líquida, conexão à rede elétrica e, cada vez mais, geração dedicada. A carteira compra essa cadeia física,
-com peso maior onde a ligação com a IA é direta e a empresa é grande e líquida, e peso pequeno onde a tese é especulativa.</p>
 <div class="grid four"><div class='card c-computacao'><span class='tag'>40% da carteira</span><h3>Chips e computação</h3><ul><li><strong>NVIDIA (NVDA, 20%)</strong> — GPUs e aceleradores, ecossistema CUDA e rede (NVLink, InfiniBand, Ethernet) para clusters de IA.</li><li><strong>Micron Technology (MU, 10%)</strong> — Memória HBM e DRAM para aceleradores e SSDs de data center.</li><li><strong>Super Micro Computer (SMCI, 5%)</strong> — Servidores e racks de IA com refrigeração líquida direta.</li><li><strong>STMicroelectronics (STM, 5%)</strong> — Semicondutores de potência (SiC/GaN) e microcontroladores; entra na tese pela conversão de energia dos racks.</li></ul></div><div class='card c-infraestrutura'><span class='tag'>22% da carteira</span><h3>Infraestrutura do data center</h3><ul><li><strong>Vertiv (VRT, 12%)</strong> — Energia crítica (UPS, distribuição) e refrigeração líquida para data centers.</li><li><strong>Quanta Services (PWR, 10%)</strong> — Engenharia e construção de linhas de transmissão, subestações e conexões elétricas de data centers.</li></ul></div><div class='card c-energia'><span class='tag'>28% da carteira</span><h3>Geração de energia</h3><ul><li><strong>GE Vernova (GEV, 10%)</strong> — Turbinas a gás, equipamentos de rede e eletrificação para a nova carga elétrica.</li><li><strong>Vistra (VST, 10%)</strong> — Geração nuclear e a gás nos EUA, com contratos de energia para data centers.</li><li><strong>Bloom Energy (BE, 8%)</strong> — Células a combustível de óxido sólido para energia local (behind-the-meter) em data centers.</li></ul></div><div class='card c-especulativo'><span class='tag'>10% da carteira</span><h3>Satélites especulativos</h3><ul><li><strong>Digi Power X (DGXX, 4%)</strong> — Ex-minerador de bitcoin migrando para hospedagem de IA/HPC com geração própria.</li><li><strong>VivoPower (VIVO, 3%)</strong> — Microcap em pivô para terrenos energizados e data centers de IA (ticker VVPR até março de 2026).</li><li><strong>Redwire (RDW, 3%)</strong> — Infraestrutura espacial e defesa; ligação com IA indireta (energia e sensoriamento orbital).</li></ul></div></div>
-<div class="callout warn"><strong>Ligação com IA desigual:</strong> NVDA, MU, SMCI e VRT vendem diretamente para data centers de IA.
-PWR, GEV, VST e BE dependem da demanda elétrica que esses data centers criam. STM e RDW têm exposição indireta e pequena, e DGXX e VIVO são
-pivôs de negócio ainda em execução. Os pesos refletem essa diferença.</div></section>
+</section>
 
 <section><h2>2. Regras da estratégia (fixadas antes do backtest)</h2>
 <ol class="rules">
@@ -89,9 +84,6 @@ com volatilidade de 20% ao ano e drawdown máximo de -23,8%. O custo é ficar de
 <div class="card negative"><h3>Cesta em Buy &amp; Hold por camadas</h3><p>Capturou toda a alta (66,3% ao ano), mas com volatilidade de 42% e quedas de até -49,4%.
 Só faz sentido como posição pequena dentro de uma carteira maior, dimensionada para suportar metade do valor evaporando.</p></div>
 </div>
-<div class="callout"><strong>Teste de sorte (Deflated Sharpe):</strong> com 5 variantes testadas, o Sharpe máximo esperado ao acaso seria 0,28.
-A probabilidade de o Sharpe da principal (1,02) superar esse patamar é <strong>0,970</strong>; contra o Sharpe do QQQ (0,85) é 0,671.
-Esse teste não corrige o viés de seleção do universo (seção 6).</div>
 </section>
 
 <section><h2>4. Exposição ao longo do tempo e postura atual do sinal</h2>
@@ -110,26 +102,7 @@ Multiplicador de volatilidade vigente: 1,00.</p>
 <p class="small">Cada linha usa todo o histórico disponível do ativo desde 2020 (GEV desde 2024, RDW e DGXX desde 2021), por isso não é comparável linha a linha. A correlação média entre pares de ativos na janela da carteira foi 0,33.</p>
 </section>
 
-<section><h2>6. Robustez e limites da evidência</h2>
-<div class="grid two">
-<div><h3>Subperíodos (corte em 31/12/2022)</h3><div class="scroll"><table><thead><tr><th></th><th colspan="3">2020–2022</th><th colspan="3">2023–2026</th></tr>
-<tr><th>Série</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th></tr></thead><tbody><tr><td>Estratégia principal</td><td>+11,3%</td><td>0,66</td><td class='neg'>-19,0%</td><td>+27,6%</td><td>1,29</td><td class='neg'>-23,8%</td></tr><tr><td>B&amp;H pesos por camada</td><td>+28,8%</td><td>0,81</td><td class='neg'>-49,4%</td><td>+103,2%</td><td>1,91</td><td class='neg'>-41,9%</td></tr><tr><td>SMH B&amp;H</td><td>+13,7%</td><td>0,52</td><td class='neg'>-45,3%</td><td>+61,7%</td><td>1,53</td><td class='neg'>-36,0%</td></tr><tr><td>QQQ B&amp;H</td><td>+6,4%</td><td>0,36</td><td class='neg'>-35,6%</td><td>+31,5%</td><td>1,46</td><td class='neg'>-22,9%</td></tr></tbody></table></div>
-<p class="small">2020–2022 inclui a alta pós-pandemia e o bear market de semicondutores de 2022. 2023–2026 é o ciclo pós-ChatGPT, período em que estes nomes ficaram conhecidos como beneficiários de IA.</p></div>
-<div><h3>Estresse de custos (motor oficial)</h3><div class="scroll"><table><thead><tr><th>Cenário</th><th>Custo/ponta</th><th>Slippage stop</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th></tr></thead><tbody><tr><td>base_15bps</td><td>0,15%</td><td>0,00%</td><td>+20,2%</td><td>1,02</td><td class='neg'>-23,8%</td></tr><tr><td>liquidez_reduzida</td><td>0,35%</td><td>0,15%</td><td>+13,7%</td><td>0,75</td><td class='neg'>-25,8%</td></tr><tr><td>severo_50bps</td><td>0,50%</td><td>0,30%</td><td>+9,0%</td><td>0,53</td><td class='neg'>-27,2%</td></tr></tbody></table></div>
-<p class="small">No cenário severo (50 bps por ponta e 30 bps de slippage no stop), o CAGR fica em +9,0%. O Momentum ATR gira bastante, então o custo real de execução é decisivo.</p></div>
-</div>
-<h3 style="margin-top:22px">Retornos por ano</h3>
-<div class="scroll"><table><thead><tr><th>Ano</th><th>Momentum ATR + camadas + vol target 25% (principal)</th><th>Buy &amp; Hold, pesos por camada</th><th>SMH Buy &amp; Hold</th><th>QQQ Buy &amp; Hold</th><th>Exposição média (principal)</th></tr></thead><tbody><tr><td>2020 (desde 02/2020)</td><td class='pos'>+21,3%</td><td class='pos'>+80,9%</td><td class='pos'>+56,6%</td><td class='pos'>+41,1%</td><td>43%</td></tr><tr><td>2021</td><td class='pos'>+15,2%</td><td class='pos'>+41,0%</td><td class='pos'>+41,4%</td><td class='pos'>+26,8%</td><td>46%</td></tr><tr><td>2022</td><td class='neg'>-2,2%</td><td class='neg'>-18,0%</td><td class='neg'>-34,3%</td><td class='neg'>-33,1%</td><td>36%</td></tr><tr><td>2023</td><td class='pos'>+49,9%</td><td class='pos'>+116,2%</td><td class='pos'>+72,3%</td><td class='pos'>+53,8%</td><td>56%</td></tr><tr><td>2024</td><td class='pos'>+39,7%</td><td class='pos'>+118,3%</td><td class='pos'>+38,5%</td><td class='pos'>+24,8%</td><td>44%</td></tr><tr><td>2025</td><td class='neg'>-1,1%</td><td class='pos'>+58,8%</td><td class='pos'>+48,7%</td><td class='pos'>+20,2%</td><td>35%</td></tr><tr><td>2026 (até 29/09)</td><td class='pos'>+19,6%</td><td class='pos'>+86,7%</td><td class='pos'>+68,5%</td><td class='pos'>+20,1%</td><td>43%</td></tr></tbody></table></div>
-<p class="small">Os anos de maior defasagem frente à cesta em Buy &amp; Hold foram 2024 (+39,7% contra +118,3%, exposição média de 44%) e 2026 (+19,6% contra +86,7%, exposição média de 43%). Com exposição parcial, a estratégia fica atrás em altas fortes e contínuas. Na maior queda da cesta (19/02/2020 a 18/03/2020), a estratégia variou -7,0% contra -49,4%; nos 63 pregões seguintes, +15,6% contra +88,5%. Os stops protegem na queda, e a recompra só acontece depois que o momentum de 20 pregões volta a ficar positivo, o que deixa parte da recuperação para trás.</p>
-<h3 style="margin-top:22px">Dependência de um único ativo (exclusão de um por vez)</h3>
-<p>Retirando um ativo por vez e redistribuindo o peso dentro da camada, o Sharpe da principal varia de 0,75 (sem NVDA) a 1,08 (sem MU).</p>
-<div class="scroll"><table><thead><tr><th>Carteira</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th></tr></thead><tbody><tr><td>sem NVDA</td><td>+12,9%</td><td>0,75</td><td class='neg'>-24,9%</td></tr><tr><td>sem MU</td><td>+22,4%</td><td>1,08</td><td class='neg'>-23,1%</td></tr><tr><td>sem SMCI</td><td>+20,7%</td><td>1,04</td><td class='neg'>-24,5%</td></tr><tr><td>sem STM</td><td>+20,6%</td><td>1,02</td><td class='neg'>-24,5%</td></tr><tr><td>sem VRT</td><td>+18,8%</td><td>1,02</td><td class='neg'>-24,4%</td></tr><tr><td>sem PWR</td><td>+19,9%</td><td>0,98</td><td class='neg'>-22,8%</td></tr><tr><td>sem GEV</td><td>+20,0%</td><td>1,00</td><td class='neg'>-22,5%</td></tr><tr><td>sem VST</td><td>+20,4%</td><td>0,94</td><td class='neg'>-25,8%</td></tr><tr><td>sem BE</td><td>+18,9%</td><td>1,01</td><td class='neg'>-24,6%</td></tr><tr><td>sem DGXX</td><td>+19,9%</td><td>1,01</td><td class='neg'>-23,8%</td></tr><tr><td>sem VIVO</td><td>+20,4%</td><td>1,04</td><td class='neg'>-23,8%</td></tr><tr><td>sem RDW</td><td>+19,6%</td><td>1,00</td><td class='neg'>-23,6%</td></tr></tbody></table></div>
-<div class="callout warn"><strong>Viés de seleção ex-post:</strong> a lista de ativos foi escolhida em setembro de 2026, quando já se sabia quais empresas se beneficiaram da IA
-(Vistra, Vertiv, GE Vernova, Bloom e NVIDIA estão entre as maiores altas do mercado americano no período). Nenhum teste estatístico aqui remove esse viés.
-O backtest mostra como as regras de risco teriam se comportado nesta cesta, não quanto se ganharia escolhendo ações de IA em 2020.</div>
-</section>
-
-<section><h2>7. Riscos que invalidam a tese</h2>
+<section><h2>6. Riscos que invalidam a tese</h2>
 <div class="grid two">
 <div class="card negative"><h3>Riscos da carteira</h3><ul>
 <li><strong>Um fator só:</strong> todas as camadas dependem do capex de IA dos hiperescaladores. Um corte de investimento derruba chips, data center e energia ao mesmo tempo.</li>
@@ -141,15 +114,35 @@ O backtest mostra como as regras de risco teriam se comportado nesta cesta, não
 <div class="card neutral"><h3>Riscos por empresa</h3><div class="scroll"><table><tbody><tr><td><strong>NVDA</strong></td><td class='l'>Concentração em poucos hiperescaladores, ASICs próprios dos clientes, controles de exportação e múltiplo elevado</td></tr><tr><td><strong>MU</strong></td><td class='l'>Ciclo de preços de memória, capex pesado e competição com SK Hynix e Samsung</td></tr><tr><td><strong>SMCI</strong></td><td class='l'>Histórico de atraso de demonstrações e troca de auditor, margens estreitas e dependência de alocação de GPUs</td></tr><tr><td><strong>STM</strong></td><td class='l'>Receita dominada por automotivo e industrial: a ligação com IA é indireta e ainda pequena</td></tr><tr><td><strong>VRT</strong></td><td class='l'>Carteira de pedidos sensível ao capex dos hiperescaladores e execução de capacidade fabril</td></tr><tr><td><strong>PWR</strong></td><td class='l'>Execução de projetos, mão de obra especializada e ciclo de investimento das utilities</td></tr><tr><td><strong>GEV</strong></td><td class='l'>Histórico curto em bolsa (desde 2024), segmento eólico deficitário e expectativa alta já no preço</td></tr><tr><td><strong>VST</strong></td><td class='l'>Preço de energia no atacado, regulação de colocalização nuclear e alavancagem</td></tr><tr><td><strong>BE</strong></td><td class='l'>Histórico de prejuízos, custo do gás natural e competição com a rede e turbinas</td></tr><tr><td><strong>DGXX</strong></td><td class='l'>Microcap, execução do pivô, diluição e dependência do preço do bitcoin</td></tr><tr><td><strong>VIVO</strong></td><td class='l'>Pivôs sucessivos de negócio, liquidez historicamente mínima, diluição e risco de continuidade</td></tr><tr><td><strong>RDW</strong></td><td class='l'>Tese de IA fraca, dependência de contratos governamentais e histórico de prejuízos</td></tr></tbody></table></div></div>
 </div></section>
 
-<section><h2>8. Como reproduzir e operar em paper</h2>
+<section><h2>7. Perspectiva: o futuro desta carteira é promissor?</h2>
+<div class="grid two">
+<div class="card" style="border-top:4px solid var(--green)"><h3>O que sustenta a tese daqui para frente</h3><ul>
+<li><strong>O gargalo é físico:</strong> computação de IA depende de chips, memória, refrigeração, conexão à rede e geração. Turbinas, transformadores e conexões
+levam anos para serem entregues, o que dá visibilidade de receita às camadas de data center e energia.</li>
+<li><strong>Energia não depende só da IA:</strong> eletrificação e reindustrialização também puxam a carga elétrica, e essa camada soma 28% da carteira.</li>
+<li><strong>As regras não exigem que a tese esteja certa:</strong> se o ciclo virar, o stop tira a posição. Na queda de 2020, a cesta perdeu 49,4%
+e a estratégia, 7,0%; em 2022, a cesta fechou em -18,0% e a estratégia em -2,2%.</li>
+</ul></div>
+<div class="card negative"><h3>O que limita o retorno daqui para frente</h3><ul>
+<li><strong>Aritmética:</strong> a cesta multiplicou o capital por 29 em 6,7 anos. Repetir isso exigiria que empresas
+que já estão entre as maiores do mundo se multiplicassem de novo na mesma proporção.</li>
+<li><strong>O crescimento já está no preço:</strong> o sinal está 89% exposto a mercado, contra média histórica de 43%,
+depois de uma alta longa. É o ponto de maior risco da estratégia.</li>
+<li><strong>Dependência de um nome:</strong> sem NVDA, o CAGR histórico da principal cai para 12,9%.</li>
+<li><strong>O timing custa caro em alta contínua:</strong> a estratégia capturou cerca de 30% do retorno anual da cesta; em 2025, fechou em -1,1%
+com a cesta em +58,8%.</li>
+<li><strong>Precedente histórico:</strong> em ciclos de infraestrutura como ferrovias e fibra óptica, a tecnologia se impôs, mas o excesso de capacidade puniu parte de quem a financiou.</li>
+</ul></div>
+</div>
+<h3 style="margin-top:22px">Perspectiva por camada</h3>
+<div class="scroll"><table><thead><tr><th>Camada</th><th>Peso</th><th class="l">Perspectiva</th><th class="l">Leitura</th></tr></thead><tbody><tr><td><strong>Chips e computação</strong></td><td>40%</td><td class='l'><strong>Favorável, a mais cíclica</strong></td><td class='l'>Concentra o maior lucro da cadeia e também a maior exigência de preço. Memória (MU) segue ciclo próprio de preços, e os chips desenhados pelos próprios clientes disputam espaço com a NVDA.</td></tr><tr><td><strong>Infraestrutura do data center</strong></td><td>22%</td><td class='l'><strong>Favorável enquanto o capex durar</strong></td><td class='l'>A receita deriva direto dos pedidos dos hiperescaladores: é a primeira camada a sentir um corte de investimento.</td></tr><tr><td><strong>Geração de energia</strong></td><td>28%</td><td class='l'><strong>A mais durável</strong></td><td class='l'>A carga elétrica cresce por mais de um motivo (IA, eletrificação, reindustrialização) e os ativos são difíceis de replicar. PWR e VST têm beta de 0,82 e 0,80 contra o QQQ, os menores da cesta. Pesam o risco regulatório e o preço da energia no atacado.</td></tr><tr><td><strong>Satélites especulativos</strong></td><td>10%</td><td class='l'><strong>Pouco promissora</strong></td><td class='l'>Pivôs de negócio ainda não provados. No histórico, VIVO perdeu 14,4% ao ano em Buy &amp; Hold e DGXX chegou a cair 97,4%. Funciona como opção: a perda total do peso é um desfecho plausível.</td></tr></tbody></table></div>
+<h3 style="margin-top:22px">O que confirmaria ou derrubaria a tese</h3>
 <ul>
-<li><code>python scripts/run_tese_ia_infraestrutura.py</code> reproduz tudo offline a partir do snapshot congelado <code>results/tese_ia_infra/snapshot_ohlcv_2026-09-29.parquet</code> (SHA-256 <code>976698b984b98e11…</code>). Com <code>--refresh</code>, baixa de novo pelo yfinance.</li>
-<li>Calendário: rebalanceamento no pregão seguinte ao último pregão de cada mês; sinais e stops são reavaliados diariamente no fechamento.</li>
-<li>Universo registrado em <code>config/momentum_universe.json</code> como <code>tese_ia_infraestrutura</code>. Métricas, pesos mensais, sinais atuais e curvas estão em <code>results/tese_ia_infra/</code>.</li>
-<li>Antes de qualquer capital real: validação walk-forward fora da amostra, paper trading pelo OMS do repositório e revisão humana dos fundamentos de cada empresa.</li>
+<li><strong>Capex dos hiperescaladores:</strong> a orientação de investimento que eles divulgam a cada trimestre é o primeiro sinal, para cima ou para baixo.</li>
+<li><strong>Receita de IA frente ao capex:</strong> se a monetização não acompanhar o investimento, ou se ele passar a depender cada vez mais de dívida, o ciclo fica frágil.</li>
+<li><strong>Pedidos e preços na cadeia:</strong> carteira de pedidos de VRT e GEV, preço de memória para MU e contratos de energia para data centers de VST e BE.</li>
+<li><strong>Satélites:</strong> contratos assinados e receita, não anúncios de pivô.</li>
 </ul>
-<p class="small">Fontes: preços diários — Yahoo Finance via yfinance (auto_adjust=False: OHLC ajustado por desdobramentos, sem dividendos). A descrição dos negócios é qualitativa e deve ser confirmada nos arquivamentos de cada empresa na
-<a href="https://www.sec.gov/edgar/search/">SEC EDGAR</a> (10-K/10-Q; 20-F/6-K para STM e VivoPower). VivoPower negociava como VVPR até 16/03/2026, quando passou a VIVO.</p>
 </section>
 
 <div class="footer">Fundo LASTRO &amp; Laboratório Momentum ATR — iitauquant • Relatório gerado por scripts/run_tese_ia_infraestrutura.py • Simulação histórica paper-only, sem ordens executadas •

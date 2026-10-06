@@ -979,11 +979,8 @@ def build_html(*, charts, variants, subperiods, annual, annual_exposure, loo, st
     bh = _row(variants, "BH_CAMADAS")
     smh = _row(variants, "SMH_BH")
     qqq = _row(variants, "QQQ_BH")
-    sub = subperiods.set_index(["variante", "periodo"])
     loo_sorted = loo.sort_values("sharpe")
     worst_loo = loo_sorted.iloc[0]
-    best_loo = loo_sorted.iloc[-1]
-    severe = stress.set_index("cenario").iloc[-1]
     n_long = int((positions["sinal"] == "comprado").sum())
 
     camada_cards = []
@@ -1004,32 +1001,6 @@ def build_html(*, charts, variants, subperiods, annual, annual_exposure, loo, st
             f"<td>{num(r['sortino'])}</td><td class='neg'>{pct(r['max_drawdown'])}</td><td>{num(r['calmar'])}</td></tr>"
         )
 
-    sub_rows = []
-    labels = {PRINCIPAL: "Estratégia principal", "BH_CAMADAS": "B&amp;H pesos por camada", "SMH_BH": "SMH B&amp;H", "QQQ_BH": "QQQ B&amp;H"}
-    for key, label in labels.items():
-        a, b = sub.loc[(key, "2020-2022")], sub.loc[(key, "2023-2026")]
-        sub_rows.append(
-            f"<tr><td>{label}</td><td>{pct(a['cagr'], 1, True)}</td><td>{num(a['sharpe'])}</td><td class='neg'>{pct(a['max_drawdown'])}</td>"
-            f"<td>{pct(b['cagr'], 1, True)}</td><td>{num(b['sharpe'])}</td><td class='neg'>{pct(b['max_drawdown'])}</td></tr>"
-        )
-
-    annual_head = "".join(f"<th>{esc(c)}</th>" for c in annual.columns) + "<th>Exposição média (principal)</th>"
-    annual_rows = "".join(
-        f"<tr><td>{year}{' (desde ' + stats['inicio'][5:7] + '/' + stats['inicio'][:4] + ')' if year == annual.index[0] else ''}"
-        f"{' (até 29/09)' if year == annual.index[-1] else ''}</td>"
-        + "".join(f"<td class='{_cls(v)}'>{pct(v, 1, True)}</td>" for v in r) + f"<td>{pct(annual_exposure.loc[year], 0)}</td></tr>"
-        for year, r in annual.iterrows()
-    )
-
-    loo_rows = "".join(
-        f"<tr><td>sem {esc(r['ativo_excluido'])}</td><td>{pct(r['cagr'], 1, True)}</td><td>{num(r['sharpe'])}</td>"
-        f"<td class='neg'>{pct(r['max_drawdown'])}</td></tr>" for _, r in loo.iterrows()
-    )
-    stress_rows = "".join(
-        f"<tr><td>{esc(r['cenario'])}</td><td>{pct(r['custo_por_ponta'], 2)}</td><td>{pct(r['slippage_stop'], 2)}</td>"
-        f"<td>{pct(r['cagr'], 1, True)}</td><td>{num(r['sharpe'])}</td><td class='neg'>{pct(r['max_drawdown'])}</td></tr>"
-        for _, r in stress.iterrows()
-    )
     asset_rows = "".join(
         f"<tr><td><strong>{r['ticker']}</strong> <span class='small'>{esc(r['empresa'])}</span></td><td class='l'>{esc(r['camada'])}</td>"
         f"<td>{pct(r['peso_alvo'], 0)}</td><td>{r['inicio']}</td><td>{int(r['trades'])}</td><td>{pct(r['exposicao'], 0)}</td>"
@@ -1046,6 +1017,32 @@ def build_html(*, charts, variants, subperiods, annual, annual_exposure, loo, st
         f"<td>{_usd_compact(r['liquidez_mediana_63d_usd'])}</td><td>{pct(r['peso_alvo_vigente'])}</td>"
         f"<td>{pct(r['peso_alvo_indicativo_proximo'])}</td></tr>"
         for _, r in positions.iterrows()
+    )
+
+    by_ticker = assets.set_index("ticker")
+    anos_amostra = (pd.Timestamp(stats["fim"]) - pd.Timestamp(stats["inicio"])).days / 365.25
+    strat_year, basket_year = annual.iloc[:, 0], annual.iloc[:, 1]
+    ano_queda = basket_year.idxmin()
+    ano_custo = strat_year[basket_year > 0].idxmin()
+    episodio = stats["episodio"]
+    leitura_camada = {
+        "computacao": ("Favorável, a mais cíclica",
+                       "Concentra o maior lucro da cadeia e também a maior exigência de preço. Memória (MU) segue ciclo próprio de preços, "
+                       "e os chips desenhados pelos próprios clientes disputam espaço com a NVDA."),
+        "infraestrutura": ("Favorável enquanto o capex durar",
+                           "A receita deriva direto dos pedidos dos hiperescaladores: é a primeira camada a sentir um corte de investimento."),
+        "energia": ("A mais durável",
+                    "A carga elétrica cresce por mais de um motivo (IA, eletrificação, reindustrialização) e os ativos são difíceis de replicar. "
+                    f"PWR e VST têm beta de {num(by_ticker.loc['PWR', 'beta_qqq'])} e {num(by_ticker.loc['VST', 'beta_qqq'])} contra o QQQ, "
+                    "os menores da cesta. Pesam o risco regulatório e o preço da energia no atacado."),
+        "especulativo": ("Pouco promissora",
+                         f"Pivôs de negócio ainda não provados. No histórico, VIVO perdeu {pct(abs(by_ticker.loc['VIVO', 'bh_cagr']), 1)} ao ano em Buy &amp; Hold "
+                         f"e DGXX chegou a cair {pct(abs(by_ticker.loc['DGXX', 'bh_max_dd']), 1)}. Funciona como opção: a perda total do peso é um desfecho plausível."),
+    }
+    outlook_rows = "".join(
+        f"<tr><td><strong>{esc(label)}</strong></td><td>{pct(sum(a.peso for a in ATIVOS if a.camada == key), 0)}</td>"
+        f"<td class='l'><strong>{leitura_camada[key][0]}</strong></td><td class='l'>{leitura_camada[key][1]}</td></tr>"
+        for key, label in CAMADAS.items()
     )
 
     janela = f"{stats['inicio'][5:7]}/{stats['inicio'][:4]}–{stats['fim'][5:7]}/{stats['fim'][:4]}"
@@ -1095,13 +1092,8 @@ def build_html(*, charts, variants, subperiods, annual, annual_exposure, loo, st
 </div>
 
 <section><h2>1. A tese em quatro camadas</h2>
-<p>Treinar e rodar modelos de IA exige mais do que GPUs. Cada cluster precisa de memória de alta banda, servidores e racks, energia
-ininterrupta, refrigeração líquida, conexão à rede elétrica e, cada vez mais, geração dedicada. A carteira compra essa cadeia física,
-com peso maior onde a ligação com a IA é direta e a empresa é grande e líquida, e peso pequeno onde a tese é especulativa.</p>
 <div class="grid four">{''.join(camada_cards)}</div>
-<div class="callout warn"><strong>Ligação com IA desigual:</strong> NVDA, MU, SMCI e VRT vendem diretamente para data centers de IA.
-PWR, GEV, VST e BE dependem da demanda elétrica que esses data centers criam. STM e RDW têm exposição indireta e pequena, e DGXX e VIVO são
-pivôs de negócio ainda em execução. Os pesos refletem essa diferença.</div></section>
+</section>
 
 <section><h2>2. Regras da estratégia (fixadas antes do backtest)</h2>
 <ol class="rules">
@@ -1129,9 +1121,6 @@ com volatilidade de {pct(p['volatilidade'], 0)} ao ano e drawdown máximo de {pc
 <div class="card negative"><h3>Cesta em Buy &amp; Hold por camadas</h3><p>Capturou toda a alta ({pct(bh['cagr'], 1)} ao ano), mas com volatilidade de {pct(bh['volatilidade'], 0)} e quedas de até {pct(bh['max_drawdown'])}.
 Só faz sentido como posição pequena dentro de uma carteira maior, dimensionada para suportar metade do valor evaporando.</p></div>
 </div>
-<div class="callout"><strong>Teste de sorte (Deflated Sharpe):</strong> com 5 variantes testadas, o Sharpe máximo esperado ao acaso seria {num(stats['sharpe_esperado_maximo_5_tentativas'])}.
-A probabilidade de o Sharpe da principal ({num(p['sharpe'])}) superar esse patamar é <strong>{num(stats['dsr_5_tentativas'], 3)}</strong>; contra o Sharpe do QQQ ({num(stats['sharpe_qqq'])}) é {num(stats['psr_vs_qqq'], 3)}.
-Esse teste não corrige o viés de seleção do universo (seção 6).</div>
 </section>
 
 <section><h2>4. Exposição ao longo do tempo e postura atual do sinal</h2>
@@ -1150,26 +1139,7 @@ Multiplicador de volatilidade vigente: {num(stats['multiplicador_vol_atual'])}.<
 <p class="small">Cada linha usa todo o histórico disponível do ativo desde 2020 (GEV desde 2024, RDW e DGXX desde 2021), por isso não é comparável linha a linha. A correlação média entre pares de ativos na janela da carteira foi {num(stats['correlacao_media_pares'])}.</p>
 </section>
 
-<section><h2>6. Robustez e limites da evidência</h2>
-<div class="grid two">
-<div><h3>Subperíodos (corte em 31/12/2022)</h3><div class="scroll"><table><thead><tr><th></th><th colspan="3">2020–2022</th><th colspan="3">2023–2026</th></tr>
-<tr><th>Série</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th></tr></thead><tbody>{''.join(sub_rows)}</tbody></table></div>
-<p class="small">2020–2022 inclui a alta pós-pandemia e o bear market de semicondutores de 2022. 2023–2026 é o ciclo pós-ChatGPT, período em que estes nomes ficaram conhecidos como beneficiários de IA.</p></div>
-<div><h3>Estresse de custos (motor oficial)</h3><div class="scroll"><table><thead><tr><th>Cenário</th><th>Custo/ponta</th><th>Slippage stop</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th></tr></thead><tbody>{stress_rows}</tbody></table></div>
-<p class="small">No cenário severo (50 bps por ponta e 30 bps de slippage no stop), o CAGR fica em {pct(severe['cagr'], 1, True)}. O Momentum ATR gira bastante, então o custo real de execução é decisivo.</p></div>
-</div>
-<h3 style="margin-top:22px">Retornos por ano</h3>
-<div class="scroll"><table><thead><tr><th>Ano</th>{annual_head}</tr></thead><tbody>{annual_rows}</tbody></table></div>
-<p class="small">{worst_year_text}</p>
-<h3 style="margin-top:22px">Dependência de um único ativo (exclusão de um por vez)</h3>
-<p>Retirando um ativo por vez e redistribuindo o peso dentro da camada, o Sharpe da principal varia de {num(worst_loo['sharpe'])} (sem {esc(worst_loo['ativo_excluido'])}) a {num(best_loo['sharpe'])} (sem {esc(best_loo['ativo_excluido'])}).</p>
-<div class="scroll"><table><thead><tr><th>Carteira</th><th>CAGR</th><th>Sharpe</th><th>Max DD</th></tr></thead><tbody>{loo_rows}</tbody></table></div>
-<div class="callout warn"><strong>Viés de seleção ex-post:</strong> a lista de ativos foi escolhida em setembro de 2026, quando já se sabia quais empresas se beneficiaram da IA
-(Vistra, Vertiv, GE Vernova, Bloom e NVIDIA estão entre as maiores altas do mercado americano no período). Nenhum teste estatístico aqui remove esse viés.
-O backtest mostra como as regras de risco teriam se comportado nesta cesta, não quanto se ganharia escolhendo ações de IA em 2020.</div>
-</section>
-
-<section><h2>7. Riscos que invalidam a tese</h2>
+<section><h2>6. Riscos que invalidam a tese</h2>
 <div class="grid two">
 <div class="card negative"><h3>Riscos da carteira</h3><ul>
 <li><strong>Um fator só:</strong> todas as camadas dependem do capex de IA dos hiperescaladores. Um corte de investimento derruba chips, data center e energia ao mesmo tempo.</li>
@@ -1181,15 +1151,35 @@ O backtest mostra como as regras de risco teriam se comportado nesta cesta, não
 <div class="card neutral"><h3>Riscos por empresa</h3><div class="scroll"><table><tbody>{risk_rows}</tbody></table></div></div>
 </div></section>
 
-<section><h2>8. Como reproduzir e operar em paper</h2>
+<section><h2>7. Perspectiva: o futuro desta carteira é promissor?</h2>
+<div class="grid two">
+<div class="card" style="border-top:4px solid var(--green)"><h3>O que sustenta a tese daqui para frente</h3><ul>
+<li><strong>O gargalo é físico:</strong> computação de IA depende de chips, memória, refrigeração, conexão à rede e geração. Turbinas, transformadores e conexões
+levam anos para serem entregues, o que dá visibilidade de receita às camadas de data center e energia.</li>
+<li><strong>Energia não depende só da IA:</strong> eletrificação e reindustrialização também puxam a carga elétrica, e essa camada soma {pct(sum(a.peso for a in ATIVOS if a.camada == 'energia'), 0)} da carteira.</li>
+<li><strong>As regras não exigem que a tese esteja certa:</strong> se o ciclo virar, o stop tira a posição. Na queda de {episodio['pico'][:4]}, a cesta perdeu {pct(abs(episodio['cesta_queda']), 1)}
+e a estratégia, {pct(abs(episodio['estrategia_queda']), 1)}; em {ano_queda}, a cesta fechou em {pct(basket_year.loc[ano_queda], 1, True)} e a estratégia em {pct(strat_year.loc[ano_queda], 1, True)}.</li>
+</ul></div>
+<div class="card negative"><h3>O que limita o retorno daqui para frente</h3><ul>
+<li><strong>Aritmética:</strong> a cesta multiplicou o capital por {num(1 + bh['retorno_total'], 0)} em {num(anos_amostra, 1)} anos. Repetir isso exigiria que empresas
+que já estão entre as maiores do mundo se multiplicassem de novo na mesma proporção.</li>
+<li><strong>O crescimento já está no preço:</strong> o sinal está {pct(stats['exposicao_atual_mercado'], 0)} exposto a mercado, contra média histórica de {pct(stats['exposicao_media_mercado'], 0)},
+depois de uma alta longa. É o ponto de maior risco da estratégia.</li>
+<li><strong>Dependência de um nome:</strong> sem {esc(worst_loo['ativo_excluido'])}, o CAGR histórico da principal cai para {pct(worst_loo['cagr'], 1)}.</li>
+<li><strong>O timing custa caro em alta contínua:</strong> a estratégia capturou cerca de {pct(p['cagr'] / bh['cagr'], 0)} do retorno anual da cesta; em {ano_custo}, fechou em {pct(strat_year.loc[ano_custo], 1, True)}
+com a cesta em {pct(basket_year.loc[ano_custo], 1, True)}.</li>
+<li><strong>Precedente histórico:</strong> em ciclos de infraestrutura como ferrovias e fibra óptica, a tecnologia se impôs, mas o excesso de capacidade puniu parte de quem a financiou.</li>
+</ul></div>
+</div>
+<h3 style="margin-top:22px">Perspectiva por camada</h3>
+<div class="scroll"><table><thead><tr><th>Camada</th><th>Peso</th><th class="l">Perspectiva</th><th class="l">Leitura</th></tr></thead><tbody>{outlook_rows}</tbody></table></div>
+<h3 style="margin-top:22px">O que confirmaria ou derrubaria a tese</h3>
 <ul>
-<li><code>python scripts/run_tese_ia_infraestrutura.py</code> reproduz tudo offline a partir do snapshot congelado <code>results/tese_ia_infra/{esc(manifest['snapshot'])}</code> (SHA-256 <code>{esc(manifest['snapshot_sha256'][:16])}…</code>). Com <code>--refresh</code>, baixa de novo pelo yfinance.</li>
-<li>Calendário: rebalanceamento no pregão seguinte ao último pregão de cada mês; sinais e stops são reavaliados diariamente no fechamento.</li>
-<li>Universo registrado em <code>config/momentum_universe.json</code> como <code>tese_ia_infraestrutura</code>. Métricas, pesos mensais, sinais atuais e curvas estão em <code>results/tese_ia_infra/</code>.</li>
-<li>Antes de qualquer capital real: validação walk-forward fora da amostra, paper trading pelo OMS do repositório e revisão humana dos fundamentos de cada empresa.</li>
+<li><strong>Capex dos hiperescaladores:</strong> a orientação de investimento que eles divulgam a cada trimestre é o primeiro sinal, para cima ou para baixo.</li>
+<li><strong>Receita de IA frente ao capex:</strong> se a monetização não acompanhar o investimento, ou se ele passar a depender cada vez mais de dívida, o ciclo fica frágil.</li>
+<li><strong>Pedidos e preços na cadeia:</strong> carteira de pedidos de VRT e GEV, preço de memória para MU e contratos de energia para data centers de VST e BE.</li>
+<li><strong>Satélites:</strong> contratos assinados e receita, não anúncios de pivô.</li>
 </ul>
-<p class="small">Fontes: preços diários — {esc(manifest['fonte'])}. A descrição dos negócios é qualitativa e deve ser confirmada nos arquivamentos de cada empresa na
-<a href="https://www.sec.gov/edgar/search/">SEC EDGAR</a> (10-K/10-Q; 20-F/6-K para STM e VivoPower). VivoPower negociava como VVPR até 16/03/2026, quando passou a VIVO.</p>
 </section>
 
 <div class="footer">Fundo LASTRO &amp; Laboratório Momentum ATR — iitauquant • Relatório gerado por scripts/run_tese_ia_infraestrutura.py • Simulação histórica paper-only, sem ordens executadas •
