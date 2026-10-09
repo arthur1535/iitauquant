@@ -14,6 +14,7 @@ dependencies = [
   "yfinance>=0.2.54",
   "lxml>=5.0",
   "openpyxl>=3.1",
+  "tzdata>=2024.1; platform_system == 'Windows'",
 ]
 
 [project.optional-dependencies]
@@ -35,12 +36,23 @@ dev = [
 [project.scripts]
 iitauquant-data = "iitauquant_data.cli:main"
 iitauquant-paper = "automation.__main__:main"
+iitauquant-research = "investment_research.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "src", "quant_fund" = "quant_fund"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "."]
+include = [
+  "iitauquant_data*",
+  "investment_research*",
+  "automation*",
+  "backtest*",
+  "server*",
+  "strategies*",
+  "quant_fund*",
+]
+namespaces = false
 
 [tool.pytest.ini_options]
 pythonpath = [".", "src"]

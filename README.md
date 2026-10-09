@@ -1,253 +1,118 @@
-# LASTRO — Fundo Sistemático Multi-Sleeve & Laboratório Momentum ATR
+# IITAU Quant — pesquisa quantitativa de investimentos
 
-[![Testes Python](https://img.shields.io/badge/testes%20python-139%20aprovados-brightgreen.svg)](#testes-e-validação)
-[![Testes Cloudflare](https://img.shields.io/badge/testes%20worker-37%20aprovados-brightgreen.svg)](#testes-e-validação)
-[![Modo Operacional](https://img.shields.io/badge/modo-paper--only-blue.svg)](#segurança-e-governança)
-[![Edital Itaú Quant](https://img.shields.io/badge/entrega%20oficial-AAKR%20(16%3A9)-orange.svg)](#relatórios-oficiais)
+Pesquisa reproduzível de ações e ETFs negociados nos EUA, em USD, para operações de dias a semanas. O pipeline compara tendência, força relativa, liquidez e risco; entrega um ranking com regras explícitas, cenários de custos e evidências de backtest. O fundo LASTRO, os estudos anteriores e o OMS simulado continuam documentados neste repositório.
 
-Repositório unificado de pesquisa, modelagem econométrica, backtest orientado a eventos e execução simulada desenvolvido para o **Desafio II Itaú Quant**. O projeto combina uma estratégia fundamentalista/momentum multi-sleeve com overlay macro e um laboratório sistemático de alta capacidade baseado em Momentum ATR e Order Management System (OMS) estritamente paper-only.
+## Começar
 
----
+Python 3.11+; recomendado 3.12. No PowerShell, na raiz do projeto:
 
-## 1. Estrutura do Repositório
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\python.exe scripts/run_investment_research.py --refresh --as-of 2026-10-09
+```
 
-O projeto adota uma arquitetura modular com separação estrita de responsabilidades entre dados macro/mensais e cotações diárias, relatórios oficiais e evidências de pesquisa:
+Abra `results/investment_research/2026-10-09/relatorio.html`. A mesma pasta contém `ranking.csv`, `exclusions.csv`, `manifest.json` e `support_note.md`. Depois da instalação, `iitauquant-research` também executa a CLI.
+
+Para repetir a análise usando o cache local:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_investment_research.py --offline --as-of 2026-10-09
+```
+
+A data é explícita: troque `--as-of` para a data desejada e atualize a coleta. Sessões ainda abertas são removidas; séries antigas ou sem evidência suficiente são excluídas. O ranking é um filtro quantitativo de pesquisa, não uma probabilidade de lucro. Confira a data dos preços, as exclusões e o manifesto antes de interpretar os resultados.
+
+## Navegação
+
+| Procurando | Caminho |
+|---|---|
+| Regras, dados, custos e leitura do ranking | [Guia da pesquisa de curto prazo](docs/INVESTMENT_RESEARCH.md) |
+| Universo e parâmetros da pesquisa | [config/swing_us.json](config/swing_us.json) |
+| Documentação técnica completa | [Índice de documentação](docs/README.md) |
+| Fundo e estudos anteriores | [Pesquisa e entregas anteriores](#pesquisa-e-entregas-anteriores) |
+| Proveniência mensal e macro | [Camada de dados LASTRO](dados/README.md) |
+| Operação do servidor simulado | [Runbook](docs/OPERATIONS_RUNBOOK.md) |
+| Histórico de colaboração e verificações | [AGENT_SYNC.md](AGENT_SYNC.md) |
+
+## Organização
 
 ```text
-iitauquant/
-├── README.md                      # [Este arquivo] Guia mestre, arquitetura e documentação
-├── AGENT_SYNC.md                  # Barramento de colaboração multi-agente (Antigravity ↔ ChatGPT)
-├── log_uso_genai.csv              # Trilha de auditoria GenAI (requisito formal do edital - 15% da nota)
-├── pyproject.toml                 # Configuração de build, pacotes e ferramentas de teste
-├── requirements.txt               # Dependências completas Python
-├── requirements-tradingview.txt   # Dependências específicas para TradingView/OMS
-├── run_quant_pipeline.py          # Shim CLI para execução rápida do pipeline multi-sleeve
-│
-├── config/                        # Configurações declarativas JSON (universos, OMS e automação)
-│   ├── automation.json            # Agendamentos de automação
-│   ├── dados.json                 # Parâmetros de ingestão e normalização
-│   ├── momentum_universe.json     # Universos (B3 local, Global Leaders, ETFs)
-│   └── oms_simulation.json        # Limites de risco, capital inicial e símbolos autorizados
-│
-├── docs/                          # Central de Documentação Técnica e Governança
-│   ├── README.md                  # Catálogo mestre de toda a documentação
-│   ├── ACCEPTANCE_CHECKLIST.md    # 17 critérios de aceite formais auditados
-│   ├── ARCHITECTURE_MOMENTUM.md   # Arquitetura do motor Momentum ATR e paper OMS
-│   ├── AUDITORIA_OOS_TAREFA1.md   # Auditoria Out-Of-Sample com contrato temporal
-│   ├── DATA_GOVERNANCE.md         # Governança de dados e integridade point-in-time
-│   ├── OPERATIONS_RUNBOOK.md      # Runbook de operações, monitoramento e contingência
-│   ├── PESQUISA_METODOS_QUANTITATIVOS.md # Métodos econométricos (DSR, Bootstrap, FF5)
-│   ├── SECURITY_MODEL.md          # Modelo de segurança fail-closed e assinatura HMAC
-│   ├── TRADINGVIEW_CREATOR.md     # Guia de desenvolvimento Pine v5/v6 sem repainting
-│   ├── fundo/                     # Relatórios técnicos e tutoriais do Fundo LASTRO
-│   │   ├── relatorio_tecnico_fundo.md
-│   │   ├── tutorial_desenvolvimento_fundo.md
-│   │   └── checklist_pre_relatorio_31_07.md
-│   └── prompts/                   # Prompts institucionais e barramentos de colaboração
-│       ├── MEGAPROMPT_ANALISTA_INVESTIMENTOS.md
-│       └── PROMPT_INTEGRACAO_CHATGPT.md
-│
-├── quant_fund/                    # Pacote Python do Fundo Multi-Sleeve LASTRO
-│   ├── README.md                  # Documentação do pacote, regras de pesos e rebalanceamento
-│   ├── adapters.py                # Adaptadores de dados SEC e preços
-│   ├── config.py                  # Parâmetros de sleeves e overlay
-│   ├── pipeline.py                # Pipeline ponta a ponta
-│   ├── portfolio.py               # Consolidação e ponderação de carteira
-│   ├── risk_overlay.py            # Overlay macro BAA10Y + NFCI com histerese
-│   ├── sleeve1.py                 # Sleeve 1: Fatores / Qualidade (top 50 anual)
-│   ├── sleeve2.py                 # Sleeve 2: Small Cap Momentum 12-1 (mensal)
-│   ├── sleeve3.py                 # Sleeve 3: Gestão de Caixa (BIL / T-Bills)
-│   ├── utils.py                   # Z-score transversal e drift de pesos
-│   └── validation.py              # DSR, PSR e bootstrap em blocos
-│
-├── src/                           # Pacote Python do Laboratório Momentum ATR e OMS
-│   ├── antigravity/               # Prompts e manifestos de pesquisa autônoma
-│   ├── automation/                # Agendador e orquestrador de tarefas
-│   ├── backtest/                  # Motor de backtest causal, DSR, WFA e grid
-│   ├── iitauquant_data/           # Pipeline de ingestão, normalização e cache
-│   ├── server/                    # Servidor FastAPI do Paper OMS e webhook HMAC
-│   └── strategies/                # Estratégia Momentum ATR e validação OHLCV
-│
-├── scripts/                       # Todos os scripts executáveis da esteira unificada
-│   ├── run_quant_pipeline.py      # Execução do pipeline completo do fundo
-│   ├── backtest_auditoria.py      # Backtest preliminar por proxies e vieses
-│   ├── auditar_vintages_macro.py  # Fotografias ALFRED disponíveis point-in-time
-│   ├── diagnostico_overlay.py     # Atribuição, sensibilidade e gate estatístico
-│   ├── graficos_relatorio.py      # Geração das figuras oficiais R1..R7
-│   ├── build_relatorio.py         # Compilação dos PDFs oficiais AAKR
-│   ├── auditar_tradingview.py     # Reconciliação de sinais do TradingView
-│   ├── analisar_trades_tv.py      # Análise de exportações de trades
-│   ├── run_momentum_research.py   # Pipeline de pesquisa Momentum B3
-│   ├── run_global_momentum_research.py # Pesquisa da cesta Global Leaders
-│   ├── run_out_of_sample_audit.py # Split cronológico OOS e contrato temporal
-│   ├── run_tradingview_live_demo.py   # Emulação de webhook TradingView -> OMS
-│   └── analisar_mercado_chines.py # Estudo quantitativo de ETFs/ações da China
-│
-├── dados/                         # Camada de dados mensais e macro do Fundo LASTRO
-│   ├── README.md                  # Documentação da camada de dados
-│   ├── DICIONARIO_DADOS.md        # Dicionário de variáveis e fontes XBRL/FRED
-│   ├── STATUS_AGENTE_DADOS.md     # Status de ingestão
-│   └── ...                        # Datasets (preços, fatores FF, BAA10Y, NFCI)
-│
-├── data/                          # Camada de mercado diária em Parquet e Paper OMS
-│   ├── README.md                  # Documentação dos caches de mercado
-│   ├── market/*.parquet           # Cotações diárias validadas (B3, Globais, ETFs)
-│   └── oms_live_demo.sqlite3      # Banco SQLite em WAL append-only para ordens paper
-│
-├── relatorios/                    # Entregáveis Oficiais do Edital (Anonimizados)
-│   ├── AAKR.pdf                   # Relatório oficial em 5 páginas 16:9 horizontal
-│   ├── AAKR_retrato.pdf           # Versão alternativa em A4 retrato
-│   ├── AAKR.html                  # Versão autocontida para visualização em tela
-│   └── AAKR_retrato.html          # Versão autocontida retrato
-│
-├── resultados/                    # Artefatos, gráficos e tabelas do Fundo LASTRO
-│   ├── graficos/                  # Figuras renderizadas (R1 a R7)
-│   ├── tabelas/                   # Métricas e saídas numéricas
-│   └── *.json / *.csv             # Manifestos de revisão, validação e pesos
-│
-├── results/                       # Evidências do Laboratório Momentum ATR e OMS
-│   ├── README.md                  # Histórico das evidências arquivadas
-│   ├── baseline/                  # Métricas de referência
-│   ├── global_research/           # Resultados dos Global Leaders (NVDA, SPY, etc.)
-│   ├── china_research/            # Resultados do mercado chinês
-│   ├── grid_search/               # Avaliação e checkpoints de grid search
-│   ├── oos_audit/                 # Manifestos e métricas da auditoria OOS
-│   └── test_reports/              # Relatórios XML de testes
-│
-├── tradingview/                   # Scripts Pine v5/v6 e integrações TradingView
-│   ├── README.md                  # Guia geral do módulo TradingView
-│   ├── README_MOMENTUM_ATR.md     # Especificação técnica do Momentum ATR
-│   ├── README_EXPORTACAO_DADOS.md # Protocolo de exportação e sanitização
-│   ├── alert_templates.json       # Templates de alerta JSON para webhook
-│   └── *.pine                     # Indicadores de regime, dashboard e estratégias
-│
-├── infra/                         # Infraestrutura e borda
-│   └── cloudflare/                # Worker Cloudflare de terminação de webhook com HMAC
-│
-└── tests/                         # Suíte de testes automatizados (139 testes verdes)
-    ├── test_automation_runner.py
-    ├── test_data_pipeline.py
-    ├── test_momentum_backtest.py
-    ├── test_oos_validation.py
-    ├── test_paper_ledger.py
-    ├── test_paper_replay.py
-    ├── test_quant_fund.py
-    ├── test_research_automation.py
-    ├── test_risk_overlay.py
-    ├── test_server_oms.py
-    └── test_validation.py
+config/swing_us.json             Universo dos EUA e parâmetros fixos
+src/investment_research/         Coleta, filtros, métricas, backtest e relatório
+scripts/run_investment_research.py  Entrada da pesquisa de curto prazo
+data/swing_us/                  Cache isolado e proveniência da nova pesquisa
+results/investment_research/     Relatórios e tabelas separados por data
+
+quant_fund/                     Fundo LASTRO: fatores, small caps, caixa e overlay
+dados/                          Dados mensais, SEC, FRED, fatores e vintages
+resultados/                     Tabelas e figuras do fundo
+src/backtest/ + src/strategies/  Laboratório Momentum ATR
+src/iitauquant_data/             CLI de dados mensais auditáveis
+src/automation/ + src/server/   Automação local e OMS simulado
+tradingview/ + infra/cloudflare/ Pine Script, webhook e Worker
+relatorios/                     Relatórios institucionais e estudos anteriores
+tests/                          Verificações Python
 ```
 
----
+A nova pesquisa usa um cache próprio. Os arquivos de `data/market/` e os resultados antigos mantêm seus cortes e limitações originais; executar um script antigo não atualiza automaticamente o mercado nem valida sua proveniência.
 
-## 2. As Duas Frentes do Projeto
+## Método de curto prazo
 
-### A. Fundo Sistemático Multi-Sleeve (LASTRO)
-- **Sleeve 1 (Fatores / Qualidade)**: Seleção anual em junho das 50 maiores pontuações combinadas de valor, tamanho, rentabilidade e investimento, baseada em demonstrações financeiras SEC XBRL point-in-time.
-- **Sleeve 2 (Small Cap Momentum)**: Rebalanceamento mensal no top 5% do ranking composto por Momentum 12-1 defasado e reversão de curto prazo.
-- **Sleeve 3 (Caixa Defensivo)**: Alocação em títulos do Tesouro Americano de curtíssimo prazo (`BIL`).
-- **Overlay de Risco Dual-Axis**: Monitoramento do spread de crédito corporativo (`BAA10Y`) e índice de condições financeiras (`NFCI`) via z-score móvel de 36 meses com histerese (entrada 1,0 / saída 0,5) e de-risking graduado (até 50% de migração para BIL).
-- **Entregável**: Relatório institucional anônimo **`relatorios/AAKR.pdf`** (5 páginas, formato 16:9 exigido pelo edital).
+O universo reúne 24 ações e ETFs dos EUA. A triagem exige fechamento acima da média de 20 pregões e esta acima da média de 50, retorno positivo em 20 pregões, força relativa positiva frente ao SPY (dispensada para o próprio SPY), extensão máxima de 3 ATR e liquidez média de 20 pregões de pelo menos US$ 20 milhões. O SPY também precisa estar acima da média de 50 pregões. O score combina momentum de 20/60 pregões ajustado ao risco, força relativa e drawdown com pesos fixos documentados no código.
 
-### B. Laboratório Momentum ATR & Paper OMS
-- **Estratégia Momentum ATR**: Trend-following sistemático em barras diárias com gatilho de Momentum relativo, filtro de volatilidade e trailing stop adaptativo calculado via ATR (`stop = close - multiplier * ATR`).
-- **Garantias Anti-Look-Ahead**: Sinal computado em `close[t]` executado estritamente em `open[t+1]`. Tratamento realista de gaps abaixo do stop com preenchimento no preço de abertura e comissão de 15 bps por ponta.
-- **Auditoria Out-Of-Sample (OOS)**: Split cronológico 70/30 (In-Sample até 2022-12-31 e Out-Of-Sample a partir de 2023-01-01), Walk-Forward com purga e embargo, cálculo de Deflated Sharpe Ratio (DSR) e testes de estresse em múltiplos ativos.
-- **Paper OMS & Borda**: Servidor FastAPI local com autenticação HMAC SHA-256 sobre bytes brutos, prevenção de replay por timestamp/nonce, base SQLite append-only em WAL mode e Worker Cloudflare na borda. Modo estritamente restrito a simulação (`mode = "paper"`).
+O backtest compra na abertura seguinte ao sinal, usa stop móvel de 2 ATR e prazo máximo de 10 pregões. Há divisão cronológica 70/30, custos de 15 pontos-base por ponta, estresse de 30 pontos-base e comparação com comprar e manter e SPY. Os indicadores do teste podem usar o histórico anterior para aquecimento; posições e sinais anteriores não são herdados.
 
----
+A seleção do universo é atual e retrospectiva, sujeita a viés de sobrevivência e seleção. A avaliação reservada é uma comparação histórica; não é um holdout cego nem prova de alpha. Veja [definições e limitações](docs/INVESTMENT_RESEARCH.md).
 
-## 3. Como Executar
+## Testes e empacotamento
 
-### Pré-requisitos
-Ambiente Python 3.11+ (recomendado 3.12). Recomenda-se utilizar ambiente virtual `.venv`:
+A suíte inclui backtests causais, divisão temporal, adaptadores SEC, regras do fundo, HMAC/replay e o servidor paper. Para instalar suas dependências adicionais e executar:
 
-```bash
-# Criar e ativar ambiente virtual (Windows PowerShell)
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-# Instalar dependências
-pip install -r requirements.txt
+```powershell
+.\.venv\Scripts\python.exe -m pip install "fastapi>=0.115" "httpx>=0.27" "pyarrow>=17.0" "statsmodels>=0.14" "matplotlib>=3.9"
+.\.venv\Scripts\python.exe -m pytest tests -q
+node --test infra/cloudflare/test/worker.test.mjs
+.\.venv\Scripts\python.exe -m pip wheel --no-deps --no-build-isolation -w tmp/wheels .
 ```
 
-### Reproduzir o Relatório Oficial (LASTRO AAKR)
-Para reconstruir os dados, auditar vintages, computar o diagnóstico, gerar os gráficos e compilar o PDF oficial:
+O workflow [Tests and packaging](.github/workflows/tests.yml) executa Python 3.11/3.12 e Node no Windows, verifica o conteúdo do wheel e importa os pacotes fora do checkout. `vectorbt` é opcional; a CI usa o motor causal do projeto. O pacote inclui tanto `src/` quanto `quant_fund/`.
 
-```bash
-# 1. Backtest preliminar por proxies e auditoria de vieses
+## Pesquisa e entregas anteriores
+
+O projeto nasceu no **Desafio II Itaú Quant** e preserva duas frentes históricas:
+
+- **Fundo LASTRO:** fatores/qualidade, small caps com momentum 12–1 e caixa em BIL; overlay de crédito BAA10Y e condições financeiras NFCI. Regras e contratos CSV em [quant_fund/README.md](quant_fund/README.md), [relatório técnico](docs/fundo/relatorio_tecnico_fundo.md) e [tutorial](docs/fundo/tutorial_desenvolvimento_fundo.md).
+- **Laboratório Momentum ATR e OMS:** sinal no fechamento e execução na abertura seguinte, trailing stop ATR, estudos de parâmetros, walk-forward e ordens simuladas. Consulte [arquitetura](docs/ARCHITECTURE_MOMENTUM.md), [auditoria temporal](docs/AUDITORIA_OOS_TAREFA1.md), [métodos](docs/PESQUISA_METODOS_QUANTITATIVOS.md) e [histórico de resultados](results/README.md).
+
+O relatório institucional está em [relatorios/AAKR.pdf](relatorios/AAKR.pdf); a versão alternativa está em [relatorios/AAKR_retrato.pdf](relatorios/AAKR_retrato.pdf). Para reconstruir a entrega, com os dados exigidos disponíveis e as dependências completas de `requirements.txt` instaladas:
+
+```powershell
 python scripts/backtest_auditoria.py
-
-# 2. Auditoria de vintages point-in-time no ALFRED (FRED vintage)
 python scripts/auditar_vintages_macro.py
-
-# 3. Diagnóstico do overlay, testes de sensibilidade e gate estatístico
 python scripts/diagnostico_overlay.py
-
-# 4. Renderização das figuras oficiais R1 a R7
 python scripts/graficos_relatorio.py
-
-# 5. Compilação dos relatórios finais AAKR.pdf e AAKR_retrato.pdf
 python scripts/build_relatorio.py
 ```
 
-Os relatórios prontos são gerados em [`relatorios/AAKR.pdf`](relatorios/AAKR.pdf).
+Outras entradas históricas:
 
-### Executar o Pipeline Multi-Sleeve em CSV
-Para rodar a esteira quantitativa com datasets locais:
-
-```bash
+```powershell
 python scripts/run_quant_pipeline.py --input-dir dados --output-dir resultados/quant
-```
-
-### Executar a Pesquisa Momentum ATR e Auditoria OOS
-Para rodar a esteira de pesquisa do motor Momentum:
-
-```bash
-# Pesquisa em ativos globais de alta liquidez (NVDA, SPY, AAPL, etc.)
 python scripts/run_global_momentum_research.py
-
-# Estudo quantitativo de ETFs e ações chinesas
 python scripts/analisar_mercado_chines.py
-
-# Auditoria formal Out-Of-Sample com contrato temporal (dry-run SPY)
-python scripts/run_out_of_sample_audit.py --symbol SPY --dry-run
+python scripts/run_out_of_sample_audit.py --symbols SPY --dry-run
 ```
 
-### Iniciar o Servidor Paper OMS
-Para iniciar o serviço de ordens simuladas:
+O último comando gera um contrato de planejamento; métricas não são calculadas em `--dry-run`. Estudos globais antigos leem os caches locais. A coleta SEC exige identificação verdadeira em `SEC_USER_AGENT` e o fundo por ações depende de fundamentos e universo adequados; veja [status dos dados](dados/STATUS_AGENTE_DADOS.md).
 
-```bash
-# Copiar configuração de ambiente (paper-only)
-cp .env.example .env
+Para o servidor simulado, instale `.[tradingview]`, configure `.env` a partir de `.env.example` e execute:
 
-# Iniciar servidor local com Uvicorn
-python -m uvicorn src.server.app:app --host 127.0.0.1 --port 8000
+```powershell
+python -m uvicorn server.app:app --host 127.0.0.1 --port 8000
 ```
 
----
+O OMS permanece em `mode="paper"`, com assinatura HMAC e registro em SQLite. Detalhes em [segurança](docs/SECURITY_MODEL.md), [operações](docs/OPERATIONS_RUNBOOK.md) e [TradingView](tradingview/README.md).
 
-## 4. Testes e Validação
+## Governança
 
-A integridade de todo o ecossistema é garantida por testes automatizados executados de forma independente:
-
-### Suíte Python (139 testes)
-```bash
-.venv\Scripts\python.exe -m pytest tests/ -q
-```
-*Cobertura: backtest sem look-ahead, fill em gaps, cálculos DSR/PSR, adapters SEC, carteira multi-sleeve, overlay de risco, HMAC do servidor OMS, janelas de replay e validação cronológica OOS.*
-
-### Suíte Cloudflare Worker (37 testes)
-```bash
-node --test infra/cloudflare/test/worker.test.mjs
-```
-*Cobertura: allowlist de IPs do TradingView, integridade do HMAC SHA-256 e validação do envelope de requisição.*
-
----
-
-## 5. Governança e Transparência
-
-- **Uso de IA Generativa**: Todas as sessões, prompts, revisões e commits de agentes de IA são registrados no arquivo [`log_uso_genai.csv`](log_uso_genai.csv), cumprindo integralmente a exigência do edital (15% da avaliação).
-- **Coordenação Concorrente**: Convivência ordenada entre agentes de IA registrada em [`AGENT_SYNC.md`](AGENT_SYNC.md).
-- **Checklist de Aceite**: 17 critérios de aceite formalmente comprovados em [`docs/ACCEPTANCE_CHECKLIST.md`](docs/ACCEPTANCE_CHECKLIST.md).
-- **Modo Paper-Only**: Impossibilidade técnica de envio de ordens reais a corretoras; qualquer tentativa de alterar a configuração do servidor para outro modo resulta em falha imediata (*fail-closed*).
+Os critérios do projeto estão em [ACCEPTANCE_CHECKLIST.md](docs/ACCEPTANCE_CHECKLIST.md). O [log de uso de IA](log_uso_genai.csv) e o [barramento de colaboração](AGENT_SYNC.md) preservam a trilha das intervenções. Dados ausentes não devem ser inventados; resultados sintéticos precisam estar identificados. Relatórios históricos representam as informações e a metodologia da data de geração.

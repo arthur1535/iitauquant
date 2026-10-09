@@ -58,7 +58,9 @@ def sec_facts_to_fundamentals(facts: pd.DataFrame) -> pd.DataFrame:
     data["fiscal_period_end"] = pd.to_datetime(data["fiscal_period_end"], errors="coerce")
     data["availability_date"] = pd.to_datetime(data["availability_date"], errors="coerce")
     data["value"] = pd.to_numeric(data["value"], errors="coerce")
-    data["tag_priority"] = pd.to_numeric(data.get("tag_priority", 0), errors="coerce").fillna(0)
+    if "tag_priority" not in data:
+        data["tag_priority"] = 0
+    data["tag_priority"] = pd.to_numeric(data["tag_priority"], errors="coerce").fillna(0)
     data = data.dropna(subset=["fiscal_period_end", "availability_date", "value"])
     data = data.sort_values(
         [

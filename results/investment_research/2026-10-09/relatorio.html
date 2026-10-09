@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Pesquisa quantitativa de ações e ETFs dos EUA para operações de dias a semanas, com riscos, validação OOS e fontes auditáveis.">
+<title>Pesquisa swing em USD · 2026-10-09 · iitauquant</title><style>
+:root{--ink:#132c3b;--muted:#5a6b73;--paper:#f5f4ef;--white:#fff;--line:#d9dfda;--green:#156a5e;--amber:#986523;--red:#a14836;--serif:Georgia,'Times New Roman',serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif}a{color:var(--green);text-underline-offset:3px}button,input,select{font:inherit}button,a,input,select{touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #d89639;outline-offset:3px}.wrap{max-width:1440px;margin:auto;padding:0 44px}.masthead{display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-bottom:1px solid var(--line);gap:20px}.brand{font-weight:800;letter-spacing:-.7px;font-size:22px;color:var(--ink);text-decoration:none}.brand span{color:var(--green)}.masthead nav{display:flex;align-items:center;gap:22px;font-size:13px}.masthead nav a{color:var(--muted);text-decoration:none}.print{border:1px solid var(--line);border-radius:5px;background:transparent;padding:8px 13px;cursor:pointer;color:var(--ink)}.hero{padding:54px 0 30px;display:grid;grid-template-columns:1fr 290px;gap:50px;align-items:end}.eyebrow{text-transform:uppercase;letter-spacing:1.6px;font-size:11px;font-weight:700;color:var(--green)}h1{font:clamp(34px,3.5vw,50px)/1.12 var(--serif);letter-spacing:-1.1px;font-weight:400;margin:12px 0 18px;max-width:900px}h2{font:30px/1.2 var(--serif);font-weight:400;letter-spacing:-.4px;margin:0}h3{margin:15px 0 4px;font-size:28px;letter-spacing:-.6px}p{margin:0 0 16px}.hero .lead{font-size:17px;max-width:840px;color:var(--muted)}.hero-meta{padding:20px 0 20px 25px;border-left:2px solid var(--green)}.hero-meta p{margin:0 0 13px}.hero-meta small,.hero-meta span{display:block;color:var(--muted);font-size:12px}.hero-meta strong{font-size:16px;font-weight:600}.hero-note{font-size:12px;color:var(--muted);margin-bottom:25px}.funnel{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:7px;background:var(--white);overflow:hidden}.funnel-item{padding:22px 25px;position:relative}.funnel-item+.funnel-item{border-left:1px solid var(--line)}.funnel-item strong{display:block;font-size:34px;font-weight:500;line-height:1.2;font-variant-numeric:tabular-nums}.funnel-item span{display:block;font-size:13px;margin-top:8px}.funnel-item small{display:block;font-size:11px;color:var(--muted);margin-top:4px}.funnel-item.advance{background:#e9f2ec}.section{margin-top:46px;scroll-margin-top:22px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:20px}.section-head p{color:var(--muted);font-size:13px;max-width:620px;margin:0}.section-kicker{display:block;color:var(--green);font-size:11px;letter-spacing:1.3px;text-transform:uppercase;font-weight:700;margin-bottom:8px}.ideas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.idea-card{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--green);padding:22px;border-radius:6px;min-width:0}.card-top{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}.card-top .eyebrow{font-size:10px;letter-spacing:1px}h3 span{display:block;font-size:13px;font-weight:400;color:var(--muted);letter-spacing:0;margin-top:3px}.source-note{font-size:11px;color:var(--muted);margin-top:13px}.source-note a{color:var(--muted)}.badge{display:inline-block;border:1px solid #bfd8cc;border-radius:3px;font-size:10px;font-weight:650;line-height:1.4;padding:4px 7px;background:#eaf4ed;color:var(--green);white-space:normal}.badge.observar{background:#fbf3e7;border-color:#ead8b5;color:var(--amber)}.badge.bloqueado{background:#f7ece8;border-color:#e9c9bf;color:var(--red)}.card-metrics{display:grid;grid-template-columns:1fr 1fr;gap:15px 12px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:18px 0}.card-metrics span{font-size:10px;color:var(--muted);display:block}.card-metrics strong{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;display:block;margin-top:4px}.evidence-line{font-size:11px;line-height:1.6;padding:11px 12px;background:#eff4f1;border-radius:4px}.evidence-line strong{font-weight:650}.evidence-line.limited{background:#faf3e8;color:#79501c}.idea-thesis{margin:18px 0}.idea-thesis div{margin:0 0 14px}.idea-thesis dt{font-size:11px;font-weight:750;color:var(--ink);margin-bottom:3px}.idea-thesis dd{font-size:12px;color:var(--muted);margin:0}.risk-reference{padding:13px 0;border-top:1px solid var(--line)}.risk-reference span{font-size:10px;color:var(--muted);display:block}.risk-reference strong{font-size:22px;font-weight:500}.risk-reference small{font-size:10px;color:var(--muted);display:block;line-height:1.5;margin-top:4px}.next-step{font-size:11px;margin:0;background:#f2f5f1;padding:12px;border-radius:3px;color:var(--muted)}.next-step strong{display:block;color:var(--green);margin-bottom:3px}.empty-state{padding:25px;background:#fff;border:1px solid var(--line);border-radius:6px;color:var(--muted)}.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:18px 0 12px}.controls label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted)}.controls input,.controls select{padding:10px 12px;background:#fff;border:1px solid #cbd5ce;border-radius:4px;color:var(--ink);font-size:13px;min-height:41px}.controls input{min-width:230px}.result-count{margin:0 0 13px;color:var(--muted);font-size:12px}.table-scroll{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:6px}table{border-collapse:collapse;width:100%;font-size:12px;line-height:1.45}caption{text-align:left;padding:14px 18px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line)}th,td{text-align:right;vertical-align:top;padding:14px 13px;border-bottom:1px solid #e7eae5;white-space:nowrap;font-variant-numeric:tabular-nums}thead th{font-size:10px;font-weight:700;background:#eff2ed;color:var(--muted);padding:13px;position:sticky;top:0;z-index:1}thead th button{background:none;border:0;padding:0;color:inherit;font-size:inherit;font-weight:inherit;cursor:pointer}th:first-child,td:first-child{text-align:left}tbody th{font-size:13px;font-weight:700;min-width:190px}tbody th a{text-decoration:none;color:var(--ink)}tbody small{display:block;font-size:10px;line-height:1.4;font-weight:400;color:var(--muted);white-space:normal;max-width:195px;margin-top:4px}.rank{color:#87938e;font-size:10px;margin-right:10px}#ranking td:nth-child(2){min-width:200px;text-align:left}#ranking td:nth-child(2) small{max-width:210px}.evidence-cell{text-align:left;max-width:160px;min-width:140px;white-space:normal;font-size:10px;color:var(--muted)}tbody tr:last-child>*{border-bottom:0}tbody tr:hover{background:#fafbf8}.positive{color:var(--green)}.negative{color:var(--red)}.muted{color:var(--muted)}.table-footnote{font-size:11px;line-height:1.6;color:var(--muted);margin:12px 0}.two-column{display:grid;grid-template-columns:1fr 1fr;gap:24px}.panel{border:1px solid var(--line);border-radius:6px;background:#fff;padding:25px;min-width:0}.panel h2{font-size:26px;margin-bottom:14px}.panel p,.panel li{font-size:13px;color:var(--muted)}.panel ul,.method-list{padding-left:19px;margin:0}.panel li{margin-bottom:11px}.panel li:last-child{margin-bottom:0}.correlation{font-size:12px}.correlation caption{font-size:11px}.correlation th,.correlation td{padding:12px;text-align:center;min-width:55px}.correlation th:first-child{text-align:left}.warning-list{margin:0;padding:16px 20px 16px 35px;background:#fff5e5;border-left:3px solid #b68139;border-radius:3px}.warning-list li{color:#785624;font-size:12px;margin:5px 0}.details-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}.details-grid h3{font:24px var(--serif);margin:0 0 13px}.details-grid li{font-size:12px;color:var(--muted);margin-bottom:10px}.method-list{margin-top:14px}.rejected-list{font-size:12px;list-style:none;padding:0;margin:0}.rejected-list li{border-top:1px solid var(--line);padding:12px 0;display:flex;gap:15px}.rejected-list strong{min-width:65px;color:var(--ink)}details{margin-top:20px;border:1px solid var(--line);border-radius:5px;background:#fff;padding:15px 18px}summary{cursor:pointer;font-size:13px;font-weight:600}details p{margin:12px 0 0;color:var(--muted);font-size:12px}.sources-table td:nth-child(2),.sources-table td:last-child{text-align:left}.sources-table th:first-child{min-width:90px}.hash{font:10px/1.5 ui-monospace,monospace;white-space:normal;word-break:break-all;max-width:250px}.source-rows{margin-top:20px}.footer{border-top:1px solid var(--line);margin:45px 0 0;padding:24px 0 30px;display:flex;justify-content:space-between;gap:30px;color:var(--muted);font-size:11px}.footer p{max-width:820px;margin:0}.noscript{padding:12px;background:#fff3dc;color:#79501c;font-size:12px}.screen-reader{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.funnel{grid-template-columns:repeat(5,1fr)}
+@media(min-width:1500px){.wrap{max-width:1500px}.idea-card{padding:25px}}
+@media(max-width:1100px){.wrap{padding:0 25px}.hero{gap:30px;grid-template-columns:1fr 240px}.ideas{grid-template-columns:repeat(2,minmax(0,1fr))}.idea-card:last-child:nth-child(odd){grid-column:1/-1}.idea-card:last-child:nth-child(odd) .idea-thesis{display:grid;grid-template-columns:1fr 1fr;column-gap:25px}.masthead nav{gap:14px}.section-head{align-items:start}}
+@media(max-width:740px){.wrap{padding:0 18px}.masthead{padding:18px 0}.masthead nav a{display:none}.hero{grid-template-columns:1fr;padding:34px 0 23px;gap:17px}h1{font-size:35px}.hero-meta{padding:14px 0 0;border-left:0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 28px}.hero-meta p{margin:0}.hero-meta small{display:none}.hero-meta strong{font-size:13px}.hero .lead{font-size:15px}.funnel{grid-template-columns:1fr 1fr}.funnel-item{padding:18px}.funnel-item:nth-child(3){border-left:0}.funnel-item:nth-child(n+3){border-top:1px solid var(--line)}.funnel-item strong{font-size:28px}.section{margin-top:34px}.section-head{display:block}.section-head p{margin-top:10px}h2{font-size:28px}.ideas,.two-column,.details-grid{grid-template-columns:1fr}.idea-card:last-child:nth-child(odd){grid-column:auto}.idea-card:last-child:nth-child(odd) .idea-thesis{display:block}.controls label:first-child{width:100%}.controls input{min-width:0;width:100%}.controls label{flex-grow:1}.controls select{max-width:100%;width:100%}.footer{display:block}.footer p{margin-bottom:10px}.panel{padding:20px}}
+@media print{@page{size:A4 landscape;margin:12mm}body{background:#fff;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.wrap{max-width:none;padding:0}.masthead{padding:0 0 10px}.masthead nav,.controls,.result-count,.print,.noscript{display:none!important}.hero{padding:20px 0;grid-template-columns:1fr 220px;gap:25px}h1{font-size:30px}.hero .lead{font-size:12px}.hero-note{font-size:9px}.funnel-item{padding:12px 16px}.funnel-item strong{font-size:25px}.section{margin-top:24px}.section-head{margin-bottom:12px}h2{font-size:24px}.ideas{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.idea-card,.panel{padding:14px;break-inside:avoid}.idea-card:last-child:nth-child(odd){grid-column:auto}.idea-card:last-child:nth-child(odd) .idea-thesis{display:block}.card-top .eyebrow,.badge{font-size:8px}.card-metrics strong{font-size:15px}.idea-thesis dd,.evidence-line,.next-step{font-size:9px}.idea-thesis dt{font-size:9px}.source-note{font-size:8px}.table-scroll{overflow:visible}table{font-size:8px;table-layout:auto}th,td{padding:7px 5px;white-space:normal}thead{display:table-header-group}thead th{position:static;font-size:8px}tbody th{font-size:10px;min-width:0}tbody small{font-size:8px}#ranking td:nth-child(2){min-width:100px}.evidence-cell{min-width:70px;font-size:8px}.rank{display:none}.two-column,.details-grid{grid-template-columns:1fr 1fr}.panel p,.panel li{font-size:10px}.hash{font-size:8px;max-width:170px}.footer{margin-top:25px;padding-bottom:0}details{break-inside:avoid}a{text-decoration:none;color:inherit}.section-head p{font-size:10px}}
+</style></head>
+<body><div class="wrap">
+<header class="masthead"><a class="brand" href="#inicio">iitau<span>quant</span></a><nav aria-label="Seções do relatório"><a href="#prioridades">Prioridades</a><a href="#comparar">Comparar</a><a href="#validacao">Validação</a><a href="#fontes">Fontes</a><button id="print-report" class="print" type="button">Imprimir / PDF</button></nav></header>
+<main id="inicio">
+<section class="hero" aria-labelledby="headline"><div><span class="eyebrow">Pesquisa de oportunidades · exterior</span><h1 id="headline">11 sinais atuais. 2 com histórico favorável.</h1><p class="lead">Os sinais técnicos passam por uma segunda leitura de evidência. Prioridades para diligência: PLTR, MU. Resultado retrospectivo não demonstra vantagem futura; os demais sinais ainda exigem prova.</p></div>
+<aside class="hero-meta" aria-label="Escopo"><p><span>Últimos dados de referência</span><strong><time>2026-10-08</time></strong></p><p><span>Janela de acompanhamento</span><strong>5–10 pregões</strong></p><p><span>Universo e moeda</span><strong>Ações e ETFs · USD</strong></p><small>Pesquisa de 2026-10-09 · posições compradas; execução somente simulada.</small></aside></section>
+<p class="hero-note">Candidatos de pesquisa, não recomendação de compra. Score ordena sinais; não representa probabilidade, retorno esperado ou valor justo.</p>
+<section class="funnel" aria-label="Funil de seleção"><div class="funnel-item"><strong>24</strong><span>Ativos examinados</span><small>24 com métricas · 0 excluídos</small></div><div class="funnel-item"><strong>11</strong><span>Sinais técnicos atuais</span><small>Passam filtros de preço e risco</small></div><div class="funnel-item advance"><strong>2</strong><span>OOS retrospectivo favorável</span><small>Subconjunto dos sinais · exploratório</small></div><div class="funnel-item"><strong>13</strong><span>Aguardar sinal</span><small>Filtros atuais ainda incompletos</small></div><div class="funnel-item"><strong>0</strong><span>Não avançar</span><small>Filtros ou cobertura insuficientes</small></div></section>
+<section class="section" id="prioridades"><div class="section-head"><div><span class="section-kicker">01 / Onde olhar primeiro</span><h2>Prioridades para os próximos pregões</h2></div><p>Primeiro, sinais com OOS favorável; depois, sinais com evidência insuficiente. Essa leitura não altera o score. Mispricing, fundamentos e datas de eventos não foram demonstrados.</p></div><div class="ideas">
+<article class="idea-card">
+  <div class="card-top"><span class="eyebrow">Prioridade 01 · Ação</span>
+    <span class="badge candidato">Sinal técnico presente</span></div>
+  <h3>PLTR<span>Palantir Technologies</span></h3>
+  <p class="source-note"><a href="https://finance.yahoo.com/quote/PLTR/history/" target="_blank" rel="noopener noreferrer">Yahoo Finance via yfinance · PLTR</a> · fechamento de <time>2026-10-08</time></p>
+  <div class="card-metrics">
+    <div><span>Fechamento de referência</span><strong>US$ 198,78</strong></div>
+    <div><span>Score de ordenação</span><strong>97,2</strong></div>
+    <div><span>ATR / preço</span><strong>2,9%</strong></div>
+    <div><span>OOS líquido · 23 operações</span>
+      <strong class="positive">+42,1%</strong></div>
+  </div>
+  <p class="evidence-line "><strong>OOS favorável; evidência exploratória.</strong> Resultados positivos no recorte OOS não estabelecem significância estatística nem repetição futura.</p>
+  <dl class="idea-thesis">
+    <div><dt>Por que agora</dt><dd>Momentum de 20 pregões em +19,8%; força relativa ao SPY em +17,5 p.p.. Isso prioriza pesquisa de continuidade de preço, sem estimar valor justo.</dd></div>
+    <div><dt>Primeiro motivo de rejeição</dt><dd>Resultados corporativos e eventos ainda precisam de confirmação.</dd></div>
+    <div><dt>O que tornaria investível</dt><dd>Manter os filtros quantitativos, validar eventos e custos de execução e confirmar o sinal com dados novos. O resultado segue como candidato de pesquisa.</dd></div>
+    <div><dt>O que invalida</dt><dd>Perda do sinal de tendência, falha nos filtros de risco/liquidez ou evento que altere a tese. Gap pode atravessar a referência de saída.</dd></div>
+    <div><dt>Evidência faltante</dt><dd>Próximos resultados, comunicados de RI, notícias materiais e spread de negociação. Desconto fundamental e expectativas do mercado não medidos.</dd></div>
+  </dl>
+  <div class="risk-reference"><span>Referência técnica de saída · 2,0 ATR</span>
+    <strong>US$ 187,12</strong>
+    <small>Referência de pesquisa na escala atual; não é ordem nem cotação executável. Peso teórico pelo orçamento de risco: 8,5% do capital, antes de combinar posições.</small></div>
+  <p class="next-step"><strong>Próxima etapa</strong> Conferir calendário no RI e notícias; atualizar o sinal após o próximo fechamento.</p>
+</article>
+<article class="idea-card">
+  <div class="card-top"><span class="eyebrow">Prioridade 02 · Ação</span>
+    <span class="badge candidato">Sinal técnico presente</span></div>
+  <h3>MU<span>Micron Technology</span></h3>
+  <p class="source-note"><a href="https://finance.yahoo.com/quote/MU/history/" target="_blank" rel="noopener noreferrer">Yahoo Finance via yfinance · MU</a> · fechamento de <time>2026-10-08</time></p>
+  <div class="card-metrics">
+    <div><span>Fechamento de referência</span><strong>US$ 1.035,84</strong></div>
+    <div><span>Score de ordenação</span><strong>57,7</strong></div>
+    <div><span>ATR / preço</span><strong>4,3%</strong></div>
+    <div><span>OOS líquido · 24 operações</span>
+      <strong class="positive">+431,4%</strong></div>
+  </div>
+  <p class="evidence-line "><strong>OOS favorável; evidência exploratória.</strong> Resultados positivos no recorte OOS não estabelecem significância estatística nem repetição futura. Retorno histórico excepcional: não extrapolar como expectativa; a seleção entre ativos não foi corrigida por múltiplas comparações.</p>
+  <dl class="idea-thesis">
+    <div><dt>Por que agora</dt><dd>Momentum de 20 pregões em +6,0%; força relativa ao SPY em +3,6 p.p.. Isso prioriza pesquisa de continuidade de preço, sem estimar valor justo.</dd></div>
+    <div><dt>Primeiro motivo de rejeição</dt><dd>Resultados corporativos e eventos ainda precisam de confirmação.</dd></div>
+    <div><dt>O que tornaria investível</dt><dd>Manter os filtros quantitativos, validar eventos e custos de execução e confirmar o sinal com dados novos. O resultado segue como candidato de pesquisa.</dd></div>
+    <div><dt>O que invalida</dt><dd>Perda do sinal de tendência, falha nos filtros de risco/liquidez ou evento que altere a tese. Gap pode atravessar a referência de saída.</dd></div>
+    <div><dt>Evidência faltante</dt><dd>Próximos resultados, comunicados de RI, notícias materiais e spread de negociação. Desconto fundamental e expectativas do mercado não medidos.</dd></div>
+  </dl>
+  <div class="risk-reference"><span>Referência técnica de saída · 2,0 ATR</span>
+    <strong>US$ 946,25</strong>
+    <small>Referência de pesquisa na escala atual; não é ordem nem cotação executável. Peso teórico pelo orçamento de risco: 5,8% do capital, antes de combinar posições.</small></div>
+  <p class="next-step"><strong>Próxima etapa</strong> Conferir calendário no RI e notícias; atualizar o sinal após o próximo fechamento.</p>
+</article>
+<article class="idea-card">
+  <div class="card-top"><span class="eyebrow">Prioridade 03 · Ação</span>
+    <span class="badge candidato">Sinal técnico presente</span></div>
+  <h3>MSFT<span>Microsoft</span></h3>
+  <p class="source-note"><a href="https://finance.yahoo.com/quote/MSFT/history/" target="_blank" rel="noopener noreferrer">Yahoo Finance via yfinance · MSFT</a> · fechamento de <time>2026-10-08</time></p>
+  <div class="card-metrics">
+    <div><span>Fechamento de referência</span><strong>US$ 522,61</strong></div>
+    <div><span>Score de ordenação</span><strong>83,8</strong></div>
+    <div><span>ATR / preço</span><strong>2,4%</strong></div>
+    <div><span>OOS líquido · 21 operações</span>
+      <strong class="negative">-12,5%</strong></div>
+  </div>
+  <p class="evidence-line limited"><strong>Sem vantagem demonstrada.</strong> Retorno oos ausente ou não positivo; sharpe oos ausente ou não positivo; retorno sob custos maiores ausente ou não positivo.</p>
+  <dl class="idea-thesis">
+    <div><dt>Por que agora</dt><dd>Momentum de 20 pregões em +6,1%; força relativa ao SPY em +3,7 p.p.. Isso prioriza pesquisa de continuidade de preço, sem estimar valor justo.</dd></div>
+    <div><dt>Primeiro motivo de rejeição</dt><dd>Retorno oos ausente ou não positivo.</dd></div>
+    <div><dt>O que tornaria investível</dt><dd>Manter os filtros quantitativos, validar eventos e custos de execução e confirmar o sinal com dados novos. O resultado segue como candidato de pesquisa.</dd></div>
+    <div><dt>O que invalida</dt><dd>Perda do sinal de tendência, falha nos filtros de risco/liquidez ou evento que altere a tese. Gap pode atravessar a referência de saída.</dd></div>
+    <div><dt>Evidência faltante</dt><dd>Próximos resultados, comunicados de RI, notícias materiais e spread de negociação. Desconto fundamental e expectativas do mercado não medidos.</dd></div>
+  </dl>
+  <div class="risk-reference"><span>Referência técnica de saída · 2,0 ATR</span>
+    <strong>US$ 497,75</strong>
+    <small>Referência de pesquisa na escala atual; não é ordem nem cotação executável. Peso teórico pelo orçamento de risco: 10,0% do capital, antes de combinar posições.</small></div>
+  <p class="next-step"><strong>Próxima etapa</strong> Conferir calendário no RI e notícias; atualizar o sinal após o próximo fechamento.</p>
+</article></div></section>
+<section class="section" id="comparar"><div class="section-head"><div><span class="section-kicker">02 / Comparação</span><h2>Todos os ativos, com o mesmo critério</h2></div><p>Retornos e risco vêm do histórico ajustado. A evidência fora da amostra aparece ao lado do sinal atual para evitar confundir força recente com robustez.</p></div>
+<div class="controls"><label>Buscar ativo ou setor<input id="search" type="search" placeholder="Ticker, nome ou setor" autocomplete="off"></label><label>Instrumento<select id="kind"><option value="">Todos</option><option value="Ação">Ações</option><option value="ETF">ETFs</option></select></label><label>Status<select id="status"><option value="">Todos</option><option value="candidato">Sinal técnico presente</option><option value="observar">Aguardar sinal</option><option value="bloqueado">Não avançar</option></select></label><label>Ordenação<select id="sort"><option value="score:desc">Maior score</option><option value="return20:desc">Maior retorno em 20 pregões</option><option value="oos:desc">Maior retorno OOS</option><option value="vol:asc">Menor volatilidade</option><option value="adv:desc">Maior liquidez</option><option value="ticker:asc">Ticker A–Z</option></select></label></div><p id="result-count" class="result-count" role="status" aria-live="polite">24 ativos exibidos</p><noscript><p class="noscript">JavaScript desativado: a tabela completa continua disponível. Filtros e ordenação precisam de JavaScript.</p></noscript>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Tabela comparativa, deslize horizontalmente para ver todas as métricas"><table id="ranking"><caption>Fechamento de referência, sinais atuais e validação histórica · dados até 2026-10-08</caption><thead><tr><th scope="col"><button type="button" data-sort-key="ticker">Ativo ↕</button></th><th scope="col">Status / primeiro impedimento</th><th scope="col" aria-sort="descending"><button type="button" data-sort-key="score">Score ↕</button></th><th scope="col">Fechamento / data</th><th scope="col"><button type="button" data-sort-key="return20">20 pregões ↕</button></th><th scope="col">Relativo SPY · 20p</th><th scope="col"><button type="button" data-sort-key="vol">Vol. 20p anual ↕</button></th><th scope="col">ATR / preço</th><th scope="col"><button type="button" data-sort-key="adv">Volume US$/dia ↕</button></th><th scope="col"><button type="button" data-sort-key="oos">Retorno OOS ↕</button></th><th scope="col">Leitura da evidência</th></tr></thead><tbody>
+<tr data-ticker="PLTR" data-search="pltr palantir technologies software"
+ data-kind="Ação" data-status="candidato" data-score="97.1875"
+ data-return20="0.1984806345588257" data-oos="0.4209849148595517"
+ data-vol="0.2302664619544539" data-adv="4244701385.014318">
+ <th scope="row"><span class="rank">01</span><a href="https://finance.yahoo.com/quote/PLTR/history/" target="_blank" rel="noopener noreferrer">PLTR</a>
+ <small>Palantir Technologies · Ação<br>Software</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Resultados corporativos e eventos ainda precisam de confirmação.</small></td>
+ <td>97,2</td>
+ <td>US$ 198,78<small>2026-10-08</small></td>
+ <td class="positive">+19,8%</td>
+ <td class="positive">+17,5 p.p.</td>
+ <td>23,0%</td>
+ <td>2,9%</td>
+ <td>US$ 4,2 bi</td>
+ <td class="positive">+42,1%<small>23 operações</small></td>
+ <td class="evidence-cell">OOS favorável; evidência exploratória</td>
+</tr>
+<tr data-ticker="MSFT" data-search="msft microsoft software"
+ data-kind="Ação" data-status="candidato" data-score="83.75"
+ data-return20="0.06126631216279943" data-oos="-0.12504267240041034"
+ data-vol="0.21500203482037514" data-adv="11281835304.510658">
+ <th scope="row"><span class="rank">02</span><a href="https://finance.yahoo.com/quote/MSFT/history/" target="_blank" rel="noopener noreferrer">MSFT</a>
+ <small>Microsoft · Ação<br>Software</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno oos ausente ou não positivo.</small></td>
+ <td>83,8</td>
+ <td>US$ 522,61<small>2026-10-08</small></td>
+ <td class="positive">+6,1%</td>
+ <td class="positive">+3,7 p.p.</td>
+ <td>21,5%</td>
+ <td>2,4%</td>
+ <td>US$ 11,3 bi</td>
+ <td class="negative">-12,5%<small>21 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="AMD" data-search="amd advanced micro devices semicondutores"
+ data-kind="Ação" data-status="candidato" data-score="82.91666666666666"
+ data-return20="0.23248607059750803" data-oos="0.04060633266731872"
+ data-vol="0.52933569395532" data-adv="13271306865.436415">
+ <th scope="row"><span class="rank">03</span><a href="https://finance.yahoo.com/quote/AMD/history/" target="_blank" rel="noopener noreferrer">AMD</a>
+ <small>Advanced Micro Devices · Ação<br>Semicondutores</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno sob custos maiores ausente ou não positivo.</small></td>
+ <td>82,9</td>
+ <td>US$ 620,68<small>2026-10-08</small></td>
+ <td class="positive">+23,2%</td>
+ <td class="positive">+20,9 p.p.</td>
+ <td>52,9%</td>
+ <td>4,0%</td>
+ <td>US$ 13,3 bi</td>
+ <td class="positive">+4,1%<small>22 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="QQQ" data-search="qqq invesco qqq trust nasdaq 100"
+ data-kind="ETF" data-status="candidato" data-score="80.41666666666666"
+ data-return20="0.05597507597811058" data-oos="-0.14560356831528598"
+ data-vol="0.15780214575975857" data-adv="25193352486.666428">
+ <th scope="row"><span class="rank">04</span><a href="https://finance.yahoo.com/quote/QQQ/history/" target="_blank" rel="noopener noreferrer">QQQ</a>
+ <small>Invesco QQQ Trust · ETF<br>Nasdaq 100</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno oos ausente ou não positivo.</small></td>
+ <td>80,4</td>
+ <td>US$ 747,58<small>2026-10-08</small></td>
+ <td class="positive">+5,6%</td>
+ <td class="positive">+3,2 p.p.</td>
+ <td>15,8%</td>
+ <td>1,3%</td>
+ <td>US$ 25,2 bi</td>
+ <td class="negative">-14,6%<small>31 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="AAPL" data-search="aapl apple tecnologia"
+ data-kind="Ação" data-status="candidato" data-score="72.29166666666666"
+ data-return20="0.04241052697242642" data-oos="0.06184149828255814"
+ data-vol="0.16764514098137637" data-adv="12871691863.900124">
+ <th scope="row"><span class="rank">05</span><a href="https://finance.yahoo.com/quote/AAPL/history/" target="_blank" rel="noopener noreferrer">AAPL</a>
+ <small>Apple · Ação<br>Tecnologia</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno sob custos maiores ausente ou não positivo.</small></td>
+ <td>72,3</td>
+ <td>US$ 340,42<small>2026-10-08</small></td>
+ <td class="positive">+4,2%</td>
+ <td class="positive">+1,9 p.p.</td>
+ <td>16,8%</td>
+ <td>1,8%</td>
+ <td>US$ 12,9 bi</td>
+ <td class="positive">+6,2%<small>21 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="NVDA" data-search="nvda nvidia semicondutores"
+ data-kind="Ação" data-status="candidato" data-score="71.04166666666666"
+ data-return20="0.05550464867256899" data-oos="-0.22813234844426433"
+ data-vol="0.2505120334776117" data-adv="24678849220.99536">
+ <th scope="row"><span class="rank">06</span><a href="https://finance.yahoo.com/quote/NVDA/history/" target="_blank" rel="noopener noreferrer">NVDA</a>
+ <small>NVIDIA · Ação<br>Semicondutores</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno oos ausente ou não positivo.</small></td>
+ <td>71,0</td>
+ <td>US$ 230,48<small>2026-10-08</small></td>
+ <td class="positive">+5,6%</td>
+ <td class="positive">+3,2 p.p.</td>
+ <td>25,1%</td>
+ <td>2,3%</td>
+ <td>US$ 24,7 bi</td>
+ <td class="negative">-22,8%<small>27 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="SMH" data-search="smh vaneck semiconductor etf semicondutores"
+ data-kind="ETF" data-status="candidato" data-score="70.83333333333333"
+ data-return20="0.08386875807970462" data-oos="-0.06563302244450697"
+ data-vol="0.3148665905339141" data-adv="3817284829.0813837">
+ <th scope="row"><span class="rank">07</span><a href="https://finance.yahoo.com/quote/SMH/history/" target="_blank" rel="noopener noreferrer">SMH</a>
+ <small>VanEck Semiconductor ETF · ETF<br>Semicondutores</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno oos ausente ou não positivo.</small></td>
+ <td>70,8</td>
+ <td>US$ 607,27<small>2026-10-08</small></td>
+ <td class="positive">+8,4%</td>
+ <td class="positive">+6,0 p.p.</td>
+ <td>31,5%</td>
+ <td>2,4%</td>
+ <td>US$ 3,8 bi</td>
+ <td class="negative">-6,6%<small>34 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="SPY" data-search="spy spdr s&amp;p 500 etf trust mercado amplo"
+ data-kind="ETF" data-status="candidato" data-score="67.5"
+ data-return20="0.023780813273750923" data-oos="-0.10417206801699219"
+ data-vol="0.10154652716318241" data-adv="35213128332.744545">
+ <th scope="row"><span class="rank">08</span><a href="https://finance.yahoo.com/quote/SPY/history/" target="_blank" rel="noopener noreferrer">SPY</a>
+ <small>SPDR S&amp;P 500 ETF Trust · ETF<br>Mercado amplo</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno oos ausente ou não positivo.</small></td>
+ <td>67,5</td>
+ <td>US$ 773,93<small>2026-10-08</small></td>
+ <td class="positive">+2,4%</td>
+ <td class="">+0,0 p.p.</td>
+ <td>10,2%</td>
+ <td>0,9%</td>
+ <td>US$ 35,2 bi</td>
+ <td class="negative">-10,4%<small>41 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="META" data-search="meta meta platforms internet"
+ data-kind="Ação" data-status="candidato" data-score="62.708333333333336"
+ data-return20="0.11961716138142142" data-oos="-0.08954205038477303"
+ data-vol="0.5379430129961718" data-adv="15775321907.551487">
+ <th scope="row"><span class="rank">09</span><a href="https://finance.yahoo.com/quote/META/history/" target="_blank" rel="noopener noreferrer">META</a>
+ <small>Meta Platforms · Ação<br>Internet</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno oos ausente ou não positivo.</small></td>
+ <td>62,7</td>
+ <td>US$ 720,89<small>2026-10-08</small></td>
+ <td class="positive">+12,0%</td>
+ <td class="positive">+9,6 p.p.</td>
+ <td>53,8%</td>
+ <td>3,8%</td>
+ <td>US$ 15,8 bi</td>
+ <td class="negative">-9,0%<small>20 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="MU" data-search="mu micron technology semicondutores"
+ data-kind="Ação" data-status="candidato" data-score="57.708333333333336"
+ data-return20="0.05978043429103819" data-oos="4.313887713858626"
+ data-vol="0.48074049132763125" data-adv="26837604133.161507">
+ <th scope="row"><span class="rank">10</span><a href="https://finance.yahoo.com/quote/MU/history/" target="_blank" rel="noopener noreferrer">MU</a>
+ <small>Micron Technology · Ação<br>Semicondutores</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Resultados corporativos e eventos ainda precisam de confirmação.</small></td>
+ <td>57,7</td>
+ <td>US$ 1.035,84<small>2026-10-08</small></td>
+ <td class="positive">+6,0%</td>
+ <td class="positive">+3,6 p.p.</td>
+ <td>48,1%</td>
+ <td>4,3%</td>
+ <td>US$ 26,8 bi</td>
+ <td class="positive">+431,4%<small>24 operações</small></td>
+ <td class="evidence-cell">OOS favorável; evidência exploratória</td>
+</tr>
+<tr data-ticker="TSLA" data-search="tsla tesla automóveis"
+ data-kind="Ação" data-status="candidato" data-score="49.375"
+ data-return20="0.031466614913109314" data-oos="-0.09937191142351842"
+ data-vol="0.2984521410470497" data-adv="13009914381.22011">
+ <th scope="row"><span class="rank">11</span><a href="https://finance.yahoo.com/quote/TSLA/history/" target="_blank" rel="noopener noreferrer">TSLA</a>
+ <small>Tesla · Ação<br>Automóveis</small></th>
+ <td><span class="badge candidato">Sinal técnico presente</span><small>Retorno oos ausente ou não positivo.</small></td>
+ <td>49,4</td>
+ <td>US$ 375,00<small>2026-10-08</small></td>
+ <td class="positive">+3,1%</td>
+ <td class="positive">+0,8 p.p.</td>
+ <td>29,8%</td>
+ <td>3,0%</td>
+ <td>US$ 13,0 bi</td>
+ <td class="negative">-9,9%<small>18 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="BIL" data-search="bil spdr bloomberg 1-3 month t-bill etf caixa usd"
+ data-kind="ETF" data-status="observar" data-score="75.72916666666666"
+ data-return20="0.00287818697607789" data-oos="0.0"
+ data-vol="0.0022965482595528656" data-adv="1124431901.4318647">
+ <th scope="row"><span class="rank">12</span><a href="https://finance.yahoo.com/quote/BIL/history/" target="_blank" rel="noopener noreferrer">BIL</a>
+ <small>SPDR Bloomberg 1-3 Month T-Bill ETF · ETF<br>Caixa USD</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>não supera o SPY em 20 pregões</small></td>
+ <td>75,7</td>
+ <td>US$ 91,47<small>2026-10-08</small></td>
+ <td class="positive">+0,3%</td>
+ <td class="negative">-2,1 p.p.</td>
+ <td>0,2%</td>
+ <td>0,0%</td>
+ <td>US$ 1,1 bi</td>
+ <td class="">+0,0%<small>0 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="XLV" data-search="xlv health care select sector spdr fund saúde"
+ data-kind="ETF" data-status="observar" data-score="62.291666666666664"
+ data-return20="0.0189760766743714" data-oos="-0.11079996716619178"
+ data-vol="0.11399978669171104" data-adv="1379195126.7021956">
+ <th scope="row"><span class="rank">13</span><a href="https://finance.yahoo.com/quote/XLV/history/" target="_blank" rel="noopener noreferrer">XLV</a>
+ <small>Health Care Select Sector SPDR Fund · ETF<br>Saúde</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>62,3</td>
+ <td>US$ 168,16<small>2026-10-08</small></td>
+ <td class="positive">+1,9%</td>
+ <td class="negative">-0,5 p.p.</td>
+ <td>11,4%</td>
+ <td>1,6%</td>
+ <td>US$ 1,4 bi</td>
+ <td class="negative">-11,1%<small>20 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="XLE" data-search="xle energy select sector spdr fund energia"
+ data-kind="ETF" data-status="observar" data-score="61.04166666666667"
+ data-return20="0.010746769261644307" data-oos="-0.02580397638806109"
+ data-vol="0.22413499788499375" data-adv="2254628298.905682">
+ <th scope="row"><span class="rank">14</span><a href="https://finance.yahoo.com/quote/XLE/history/" target="_blank" rel="noopener noreferrer">XLE</a>
+ <small>Energy Select Sector SPDR Fund · ETF<br>Energia</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>não supera o SPY em 20 pregões</small></td>
+ <td>61,0</td>
+ <td>US$ 65,24<small>2026-10-08</small></td>
+ <td class="positive">+1,1%</td>
+ <td class="negative">-1,3 p.p.</td>
+ <td>22,4%</td>
+ <td>2,0%</td>
+ <td>US$ 2,3 bi</td>
+ <td class="negative">-2,6%<small>21 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="GOOGL" data-search="googl alphabet classe a internet"
+ data-kind="Ação" data-status="observar" data-score="47.70833333333333"
+ data-return20="0.0471737887945014" data-oos="0.1948369701530499"
+ data-vol="0.24390728492214023" data-adv="9211036267.600391">
+ <th scope="row"><span class="rank">15</span><a href="https://finance.yahoo.com/quote/GOOGL/history/" target="_blank" rel="noopener noreferrer">GOOGL</a>
+ <small>Alphabet classe A · Ação<br>Internet</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>média 20 abaixo da média 50</small></td>
+ <td>47,7</td>
+ <td>US$ 348,29<small>2026-10-08</small></td>
+ <td class="positive">+4,7%</td>
+ <td class="positive">+2,3 p.p.</td>
+ <td>24,4%</td>
+ <td>2,5%</td>
+ <td>US$ 9,2 bi</td>
+ <td class="positive">+19,5%<small>21 operações</small></td>
+ <td class="evidence-cell">OOS favorável; evidência exploratória</td>
+</tr>
+<tr data-ticker="AMZN" data-search="amzn amazon consumo e cloud"
+ data-kind="Ação" data-status="observar" data-score="35.416666666666664"
+ data-return20="0.00861486432274039" data-oos="-0.22887963698415903"
+ data-vol="0.23608882077588111" data-adv="9231526087.130398">
+ <th scope="row"><span class="rank">16</span><a href="https://finance.yahoo.com/quote/AMZN/history/" target="_blank" rel="noopener noreferrer">AMZN</a>
+ <small>Amazon · Ação<br>Consumo e cloud</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>média 20 abaixo da média 50</small></td>
+ <td>35,4</td>
+ <td>US$ 254,06<small>2026-10-08</small></td>
+ <td class="positive">+0,9%</td>
+ <td class="negative">-1,5 p.p.</td>
+ <td>23,6%</td>
+ <td>2,1%</td>
+ <td>US$ 9,2 bi</td>
+ <td class="negative">-22,9%<small>21 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="AVGO" data-search="avgo broadcom semicondutores"
+ data-kind="Ação" data-status="observar" data-score="31.666666666666668"
+ data-return20="-9.472821573086598e-05" data-oos="-0.08534173650698484"
+ data-vol="0.37915322193453793" data-adv="8613489807.410343">
+ <th scope="row"><span class="rank">17</span><a href="https://finance.yahoo.com/quote/AVGO/history/" target="_blank" rel="noopener noreferrer">AVGO</a>
+ <small>Broadcom · Ação<br>Semicondutores</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>média 20 abaixo da média 50</small></td>
+ <td>31,7</td>
+ <td>US$ 360,14<small>2026-10-08</small></td>
+ <td class="negative">-0,0%</td>
+ <td class="negative">-2,4 p.p.</td>
+ <td>37,9%</td>
+ <td>2,9%</td>
+ <td>US$ 8,6 bi</td>
+ <td class="negative">-8,5%<small>23 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="DIA" data-search="dia spdr dow jones industrial average etf mercado amplo"
+ data-kind="ETF" data-status="observar" data-score="27.291666666666668"
+ data-return20="-0.015210198173510325" data-oos="-0.10835520725519632"
+ data-vol="0.09917946984298068" data-adv="1770375768.5784335">
+ <th scope="row"><span class="rank">18</span><a href="https://finance.yahoo.com/quote/DIA/history/" target="_blank" rel="noopener noreferrer">DIA</a>
+ <small>SPDR Dow Jones Industrial Average ETF · ETF<br>Mercado amplo</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>27,3</td>
+ <td>US$ 511,65<small>2026-10-08</small></td>
+ <td class="negative">-1,5%</td>
+ <td class="negative">-3,9 p.p.</td>
+ <td>9,9%</td>
+ <td>0,9%</td>
+ <td>US$ 1,8 bi</td>
+ <td class="negative">-10,8%<small>21 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="GLD" data-search="gld spdr gold shares ouro"
+ data-kind="ETF" data-status="observar" data-score="25.416666666666664"
+ data-return20="-0.044757268368666114" data-oos="0.17352950217436058"
+ data-vol="0.20522748532320306" data-adv="3247299199.9101667">
+ <th scope="row"><span class="rank">19</span><a href="https://finance.yahoo.com/quote/GLD/history/" target="_blank" rel="noopener noreferrer">GLD</a>
+ <small>SPDR Gold Shares · ETF<br>Ouro</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>25,4</td>
+ <td>US$ 378,62<small>2026-10-08</small></td>
+ <td class="negative">-4,5%</td>
+ <td class="negative">-6,9 p.p.</td>
+ <td>20,5%</td>
+ <td>1,5%</td>
+ <td>US$ 3,2 bi</td>
+ <td class="positive">+17,4%<small>22 operações</small></td>
+ <td class="evidence-cell">OOS favorável; evidência exploratória</td>
+</tr>
+<tr data-ticker="XLI" data-search="xli industrial select sector spdr fund indústria"
+ data-kind="ETF" data-status="observar" data-score="23.333333333333332"
+ data-return20="-0.009952539672756555" data-oos="-0.03517570664469283"
+ data-vol="0.14202267960533968" data-adv="1285429268.2730513">
+ <th scope="row"><span class="rank">20</span><a href="https://finance.yahoo.com/quote/XLI/history/" target="_blank" rel="noopener noreferrer">XLI</a>
+ <small>Industrial Select Sector SPDR Fund · ETF<br>Indústria</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>23,3</td>
+ <td>US$ 168,40<small>2026-10-08</small></td>
+ <td class="negative">-1,0%</td>
+ <td class="negative">-3,4 p.p.</td>
+ <td>14,2%</td>
+ <td>1,4%</td>
+ <td>US$ 1,3 bi</td>
+ <td class="negative">-3,5%<small>18 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="VRT" data-search="vrt vertiv holdings infraestrutura digital"
+ data-kind="Ação" data-status="observar" data-score="22.291666666666664"
+ data-return20="-0.01749184466769438" data-oos="0.6354323643118915"
+ data-vol="0.44375632619514266" data-adv="1210445895.9305065">
+ <th scope="row"><span class="rank">21</span><a href="https://finance.yahoo.com/quote/VRT/history/" target="_blank" rel="noopener noreferrer">VRT</a>
+ <small>Vertiv Holdings · Ação<br>Infraestrutura digital</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>22,3</td>
+ <td>US$ 243,73<small>2026-10-08</small></td>
+ <td class="negative">-1,7%</td>
+ <td class="negative">-4,1 p.p.</td>
+ <td>44,4%</td>
+ <td>3,9%</td>
+ <td>US$ 1,2 bi</td>
+ <td class="positive">+63,5%<small>22 operações</small></td>
+ <td class="evidence-cell">OOS favorável; evidência exploratória</td>
+</tr>
+<tr data-ticker="IWM" data-search="iwm ishares russell 2000 etf small caps"
+ data-kind="ETF" data-status="observar" data-score="14.375"
+ data-return20="-0.03269048908359806" data-oos="-0.07183255357944895"
+ data-vol="0.11110197571518948" data-adv="7258584841.430227">
+ <th scope="row"><span class="rank">22</span><a href="https://finance.yahoo.com/quote/IWM/history/" target="_blank" rel="noopener noreferrer">IWM</a>
+ <small>iShares Russell 2000 ETF · ETF<br>Small caps</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>14,4</td>
+ <td>US$ 277,57<small>2026-10-08</small></td>
+ <td class="negative">-3,3%</td>
+ <td class="negative">-5,6 p.p.</td>
+ <td>11,1%</td>
+ <td>1,3%</td>
+ <td>US$ 7,3 bi</td>
+ <td class="negative">-7,2%<small>24 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="XLF" data-search="xlf financial select sector spdr fund financeiro"
+ data-kind="ETF" data-status="observar" data-score="14.375"
+ data-return20="-0.04304679872891082" data-oos="-0.01543079855614804"
+ data-vol="0.12301078771937889" data-adv="2133124816.8099976">
+ <th scope="row"><span class="rank">23</span><a href="https://finance.yahoo.com/quote/XLF/history/" target="_blank" rel="noopener noreferrer">XLF</a>
+ <small>Financial Select Sector SPDR Fund · ETF<br>Financeiro</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>14,4</td>
+ <td>US$ 54,23<small>2026-10-08</small></td>
+ <td class="negative">-4,3%</td>
+ <td class="negative">-6,7 p.p.</td>
+ <td>12,3%</td>
+ <td>1,3%</td>
+ <td>US$ 2,1 bi</td>
+ <td class="negative">-1,5%<small>14 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr>
+<tr data-ticker="TLT" data-search="tlt ishares 20+ year treasury bond etf juros longos"
+ data-kind="ETF" data-status="observar" data-score="13.333333333333332"
+ data-return20="-0.032141314172914215" data-oos="-0.01940429995082693"
+ data-vol="0.10699347226819422" data-adv="3927265771.4022865">
+ <th scope="row"><span class="rank">24</span><a href="https://finance.yahoo.com/quote/TLT/history/" target="_blank" rel="noopener noreferrer">TLT</a>
+ <small>iShares 20+ Year Treasury Bond ETF · ETF<br>Juros longos</small></th>
+ <td><span class="badge observar">Aguardar sinal</span><small>fechamento abaixo da média de 20 pregões</small></td>
+ <td>13,3</td>
+ <td>US$ 77,87<small>2026-10-08</small></td>
+ <td class="negative">-3,2%</td>
+ <td class="negative">-5,6 p.p.</td>
+ <td>10,7%</td>
+ <td>1,1%</td>
+ <td>US$ 3,9 bi</td>
+ <td class="negative">-1,9%<small>9 operações</small></td>
+ <td class="evidence-cell">Sem vantagem demonstrada</td>
+</tr></tbody></table></div>
+<p class="table-footnote">Relativo SPY é a diferença entre retornos de 20 pregões, em pontos percentuais. Volatilidade anualizada não é previsão. Volume em USD é média diária. OOS: teste fora da amostra; cada ativo usa 100% do capital enquanto há posição, sem combinar ativos.</p></section>
+<section class="section two-column" id="riscos"><div class="panel"><span class="section-kicker">03 / Exposição conjunta</span><h2>Vários nomes podem ser a mesma aposta</h2><div class='table-scroll'><table class='correlation'><caption>Retornos diários · últimos 60 pregões · correlação histórica</caption><thead><tr><th scope='col'>Ativo</th><th scope='col'>PLTR</th><th scope='col'>MSFT</th><th scope='col'>AMD</th><th scope='col'>QQQ</th><th scope='col'>AAPL</th></tr></thead><tbody><tr><th scope='row'>PLTR</th><td style="background:rgba(21, 106, 94, 0.260)">1,00</td><td style="background:rgba(21, 106, 94, 0.084)">0,16</td><td style="background:rgba(21, 106, 94, 0.078)">0,13</td><td style="background:rgba(21, 106, 94, 0.148)">0,47</td><td style="background:rgba(21, 106, 94, 0.082)">0,15</td></tr><tr><th scope='row'>MSFT</th><td style="background:rgba(21, 106, 94, 0.084)">0,16</td><td style="background:rgba(21, 106, 94, 0.260)">1,00</td><td style="background:rgba(21, 106, 94, 0.114)">0,31</td><td style="background:rgba(21, 106, 94, 0.153)">0,49</td><td style="background:rgba(167, 79, 51, 0.066)">-0,08</td></tr><tr><th scope='row'>AMD</th><td style="background:rgba(21, 106, 94, 0.078)">0,13</td><td style="background:rgba(21, 106, 94, 0.114)">0,31</td><td style="background:rgba(21, 106, 94, 0.260)">1,00</td><td style="background:rgba(21, 106, 94, 0.207)">0,75</td><td style="background:rgba(167, 79, 51, 0.084)">-0,16</td></tr><tr><th scope='row'>QQQ</th><td style="background:rgba(21, 106, 94, 0.148)">0,47</td><td style="background:rgba(21, 106, 94, 0.153)">0,49</td><td style="background:rgba(21, 106, 94, 0.207)">0,75</td><td style="background:rgba(21, 106, 94, 0.260)">1,00</td><td style="background:rgba(167, 79, 51, 0.070)">-0,09</td></tr><tr><th scope='row'>AAPL</th><td style="background:rgba(21, 106, 94, 0.082)">0,15</td><td style="background:rgba(167, 79, 51, 0.066)">-0,08</td><td style="background:rgba(167, 79, 51, 0.084)">-0,16</td><td style="background:rgba(167, 79, 51, 0.070)">-0,09</td><td style="background:rgba(21, 106, 94, 0.260)">1,00</td></tr></tbody></table></div><p class="table-footnote">Próximo de +1: trajetórias historicamente semelhantes. Correlação não mede sobreposição de posições; confira holdings dos ETFs e exposição a setor/fatores. Diversificação pode cair em períodos de estresse.</p></div><div class="panel"><span class="section-kicker">Disciplina de acompanhamento</span><h2>O que precisa acontecer antes de avançar</h2><ul><li><strong>Após cada fechamento:</strong> atualizar dados e repetir os filtros. Uma fotografia de mercado perde validade quando tendência, liquidez ou risco mudam.</li><li><strong>Antes de qualquer simulação:</strong> verificar próximos resultados e fatos materiais no RI; em ETFs, consultar emissor, composição e eventos do índice. Nenhuma data foi presumida.</li><li><strong>Para dimensionar:</strong> orçamento por ativo de 0,5% e teto teórico de 10,0%; não somar pesos sem limite de risco da carteira e revisão de correlação.</li><li><strong>Para rejeitar:</strong> sinal perdido, evento incompatível com o horizonte, spread/custos elevados, falha de dados ou teste histórico insuficiente. Gaps podem gerar perdas acima do orçamento.</li></ul></div></section>
+<section class="section" id="validacao"><div class="section-head"><div><span class="section-kicker">04 / Teste de realidade</span><h2>O que o histórico fora da amostra sustenta</h2></div><p>Resultado líquido simulado com 0,15% por lado. Estresse usa 0,30% por lado. Exige-se ao menos 10 operações para reduzir a fragilidade da amostra; isso não prova significância estatística.</p></div>
+<ul class="warning-list"><li>Triagem técnica para pesquisa em 5–10 pregões. Não demonstra preço justo, vantagem futura ou aprovação para operar.</li><li>Datas de resultados, notícias, spreads, composição e sobreposição de ETFs precisam de checagem antes de qualquer operação; não foram validadas por este modelo.</li><li>Retornos em USD, antes de impostos, câmbio BRL/USD, corretagem fixa e eventual diferença entre liquidez do ETF e dos componentes.</li><li>Dados Yahoo são uma fonte pública secundária; ajustes históricos podem ser revisados. Manifestos e SHA256 identificam o snapshot analisado.</li></ul><div class="table-scroll source-rows" tabindex="0" role="region" aria-label="Validação fora da amostra"><table><caption>Comparação por ativo e por janela OOS · capital integral por operação, sem carteira agregada</caption><thead><tr><th scope="col">Ativo / janela OOS</th><th scope="col">Retorno líquido</th><th scope="col">Sharpe</th><th scope="col">Drawdown máx.</th><th scope="col">Operações</th><th scope="col">Acerto</th><th scope="col">Comprar e manter</th><th scope="col">SPY na janela</th><th scope="col">Estresse de custos</th></tr></thead><tbody><tr><th scope='row'>PLTR<small>2024-12-16 → 2026-10-08</small></th><td class='positive'>+42,1%</td><td>0,74</td><td>-33,0%</td><td>23</td><td>43,5%</td><td>+164,0%</td><td>+30,3%</td><td class='positive'>+32,6%</td></tr><tr><th scope='row'>MSFT<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-12,5%</td><td>-0,64</td><td>-26,6%</td><td>21</td><td>42,9%</td><td>+18,1%</td><td>+30,3%</td><td class='negative'>-17,8%</td></tr><tr><th scope='row'>AMD<small>2024-12-16 → 2026-10-08</small></th><td class='positive'>+4,1%</td><td>0,24</td><td>-32,9%</td><td>22</td><td>40,9%</td><td>+391,1%</td><td>+30,3%</td><td class='negative'>-2,6%</td></tr><tr><th scope='row'>QQQ<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-14,6%</td><td>-0,90</td><td>-21,6%</td><td>31</td><td>29,0%</td><td>+41,2%</td><td>+30,3%</td><td class='negative'>-22,1%</td></tr><tr><th scope='row'>AAPL<small>2024-12-16 → 2026-10-08</small></th><td class='positive'>+6,2%</td><td>0,31</td><td>-12,9%</td><td>21</td><td>57,1%</td><td>+37,9%</td><td>+30,3%</td><td class='negative'>-0,3%</td></tr><tr><th scope='row'>NVDA<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-22,8%</td><td>-0,67</td><td>-39,8%</td><td>27</td><td>37,0%</td><td>+71,7%</td><td>+30,3%</td><td class='negative'>-28,8%</td></tr><tr><th scope='row'>SMH<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-6,6%</td><td>-0,04</td><td>-15,9%</td><td>34</td><td>41,2%</td><td>+143,5%</td><td>+30,3%</td><td class='negative'>-15,6%</td></tr><tr><th scope='row'>SPY<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-10,4%</td><td>-0,79</td><td>-13,7%</td><td>41</td><td>36,6%</td><td>+30,3%</td><td>+30,3%</td><td class='negative'>-20,8%</td></tr><tr><th scope='row'>META<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-9,0%</td><td>-0,21</td><td>-26,0%</td><td>20</td><td>35,0%</td><td>+14,7%</td><td>+30,3%</td><td class='negative'>-14,3%</td></tr><tr><th scope='row'>MU<small>2024-12-16 → 2026-10-08</small></th><td class='positive'>+431,4%</td><td>2,24</td><td>-26,0%</td><td>24</td><td>50,0%</td><td>+882,9%</td><td>+30,3%</td><td class='positive'>+394,5%</td></tr><tr><th scope='row'>TSLA<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-9,9%</td><td>-0,16</td><td>-32,7%</td><td>18</td><td>22,2%</td><td>-15,2%</td><td>+30,3%</td><td class='negative'>-14,7%</td></tr><tr><th scope='row'>BIL<small>2024-12-16 → 2026-10-08</small></th><td class=''>+0,0%</td><td>—</td><td>+0,0%</td><td>0</td><td>—</td><td>+6,9%</td><td>+30,3%</td><td class=''>+0,0%</td></tr><tr><th scope='row'>XLV<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-11,1%</td><td>-0,71</td><td>-13,4%</td><td>20</td><td>25,0%</td><td>+23,2%</td><td>+30,3%</td><td class='negative'>-16,3%</td></tr><tr><th scope='row'>XLE<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-2,6%</td><td>-0,09</td><td>-18,1%</td><td>21</td><td>38,1%</td><td>+55,4%</td><td>+30,3%</td><td class='negative'>-8,5%</td></tr><tr><th scope='row'>GOOGL<small>2024-12-16 → 2026-10-08</small></th><td class='positive'>+19,5%</td><td>0,62</td><td>-14,8%</td><td>21</td><td>38,1%</td><td>+81,1%</td><td>+30,3%</td><td class='positive'>+12,2%</td></tr><tr><th scope='row'>AMZN<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-22,9%</td><td>-1,06</td><td>-26,8%</td><td>21</td><td>28,6%</td><td>+10,0%</td><td>+30,3%</td><td class='negative'>-27,6%</td></tr><tr><th scope='row'>AVGO<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-8,5%</td><td>-0,05</td><td>-24,6%</td><td>23</td><td>43,5%</td><td>+57,6%</td><td>+30,3%</td><td class='negative'>-14,6%</td></tr><tr><th scope='row'>DIA<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-10,8%</td><td>-1,02</td><td>-14,2%</td><td>21</td><td>38,1%</td><td>+19,5%</td><td>+30,3%</td><td class='negative'>-16,3%</td></tr><tr><th scope='row'>GLD<small>2024-12-16 → 2026-10-08</small></th><td class='positive'>+17,4%</td><td>0,74</td><td>-9,0%</td><td>22</td><td>50,0%</td><td>+53,8%</td><td>+30,3%</td><td class='positive'>+9,9%</td></tr><tr><th scope='row'>XLI<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-3,5%</td><td>-0,23</td><td>-8,2%</td><td>18</td><td>44,4%</td><td>+25,3%</td><td>+30,3%</td><td class='negative'>-8,6%</td></tr><tr><th scope='row'>VRT<small>2024-12-16 → 2026-10-08</small></th><td class='positive'>+63,5%</td><td>0,94</td><td>-15,9%</td><td>22</td><td>54,5%</td><td>+92,9%</td><td>+30,3%</td><td class='positive'>+53,1%</td></tr><tr><th scope='row'>IWM<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-7,2%</td><td>-0,36</td><td>-14,1%</td><td>24</td><td>33,3%</td><td>+21,3%</td><td>+30,3%</td><td class='negative'>-13,6%</td></tr><tr><th scope='row'>XLF<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-1,5%</td><td>-0,12</td><td>-6,4%</td><td>14</td><td>42,9%</td><td>+12,4%</td><td>+30,3%</td><td class='negative'>-5,6%</td></tr><tr><th scope='row'>TLT<small>2024-12-16 → 2026-10-08</small></th><td class='negative'>-1,9%</td><td>-0,28</td><td>-7,3%</td><td>9</td><td>44,4%</td><td>-7,0%</td><td>+30,3%</td><td class='negative'>-4,6%</td></tr></tbody></table></div><p class="table-footnote">As comparações passivas permanecem investidas durante a janela inteira; a estratégia pode ficar em caixa. Exposições e risco diferem. Taxa de acerto isolada não informa o tamanho dos ganhos e perdas. Score e ranking atuais não usam o retorno OOS como previsão.</p>
+<div class="details-grid"><div class="panel"><h3>Como interpretar o estudo</h3><ul class="method-list"><li>Decisão no fechamento; execução na abertura seguinte. Referências ajustadas separam sinal e execução.</li><li>Score é ordenação relativa de momentum e risco no universo estudado. Ranking não valida valuation, consenso ou qualidade do negócio.</li><li>Retorno OOS não positivo, Sharpe não positivo, estresse não positivo ou menos de 10 operações: <strong>Sem vantagem demonstrada</strong>.</li><li>Resultado favorável continua exploratório: seleção de universo, múltiplas comparações, revisão de preços ajustados e regime de mercado limitam a inferência.</li><li>Retornos em USD; câmbio para BRL, tributação e custos particulares do investidor não estão contemplados.</li><li>USD; ações e ETFs sem alavancagem; universo atual selecionado manualmente, sujeito a viés de sobrevivência e seleção.</li><li>Filtro: close &gt; média20 &gt; média50, retorno20 positivo, desempenho20 superior ao SPY (SPY dispensa essa condição), SPY &gt; média50, distância da média20 ≤ 3 ATR14 e liquidez mínima declarada.</li><li>Score: percentis de momentum20/vol20 (35%), momentum60/vol20 (25%), retorno20 menos SPY/vol20 (25%) e distância da máxima60 (15%). OOS não entra no score; score não é probabilidade nem retorno esperado.</li><li>Backtest por ativo: 100% do capital quando sinal, caixa rende zero, sem alavancagem. Decisão no fechamento; compra e saída de tendência/tempo na abertura seguinte. Stop móvel de 2 ATR; gap preenche na abertura; limite de 10 pregões; encerramento final com custo.</li><li>Divisão cronológica 70/30 em calendário comum; indicadores aquecem no trecho anterior; teste começa sem posição e sem sinal herdado. Regras pré-fixadas nesta revisão, sem otimização. OOS retrospectivo não equivale a histórico prospectivo.</li><li>Custos por ponta e estresse declarados; SPY e buy &amp; hold usam a mesma janela de teste e fricção bilateral. Sharpe com taxa livre de risco zero; não ajustado por múltiplas comparações entre ativos.</li><li>Referência de tamanho = mínimo(teto de peso, orçamento de risco / distância percentual do stop). Não é carteira pronta: gaps, correlação e custos podem exceder o risco; stop precisa ser recalculado no preço real de execução.</li><li>Preços OHLC ajustados por Adj Close/Close; último fechamento e referência de stop reconvertidos à escala bruta atual. Sessão corrente excluída até 17h de Nova York. Feriados não integram a contagem aproximada de dias úteis.</li></ul></div><div class="panel"><h3>Exclusões e nomes bloqueados</h3><ul class="rejected-list"><li>Nenhuma exclusão registrada nesta execução.</li></ul></div></div></section>
+<section class="section" id="fontes"><div class="section-head"><div><span class="section-kicker">05 / Evidência rastreável</span><h2>Fontes, cobertura e atualização</h2></div><p>Os links permitem conferir o ticker no provedor. Datas mostram a cobertura usada nos cálculos; a identificação do arquivo permite auditar a execução.</p></div><div class="table-scroll" tabindex="0" role="region" aria-label="Fontes de dados"><table class="sources-table"><caption>Dados de mercado por ativo · relatório gerado em 09/10/2026 13:56 BRT</caption><thead><tr><th scope="col">Ticker</th><th scope="col">Fonte</th><th scope="col">Cobertura usada</th><th scope="col">Observações</th><th scope="col">SHA-256 do snapshot</th></tr></thead><tbody><tr><th scope='row'>SPY</th><td><a href='https://finance.yahoo.com/quote/SPY/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>2f5f856d89702ef8e3862c46b14cf700b33360d44393a7eb70203b1c74958b3d</td></tr><tr><th scope='row'>QQQ</th><td><a href='https://finance.yahoo.com/quote/QQQ/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>32e5f9e3147c56d87c7e8bfc2fba79fb2212caf44e2832fc3d10e62f868d64ae</td></tr><tr><th scope='row'>IWM</th><td><a href='https://finance.yahoo.com/quote/IWM/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>4058fbbba5182369d1b28b956c0aacb3be0dce8056bcef2d1d1cc9325c89dc6b</td></tr><tr><th scope='row'>DIA</th><td><a href='https://finance.yahoo.com/quote/DIA/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>e97260e22bde71f0749cdbf85cb59b98b85626c0618357c8357fbab06064fb05</td></tr><tr><th scope='row'>SMH</th><td><a href='https://finance.yahoo.com/quote/SMH/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>8b809c823ea1771cb12cfa566f3bd878ad53a83e3c8dbf693db53cb43e59c4aa</td></tr><tr><th scope='row'>XLF</th><td><a href='https://finance.yahoo.com/quote/XLF/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>0b2ed383fe1632fa3bed6aab641d7fd3b7ddb011829e577b6a0b9080f6d90755</td></tr><tr><th scope='row'>XLE</th><td><a href='https://finance.yahoo.com/quote/XLE/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>bec8d89bb924489be69abd6aea3a4792f261f15381d6d90d75d933b008384135</td></tr><tr><th scope='row'>XLV</th><td><a href='https://finance.yahoo.com/quote/XLV/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>9bcaaea28a6f029b911af24ffd0a6d3dea2b0b820f0d31952c6e0815e2d38ed2</td></tr><tr><th scope='row'>XLI</th><td><a href='https://finance.yahoo.com/quote/XLI/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>2ed1a8b9038dd65dbf52d35711a70673af99e027b23ef09d860ccb6bcf3aa100</td></tr><tr><th scope='row'>GLD</th><td><a href='https://finance.yahoo.com/quote/GLD/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>35727ebe3194f86e84d3a8d53b7bb8fc38f775de1985fc9ed953bbf6ddbd760c</td></tr><tr><th scope='row'>TLT</th><td><a href='https://finance.yahoo.com/quote/TLT/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>490ddd272af2969e69d300d3be353734faed1baf378781246767cb156e08a4e1</td></tr><tr><th scope='row'>BIL</th><td><a href='https://finance.yahoo.com/quote/BIL/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>add44f45f345ef0d15969ce98326617cf953f66134e29eba5d1c27873eeed04a</td></tr><tr><th scope='row'>NVDA</th><td><a href='https://finance.yahoo.com/quote/NVDA/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>b242a9f8766cd7d627cc548a77b20cf42efa849933f7d926a0d006bb3cb23bd9</td></tr><tr><th scope='row'>MSFT</th><td><a href='https://finance.yahoo.com/quote/MSFT/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>34a38e17d566ce5f72814453d22fc14c22a02680f32e798e369f9616902a635b</td></tr><tr><th scope='row'>AAPL</th><td><a href='https://finance.yahoo.com/quote/AAPL/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>e906aff42f8511f17291ea4cdba0cdf54b3f8ad1dd1c82fb3672590bbb53e7b7</td></tr><tr><th scope='row'>AMZN</th><td><a href='https://finance.yahoo.com/quote/AMZN/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>ed0af4eb7fca2e739792899e244db1e6e195655dcd73f48a8e6305011c66d9df</td></tr><tr><th scope='row'>GOOGL</th><td><a href='https://finance.yahoo.com/quote/GOOGL/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>d184457fe9bfed402315413bc8a5301d3829ec26508c7d533d5388df291e74c1</td></tr><tr><th scope='row'>META</th><td><a href='https://finance.yahoo.com/quote/META/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>2207c3c79e3f7cfeea4ea60e4a8ae38d0c574570988522a854d07455fb4c4689</td></tr><tr><th scope='row'>TSLA</th><td><a href='https://finance.yahoo.com/quote/TSLA/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>e706714736da7d080e3bc022226323a4425e47d2ee2be3e9a401f0bb87d08b67</td></tr><tr><th scope='row'>AVGO</th><td><a href='https://finance.yahoo.com/quote/AVGO/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>e9d56dfe2525f9ccdec02ebd4d8db027a13654cfdb5b77fb39a3589abcb8fd90</td></tr><tr><th scope='row'>AMD</th><td><a href='https://finance.yahoo.com/quote/AMD/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>a5eb330d61e9a5139bd5df894b63e7fc4422f305a1e58633907d5a25fd089d72</td></tr><tr><th scope='row'>MU</th><td><a href='https://finance.yahoo.com/quote/MU/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>ac60d840f66494c70d42fae8c63b9a448a4ed6bf8b86df764a4513858b576f59</td></tr><tr><th scope='row'>VRT</th><td><a href='https://finance.yahoo.com/quote/VRT/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-01-02 → 2026-10-08</td><td>1701</td><td class='hash'>2fa801c1975e2cd9d77e991884d31b98030d95b785d533676da9d44f21dbc18f</td></tr><tr><th scope='row'>PLTR</th><td><a href='https://finance.yahoo.com/quote/PLTR/history/' target='_blank' rel='noopener noreferrer'>Yahoo Finance via yfinance</a></td><td>2020-09-30 → 2026-10-08</td><td>1513</td><td class='hash'>c4da939c8d2ee9dd80de63c6f45397ae61c21c74652d6c882cca294df19a6d31</td></tr></tbody></table></div><details><summary>Limitações de dados e de decisão</summary><p>Preços históricos ajustados incorporam desdobramentos e distribuições; podem ser revistos pelo provedor. Não representam necessariamente preços brutos negociáveis. Universo atual pode conter viés de seleção e sobrevivência; não há demonstração de resultados replicáveis em um universo reconstruído ponto a ponto. Não foram verificadas nesta análise expectativas do consenso, valuation, eventos futuros ou holdings atuais de ETFs. Não há alvos de preço nem promessa de retorno. Para operar fora da simulação, seriam necessários dados e execução independentes, além de análise adequada ao risco e ao patrimônio do investidor.</p></details></section>
+</main><footer class="footer"><p>iitauquant · Pesquisa quantitativa reproduzível. Este relatório organiza hipóteses para pesquisa e simulação. Histórico e score não garantem retorno futuro.</p><span>Gerado em 09/10/2026 13:56 BRT</span></footer></div><script>
+(() => {
+  const table = document.getElementById('ranking');
+  const rows = Array.from(table.tBodies[0].rows);
+  const search = document.getElementById('search');
+  const kind = document.getElementById('kind');
+  const status = document.getElementById('status');
+  const sort = document.getElementById('sort');
+  const count = document.getElementById('result-count');
+  function update() {
+    const query = search.value.trim().toLocaleLowerCase('pt-BR');
+    const [key, direction] = sort.value.split(':');
+    rows.sort((a, b) => {
+      const av = a.dataset[key], bv = b.dataset[key];
+      if (av === '' && bv === '') return 0;
+      if (av === '') return 1;
+      if (bv === '') return -1;
+      const cmp = key === 'ticker' ? av.localeCompare(bv) : Number(av) - Number(bv);
+      return direction === 'asc' ? cmp : -cmp;
+    });
+    let visible = 0;
+    for (const row of rows) {
+      const match = (!query || row.dataset.search.includes(query)) &&
+        (!kind.value || row.dataset.kind === kind.value) &&
+        (!status.value || row.dataset.status === status.value);
+      row.hidden = !match;
+      if (match) visible++;
+      table.tBodies[0].appendChild(row);
+    }
+    count.textContent = `${visible} de ${rows.length} ativos exibidos · clique nos títulos com ↕ para ordenar`;
+  }
+  search.addEventListener('input', update);
+  [kind, status, sort].forEach(control => control.addEventListener('change', update));
+  document.querySelectorAll('[data-sort-key]').forEach(button => {
+    button.addEventListener('click', () => {
+      const key = button.dataset.sortKey;
+      const desired = sort.value === key + ':desc' ? key + ':asc' : key + ':desc';
+      if (!Array.from(sort.options).some(option => option.value === desired)) {
+        const option = document.createElement('option');
+        option.value = desired;
+        option.textContent = button.textContent.replace('↕', '').trim() + (desired.endsWith('asc') ? ' ↑' : ' ↓');
+        sort.appendChild(option);
+      }
+      sort.value = desired;
+      table.querySelectorAll('th[aria-sort]').forEach(th => th.removeAttribute('aria-sort'));
+      button.closest('th').setAttribute('aria-sort', desired.endsWith('asc') ? 'ascending' : 'descending');
+      update();
+    });
+  });
+  document.getElementById('print-report').addEventListener('click', () => window.print());
+  update();
+})();
+</script></body></html>

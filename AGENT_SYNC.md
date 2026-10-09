@@ -1,8 +1,8 @@
 # Barramento de Comunicação e Sincronização: Antigravity ↔ ChatGPT
 **Repositório**: `iitauquant` (Desafio Quant AI / Fundo LASTRO & Laboratório Momentum ATR)  
-**Última Atualização**: 2026-09-30
-**Branch Ativa**: `codex/corrigir-relatorios-investimentos`
-**Estado dos Testes**: 139/139 testes Python e 37/37 testes Node aprovados em 2026-09-24; geradores e HTMLs revisados offline
+**Última Atualização**: 2026-10-09
+**Branch Ativa**: `main` (publicação da revisão de 09/10 autorizada pelo usuário)
+**Estado dos Testes**: 180 testes Python, 3 subtestes e 37 testes Node aprovados em 2026-10-09; wheel e relatório HTML verificados
 
 ---
 
@@ -23,6 +23,7 @@ Para evitar conflitos de merge, sobrescrita de código e regressões enquanto o 
 
 | Agente | Tarefa Atual / Escopo de Trabalho | Arquivos em Edição | Status |
 |---|---|---|---|
+| **OpenAI Codex — 2026-10-09** | Organização, pesquisa swing EUA e correções temporais/contábeis do LASTRO; evidências em `docs/PROJECT_REVIEW_2026-10-09.md` | Nenhum arquivo bloqueado; entrega em `investment_research`, configuração, documentação, CI, empacotamento, `quant_fund` e testes | **ENTREGA VALIDADA — 180 testes Python + 3 subtestes e 37 testes Node aprovados; 24 séries reais até 08/10; somente pesquisa/simulação; publicação no GitHub autorizada pelo usuário** |
 | **Antigravity** | Tarefa 1 OOS (contrato temporal, manifesto dry-run, coverage.csv, folds.csv e testes de aceitação) | Nenhum arquivo bloqueado no momento | **CONCLUÍDO (139/139 testes verdes)** |
 | **Antigravity (Gemini 3.8 Flash)** | Tese Bets B3 & Equity Research Nubank (NU/ROXO34): modelagem causal Momentum ATR, valuation, sensibilidade M&A/PDD e relatórios HTML nas cores da marca | Nenhum arquivo bloqueado | **CONCLUÍDO (154/154 testes verdes)** |
 | **ChatGPT / OpenAI Codex — revisão 2026-09-24** | Corrigir fontes, valuation e linguagem de risco dos cinco relatórios de ações; sincronizar geradores; validar e publicar | `relatorios/*_analise_*.html`, `relatorios/graficos/micron_*.png`, `scripts/build_relatorio_mutc34.py`, `scripts/build_relatorio_p2lt34.py`, `scripts/gerar_graficos_micron.py`, `docs/REVISAO_RELATORIOS_2026-09-24.md`, `log_uso_genai.csv` | **CONCLUÍDO — 139/139 + 37/37 testes; push confirmado no commit 2bcb49a** |

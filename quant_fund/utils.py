@@ -10,7 +10,12 @@ import pandas as pd
 
 
 def monthly_last(data: pd.DataFrame | pd.Series) -> pd.DataFrame | pd.Series:
-    """Converte observações diárias/irregulares para o último valor de cada mês."""
+    """Agrega o último valor mensal e rejeita meses completamente ausentes.
+
+    Janelas e retornos dos sleeves contam meses de calendário. Um mês sem linha
+    deve ser declarado explicitamente com NA; não é removido nem imputado, pois
+    isso transformaria retornos de vários meses em retornos mensais.
+    """
 
     result = data.copy()
     result.index = pd.to_datetime(result.index, errors="raise")
@@ -18,7 +23,17 @@ def monthly_last(data: pd.DataFrame | pd.Series) -> pd.DataFrame | pd.Series:
         result.index = result.index.tz_localize(None)
     result = result.sort_index()
     result.index = result.index.to_period("M").to_timestamp("M")
-    return result.groupby(level=0).last()
+    monthly = result.groupby(level=0).last()
+    if len(monthly) > 1:
+        expected = pd.period_range(monthly.index[0], monthly.index[-1], freq="M")
+        missing = expected.difference(monthly.index.to_period("M"))
+        if len(missing):
+            months = ", ".join(str(month) for month in missing)
+            raise ValueError(
+                f"Série mensal contém meses ausentes: {months}. "
+                "Declare os meses com NA explicitamente; preços não são imputados."
+            )
+    return monthly
 
 
 def ensure_numeric_frame(data: pd.DataFrame, name: str) -> pd.DataFrame:

@@ -1,8 +1,19 @@
 # Central de Documentação Técnica e Governança — `iitauquant`
 
+Revisão mais recente: [organização, correções e evidências de 09/10/2026](PROJECT_REVIEW_2026-10-09.md).
+
 Este diretório centraliza os documentos de governança, arquitetura, pesquisa quantitativa, runbooks operacionais, relatórios técnicos e barramentos de colaboração com Inteligência Artificial do repositório **`iitauquant`** (Fundo LASTRO & Laboratório Momentum ATR).
 
 ---
+
+## Pesquisa atual de investimentos
+
+| Documento | Escopo e finalidade |
+|---|---|
+| [`INVESTMENT_RESEARCH.md`](INVESTMENT_RESEARCH.md) | Pesquisa reproduzível de 24 ações e ETFs dos EUA para 5–10 pregões: coleta isolada, filtros de tendência/força relativa/liquidez, score fixo, backtest causal, custos, exclusões e limitações. |
+| [`../config/swing_us.json`](../config/swing_us.json) | Universo em USD e regras da pesquisa de curto prazo. |
+
+Os relatórios dessa frente ficam em `results/investment_research/<as-of>/`. Os estudos abaixo preservam os cortes e as limitações de suas próprias execuções.
 
 ## 1. Governança, Aceite e Auditoria
 

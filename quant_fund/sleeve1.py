@@ -39,7 +39,12 @@ def prepare_fundamentals(
     fundamentals: pd.DataFrame,
     config: Sleeve1Config,
 ) -> pd.DataFrame:
-    """Calcula fatores brutos e datas point-in-time de cada balanço."""
+    """Calcula fatores brutos a partir do primeiro filing de cada exercício.
+
+    Revisões posteriores não substituem os valores disponíveis originalmente,
+    seguindo o contrato do adaptador SEC. O crescimento do ativo só fica
+    disponível depois da divulgação de ambos os balanços usados no cálculo.
+    """
 
     missing = REQUIRED_FUNDAMENTAL_COLUMNS.difference(fundamentals.columns)
     if missing:
@@ -67,8 +72,10 @@ def prepare_fundamentals(
     for column in numeric_columns:
         data[column] = pd.to_numeric(data[column], errors="coerce")
     data = data.sort_values(["ticker", "fiscal_date", "available_date"], kind="stable")
+    data = data.drop_duplicates(["ticker", "fiscal_date"], keep="first").copy()
     data["previous_total_assets"] = data.groupby("ticker", sort=False)["total_assets"].shift(1)
     previous_fiscal_date = data.groupby("ticker", sort=False)["fiscal_date"].shift(1)
+    previous_available_date = data.groupby("ticker", sort=False)["available_date"].shift(1)
     annual_gap_days = (data["fiscal_date"] - previous_fiscal_date).dt.days
 
     positive_assets = data["total_assets"].where(data["total_assets"].gt(0))
@@ -77,6 +84,12 @@ def prepare_fundamentals(
     )
     data["profitability_raw"] = data["gross_profit"] / positive_assets
     data["investment_raw"] = -(data["total_assets"] / positive_previous_assets - 1.0)
+    growth_available_date = pd.concat(
+        [data["available_date"], previous_available_date], axis=1
+    ).max(axis=1)
+    data["available_date"] = data["available_date"].where(
+        data["investment_raw"].isna(), growth_available_date
+    )
     data = data.replace([np.inf, -np.inf], np.nan)
     return data
 
@@ -113,7 +126,7 @@ def build_sleeve1(
         if known.empty:
             continue
         latest = (
-            known.sort_values(["ticker", "available_date", "fiscal_date"], kind="stable")
+            known.sort_values(["ticker", "fiscal_date", "available_date"], kind="stable")
             .groupby("ticker", sort=False, as_index=False)
             .tail(1)
             .set_index("ticker")
